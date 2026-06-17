@@ -1,0 +1,60 @@
+[
+  {
+    "timestamp": "2026-06-15T22:31:53.117479",
+    "query": "Je n'arrive pas a me connecter sur mon compte bancaire",
+    "agent": "L0",
+    "sentiment": "frustrated",
+    "urgency": "high",
+    "compliant": true,
+    "risk_level": "low",
+    "fraud_detected": false
+  },
+  {
+    "timestamp": "2026-06-16T00:34:48.073783",
+    "query": "Mon compte à ete piraté",
+    "agent": "L0",
+    "sentiment": "frustrated",
+    "urgency": "high",
+    "compliant": true,
+    "risk_level": "high",
+    "fraud_detected": false,
+    "fraud_score": 0,
+    "fraud_reasons": []
+  },
+  {
+    "timestamp": "2026-06-16T00:37:47.673514",
+    "query": "j'ai perdu ma carte bancaire",
+    "agent": "L0",
+    "sentiment": "frustrated",
+    "urgency": "high",
+    "compliant": true,
+    "risk_level": "medium",
+    "fraud_detected": false,
+    "fraud_score": 0,
+    "fraud_reasons": []
+  },
+  {
+    "timestamp": "2026-06-16T09:07:38.320458",
+    "query": "on  a pirater mon compte",
+    "agent": "L0",
+    "sentiment": "angry",
+    "urgency": "high",
+    "compliant": true,
+    "risk_level": "high",
+    "fraud_detected": false,
+    "fraud_score": 0,
+    "fraud_reasons": []
+  },
+  {
+    "timestamp": "2026-06-16T09:42:11.330807",
+    "query": "j'ai oubler mon code de conexion",
+    "agent": "L1",
+    "sentiment": "neutral",
+    "urgency": "medium",
+    "compliant": false,
+    "risk_level": "high",
+    "fraud_detected": false,
+    "fraud_score": 0,
+    "fraud_reasons": []
+  }
+]

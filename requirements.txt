@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+requests
+numpy
+chromadb
+openai
+tiktoken
+streamlit
+pandas
+python-dotenv

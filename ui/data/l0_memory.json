@@ -1,0 +1,287 @@
+[
+  {
+    "query": "je n'arrive pas \u00e0 acceder a mon compte\n",
+    "decision": "answer",
+    "response": "{\n  \"decision\": \"answer\",\n  \"answer\": \"Pour acc\u00e9der \u00e0 votre compte, veuillez v\u00e9rifier que vous entrez correctement votre mot de passe, en faisant attention \u00e0 la touche Majuscule (Caps Lock) et \u00e0 la langue de votre clavier. Si vous avez fait plusieurs tentatives infructueuses, votre compte pourrait \u00eatre temporairement bloqu\u00e9. Dans ce cas, veuillez attendre 15 minutes avant de r\u00e9essayer. Si vous ne parvenez toujours pas \u00e0 vous connecter, je vous recommande de r\u00e9initialiser votre mot de passe.\"\n}"
+  },
+  {
+    "query": "I can\u2019t access my account.",
+    "decision": "answer",
+    "response": "{\n  \"decision\": \"answer\",\n  \"answer\": \"To help you access your account, please try the following steps: 1) Reset your password in case it was entered incorrectly or expired. 2) Check that your keyboard language is correct and Caps Lock is off. 3) If you have tried multiple times and your account is locked, please wait 15 minutes before trying again. If you continue to have trouble logging in after these steps, please let us know.\"\n}"
+  },
+  {
+    "query": "No puedo acceder a mi cuenta.\n",
+    "decision": "answer",
+    "response": "{\n  \"decision\": \"answer\",\n  \"answer\": \"Para acceder a su cuenta, por favor verifique que est\u00e1 ingresando la contrase\u00f1a correctamente, asegur\u00e1ndose de que la tecla de may\u00fasculas (Caps Lock) no est\u00e9 activada y que el idioma del teclado sea el correcto. Si ha intentado varias veces sin \u00e9xito, su cuenta podr\u00eda estar temporalmente bloqueada; en ese caso, espere 15 minutos antes de intentar nuevamente. Si contin\u00faa sin poder acceder, le recomiendo restablecer su contrase\u00f1a.\"\n}"
+  },
+  {
+    "query": "Je n'arrive pas a me connecter",
+    "decision": "escalate",
+    "response": "Je ne sais pas."
+  },
+  {
+    "query": "je n'arrive pas a me connecter",
+    "decision": "escalate",
+    "response": "Je ne sais pas."
+  },
+  {
+    "query": "Je n'arrive pas a me connecter",
+    "decision": "escalate",
+    "response": "Je ne sais pas."
+  },
+  {
+    "query": "je n'arrive pas a me connecter",
+    "decision": "escalate",
+    "response": "Je ne sais pas."
+  },
+  {
+    "query": "je n'arrive pas a me connecter",
+    "decision": "answer",
+    "response": "Pour r\u00e9soudre votre probl\u00e8me de connexion \u00e0 la banque en ligne, veuillez v\u00e9rifier que vos identifiants sont corrects. Si vous recevez un message d'erreur \"Identifiants invalides\" apr\u00e8s plusieurs tentatives, il est possible que vos identifiants soient incorrects ou bloqu\u00e9s. Je vous recommande de r\u00e9initialiser votre mot de passe ou de contacter le service client pour obtenir de l'aide."
+  },
+  {
+    "query": "i don't have access on my account",
+    "decision": "answer",
+    "response": "Votre compte peut \u00eatre verrouill\u00e9 suite \u00e0 plusieurs tentatives de connexion \u00e9chou\u00e9es, ce qui entra\u00eene un message d'erreur \"Account locked\" et le rejet des tentatives de connexion.\n\nJe vous recommande de v\u00e9rifier si le probl\u00e8me persiste apr\u00e8s avoir effectu\u00e9 des contr\u00f4les sur votre environnement (par exemple, essayer de vous connecter depuis un autre appareil ou r\u00e9seau). Si le probl\u00e8me continue, il faudra escalader le cas au support de niveau L1.\n\nSi vous utilisez l'application mobile et que vous ne pouvez pas vous authentifier, assurez-vous que votre application est \u00e0 jour, que votre syst\u00e8me d'exploitation est compatible, et essayez de vider le cache des identifiants.\n\nSi ces \u00e9tapes ne r\u00e9solvent pas le probl\u00e8me, merci de contacter le support de niveau L1 pour une assistance plus approfondie."
+  },
+  {
+    "query": "i don't have access on my banking account",
+    "decision": "answer",
+    "response": "Il semble que votre compte bancaire en ligne soit bloqu\u00e9, probablement \u00e0 cause de plusieurs tentatives de connexion infructueuses. Cela peut entra\u00eener un message d'erreur indiquant que le compte est verrouill\u00e9.\n\nJe vous recommande d'attendre un certain temps avant de r\u00e9essayer de vous connecter, ou de contacter le support de votre banque pour d\u00e9bloquer votre compte. Si le probl\u00e8me persiste, il pourrait \u00eatre n\u00e9cessaire de faire escalader le probl\u00e8me \u00e0 un niveau sup\u00e9rieur (L1).\n\nSi vous avez besoin d'aide suppl\u00e9mentaire, n'h\u00e9sitez pas \u00e0 contacter le service client de votre banque."
+  },
+  {
+    "query": "je n'arrive pas a me connecter",
+    "decision": "answer",
+    "response": "Je vous conseille de v\u00e9rifier que vos identifiants sont corrects et de faire attention aux majuscules et minuscules. Si le probl\u00e8me persiste, vous pouvez essayer de r\u00e9initialiser votre mot de passe ou contacter le support technique pour obtenir de l'aide."
+  },
+  {
+    "query": "je n'arrive pas a me connecter a mon compte bancaire\n",
+    "decision": "answer",
+    "response": "Si vous n'arrivez pas \u00e0 vous connecter \u00e0 votre compte bancaire, cela peut \u00eatre d\u00fb \u00e0 plusieurs causes : identifiants incorrects, compte bloqu\u00e9, ou application non \u00e0 jour. Je vous recommande de v\u00e9rifier que vos identifiants sont corrects, de mettre \u00e0 jour votre application bancaire, et si le probl\u00e8me persiste, contactez votre service client pour v\u00e9rifier si votre compte est bloqu\u00e9."
+  },
+  {
+    "query": "donne moi mon numero de code bancaire\n\n",
+    "decision": "escalate",
+    "response": "Je ne sais pas."
+  },
+  {
+    "query": "Ich kann mich nicht in mein ",
+    "decision": "escalate",
+    "response": "Je ne sais pas."
+  },
+  {
+    "query": "Ich kann mich nicht in mein ",
+    "decision": "escalate",
+    "response": "Je ne sais pas."
+  },
+  {
+    "query": "Online\u2011Bankkonto einloggen.",
+    "decision": "escalate",
+    "response": "Je ne sais pas."
+  },
+  {
+    "query": " No puedo iniciar sesi\u00f3n en mi cuenta bancaria en l\u00ednea.\n",
+    "decision": "escalate",
+    "response": "Je ne sais pas."
+  },
+  {
+    "query": " Ich kann mich nicht in mein Online\u2011Bankkonto einloggen.\n",
+    "decision": "answer",
+    "response": "Sie k\u00f6nnen sich nicht in Ihr Online-Bankkonto einloggen und erhalten m\u00f6glicherweise die Fehlermeldung \u201eUng\u00fcltige Anmeldedaten\u201c. Dies kann auch daran liegen, dass Ihr Konto nach mehreren fehlgeschlagenen Anmeldeversuchen vor\u00fcbergehend gesperrt wurde.\n\nEmpfehlung:\n- \u00dcberpr\u00fcfen Sie Ihre Anmeldedaten sorgf\u00e4ltig.\n- Wenn Sie Ihr Passwort vergessen haben, nutzen Sie die Funktion \u201ePasswort zur\u00fccksetzen\u201c auf der Login-Seite.\n- Warten Sie einige Zeit, falls Ihr Konto vor\u00fcbergehend gesperrt ist, und versuchen Sie es sp\u00e4ter erneut.\n- Wenn das Problem weiterhin besteht, wenden Sie sich bitte an den Kundensupport Ihrer Bank."
+  },
+  {
+    "query": "je n'arrive pas a me connecter a mon comte bancaire\ud83d\ude20",
+    "decision": "answer",
+    "response": "Je comprends que cette situation soit frustrante pour vous. Cependant, je n'ai pas d'informations pr\u00e9cises concernant les probl\u00e8mes de connexion \u00e0 votre compte bancaire dans le contexte fourni. Je vous recommande de contacter directement le service client de votre banque pour obtenir une assistance rapide et s\u00e9curis\u00e9e. Ils pourront vous aider \u00e0 r\u00e9tablir l'acc\u00e8s \u00e0 votre compte. N'h\u00e9sitez pas \u00e0 leur expliquer votre difficult\u00e9, ils sont l\u00e0 pour vous aider."
+  },
+  {
+    "query": "je n'arrive pas a me connecter a mon comte bancaire\ud83d\ude20",
+    "decision": "answer",
+    "response": "Je comprends que cette situation soit frustrante pour vous. Cependant, je n'ai pas assez d'informations dans le contexte fourni pour vous aider \u00e0 r\u00e9soudre votre probl\u00e8me de connexion. Je vous recommande de contacter directement le service client de votre banque pour qu'ils puissent vous assister rapidement et s\u00e9curiser l'acc\u00e8s \u00e0 votre compte. N'h\u00e9sitez pas, ils sont l\u00e0 pour vous aider !"
+  },
+  {
+    "query": "je n'arrive pas a me connecter a mon compte bancaire \ud83d\ude0a",
+    "decision": "answer",
+    "response": "Je comprends que cette situation puisse \u00eatre frustrante. Pour r\u00e9soudre ce probl\u00e8me de connexion, veuillez v\u00e9rifier que vos identifiants sont corrects, que votre compte n'est pas bloqu\u00e9, et que votre application bancaire est bien \u00e0 jour. Si le probl\u00e8me persiste, n'h\u00e9sitez pas \u00e0 contacter le support technique de votre banque pour une assistance plus approfondie."
+  },
+  {
+    "query": "j'arrive a me connecter a mon compte bancaire \ud83d\ude0a",
+    "decision": "answer",
+    "response": "Je suis heureux d'apprendre que vous arrivez \u00e0 vous connecter \u00e0 votre compte bancaire. Si vous avez d'autres questions ou rencontrez des probl\u00e8mes, n'h\u00e9sitez pas \u00e0 me le faire savoir."
+  },
+  {
+    "query": "je n'arrive pas a me connecter a mon compte bancaire\ud83d\ude1f",
+    "decision": "answer",
+    "response": "Je comprends que cette situation soit frustrante pour vous. Plusieurs raisons peuvent expliquer ce probl\u00e8me de connexion, comme des identifiants incorrects, un compte bloqu\u00e9 ou une application non \u00e0 jour. Je vous conseille de v\u00e9rifier que vos identifiants sont bien corrects, de mettre \u00e0 jour votre application bancaire si ce n\u2019est pas d\u00e9j\u00e0 fait, et si le probl\u00e8me persiste, contactez notre service client pour v\u00e9rifier si votre compte est bloqu\u00e9. N\u2019h\u00e9sitez pas, nous sommes l\u00e0 pour vous aider \u00e0 r\u00e9soudre cela rapidement."
+  },
+  {
+    "query": "je veux mon numero de carte bancaire",
+    "decision": "escalate",
+    "response": "Je ne sais pas."
+  },
+  {
+    "query": "je n'arrive pas a me connecter \u00e0 mon compte banacire",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous rencontrez des difficult\u00e9s pour vous connecter \u00e0 votre compte bancaire. Je vous recommande de v\u00e9rifier que vos identifiants sont corrects et que votre connexion internet fonctionne bien. Si le probl\u00e8me persiste, n'h\u00e9sitez pas \u00e0 contacter directement votre banque pour obtenir une assistance personnalis\u00e9e. Je reste \u00e0 votre disposition si vous avez d'autres questions."
+  },
+  {
+    "query": "peut tu m'aider \u00e0 contacter ma banque?",
+    "decision": "escalate",
+    "response": "Je ne sais pas."
+  },
+  {
+    "query": "Je n'arrive pas me connecter \u00e0 mon compte bancaire",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous rencontrez des difficult\u00e9s pour vous connecter \u00e0 votre compte bancaire. Je vous recommande de v\u00e9rifier que vos identifiants sont corrects et que votre connexion internet est stable. Si le probl\u00e8me persiste, n'h\u00e9sitez pas \u00e0 contacter directement le service client de votre banque pour obtenir une assistance personnalis\u00e9e. Je reste \u00e0 votre disposition si vous avez d'autres questions."
+  },
+  {
+    "query": "i don't have access to my banking account",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous n'avez pas acc\u00e8s \u00e0 votre compte bancaire. Pour r\u00e9soudre ce probl\u00e8me, je vous recommande de contacter directement le service client de votre banque. Ils pourront v\u00e9rifier votre identit\u00e9 et vous aider \u00e0 r\u00e9tablir l'acc\u00e8s \u00e0 votre compte en toute s\u00e9curit\u00e9. N'h\u00e9sitez pas \u00e0 leur fournir toutes les informations n\u00e9cessaires pour acc\u00e9l\u00e9rer le processus."
+  },
+  {
+    "query": "Je n'arrive pas \u00e0 me connecter \u00e0 mon compte bancaire",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous rencontrez des difficult\u00e9s pour vous connecter \u00e0 votre compte bancaire. Pourriez-vous v\u00e9rifier que vos identifiants sont corrects et que votre connexion internet fonctionne bien ? Si le probl\u00e8me persiste, je vous recommande de contacter directement le service client de votre banque pour obtenir une assistance personnalis\u00e9e. N'h\u00e9sitez pas, je suis l\u00e0 pour vous aider autant que possible."
+  },
+  {
+    "query": "I don't hace access to my bak account",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous n'avez pas acc\u00e8s \u00e0 votre compte bancaire. Pour pouvoir vous aider au mieux, je vous recommande de v\u00e9rifier d'abord que vos identifiants de connexion sont corrects. Si vous avez oubli\u00e9 votre mot de passe, vous pouvez g\u00e9n\u00e9ralement utiliser la fonction \"Mot de passe oubli\u00e9\" sur le site ou l'application de votre banque pour le r\u00e9initialiser. Si le probl\u00e8me persiste, n'h\u00e9sitez pas \u00e0 contacter directement le service client de votre banque pour une assistance personnalis\u00e9e. Je reste \u00e0 votre disposition si vous avez d'autres questions."
+  },
+  {
+    "query": "je n'arive pas me connecter a mon compte bancaire",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous rencontrez des difficult\u00e9s pour vous connecter \u00e0 votre compte bancaire. Pourriez-vous v\u00e9rifier que vos identifiants sont corrects et que votre connexion internet fonctionne bien ? Si le probl\u00e8me persiste, je vous recommande de contacter directement le service client de votre banque pour obtenir une assistance personnalis\u00e9e. N'h\u00e9sitez pas, ils sont l\u00e0 pour vous aider."
+  },
+  {
+    "query": "je n'arrice pas a me compte \u00e0 mon compte",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous avez des difficult\u00e9s \u00e0 acc\u00e9der \u00e0 votre compte. Pourriez-vous v\u00e9rifier que vous utilisez bien vos identifiants corrects ? Si le probl\u00e8me persiste, je vous recommande de r\u00e9initialiser votre mot de passe ou de contacter directement le service client de votre banque pour une assistance personnalis\u00e9e. N'h\u00e9sitez pas, je suis l\u00e0 pour vous aider !"
+  },
+  {
+    "query": "je n'arrice pas a me compte \u00e0 mon compte :)",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 que vous rencontriez des difficult\u00e9s pour acc\u00e9der \u00e0 votre compte. Pourriez-vous v\u00e9rifier que vous utilisez bien vos identifiants corrects ? Si le probl\u00e8me persiste, n'h\u00e9sitez pas \u00e0 contacter le service client de votre banque pour obtenir une assistance personnalis\u00e9e. Je suis l\u00e0 pour vous aider si vous avez besoin d'autres informations."
+  },
+  {
+    "query": "\ud83d\ude02je n'arrice pas a me compte \u00e0 mon compte",
+    "decision": "answer",
+    "response": "Je comprends que c'est frustrant de ne pas pouvoir acc\u00e9der \u00e0 votre compte. Je vous conseille de v\u00e9rifier que vous utilisez bien les bonnes identifiants (nom d'utilisateur et mot de passe). Si le probl\u00e8me persiste, essayez de r\u00e9initialiser votre mot de passe via la fonction \"Mot de passe oubli\u00e9\" sur la page de connexion. Si vous avez toujours des difficult\u00e9s, n'h\u00e9sitez pas \u00e0 contacter le support client de votre banque pour obtenir une assistance personnalis\u00e9e."
+  },
+  {
+    "query": "tu es fou. je n'arrive pas a me connecter et c'est mon compte",
+    "decision": "answer",
+    "response": "Je comprends que c'est frustrant de ne pas pouvoir acc\u00e9der \u00e0 votre compte. Pourriez-vous v\u00e9rifier que vous utilisez bien vos identifiants corrects ? Si le probl\u00e8me persiste, je vous recommande de r\u00e9initialiser votre mot de passe ou de contacter directement le service client pour une assistance personnalis\u00e9e. N'h\u00e9sitez pas, je suis l\u00e0 pour vous aider."
+  },
+  {
+    "query": "est ce que tu connais mon nom?",
+    "decision": "escalate",
+    "response": "Je ne sais pas."
+  },
+  {
+    "query": "Est ce que tu connais mon num\u00e9ro de compte bancaire que je t'ai envoy\u00e9 plus haut",
+    "decision": "escalate",
+    "response": "Je ne sais pas."
+  },
+  {
+    "query": "est ce que tu as acc\u00e8s \u00e0 mon code source",
+    "decision": "escalate",
+    "response": "Je ne sais pas."
+  },
+  {
+    "query": "je n'arrive a pas \u00e0 me connecter \u00e0 mon compte bancaire",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous rencontrez des difficult\u00e9s pour vous connecter \u00e0 votre compte bancaire. Je vous recommande de v\u00e9rifier que vos identifiants sont corrects et que votre connexion internet est stable. Si le probl\u00e8me persiste, n'h\u00e9sitez pas \u00e0 contacter directement le service client de votre banque pour obtenir une assistance personnalis\u00e9e. Je reste \u00e0 votre disposition si vous avez d'autres questions."
+  },
+  {
+    "query": "je n'arrive pas a me connecter ",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous rencontrez des difficult\u00e9s pour vous connecter. Pourriez-vous v\u00e9rifier que vos identifiants sont corrects et que votre connexion internet fonctionne bien ? Si le probl\u00e8me persiste, n'h\u00e9sitez pas \u00e0 contacter le support technique de votre banque pour une assistance plus approfondie. Je suis l\u00e0 pour vous aider si vous avez besoin d'autres informations."
+  },
+  {
+    "query": "Je n'arrive pas a me connecter sur mon compte bancaire",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous rencontrez des difficult\u00e9s pour vous connecter \u00e0 votre compte bancaire. Pourriez-vous v\u00e9rifier que vos identifiants sont corrects et que votre connexion internet fonctionne bien ? Si le probl\u00e8me persiste, je vous recommande de contacter directement le service client de votre banque pour obtenir une assistance personnalis\u00e9e. N'h\u00e9sitez pas, ils sont l\u00e0 pour vous aider !"
+  },
+  {
+    "query": "Mon compte \u00e0 ete pirat\u00e9",
+    "decision": "answer",
+    "response": "Je suis vraiment d\u00e9sol\u00e9 d'apprendre que votre compte a \u00e9t\u00e9 pirat\u00e9. Pour votre s\u00e9curit\u00e9, je vous recommande de contacter imm\u00e9diatement votre banque via les num\u00e9ros officiels ou votre espace client s\u00e9curis\u00e9 afin de signaler cette situation. Ils pourront bloquer votre compte temporairement et vous aider \u00e0 s\u00e9curiser vos informations. N'h\u00e9sitez pas \u00e0 changer vos mots de passe et \u00e0 surveiller vos op\u00e9rations bancaires de pr\u00e8s. Si vous avez besoin d'aide pour trouver les coordonn\u00e9es de votre banque, je suis l\u00e0 pour vous aider."
+  },
+  {
+    "query": "j'ai perdu ma carte bancaire",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous avez perdu votre carte bancaire. Pour votre s\u00e9curit\u00e9, je vous recommande de contacter rapidement votre banque afin de faire opposition sur votre carte. Cela \u00e9vitera toute utilisation frauduleuse. N'h\u00e9sitez pas \u00e0 les appeler ou \u00e0 utiliser leur application mobile si vous en avez une. Si vous avez besoin d'aide pour trouver le num\u00e9ro \u00e0 contacter, je suis l\u00e0 pour vous aider."
+  },
+  {
+    "query": "on  a pirater mon compte",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que votre compte a \u00e9t\u00e9 pirat\u00e9. Pour votre s\u00e9curit\u00e9, je vous recommande de contacter imm\u00e9diatement votre banque via leur service client officiel afin de signaler la situation. Ils pourront bloquer votre compte pour \u00e9viter toute utilisation frauduleuse et vous guider dans les d\u00e9marches \u00e0 suivre pour s\u00e9curiser vos informations. N'h\u00e9sitez pas \u00e0 changer vos mots de passe et \u00e0 surveiller vos transactions r\u00e9guli\u00e8rement. Si vous avez besoin d'aide pour trouver les coordonn\u00e9es de votre banque, je suis l\u00e0 pour vous aider."
+  },
+  {
+    "query": "j'ai oubler mon code de conexion",
+    "decision": "escalate",
+    "response": "Je ne sais pas."
+  },
+  {
+    "query": "je n'arrive pas a me connecter a mon compte",
+    "decision": "escalate",
+    "response": "Je ne sais pas."
+  },
+  {
+    "query": "je n'arrive pas a me connecter a mon compte",
+    "decision": "escalate",
+    "response": "Je ne sais pas."
+  },
+  {
+    "query": "je n'aarivce pas a me connecter a mon compte bancaire",
+    "decision": "escalate",
+    "response": "Je ne sais pas."
+  },
+  {
+    "query": "je n'aarive pas a me connecter a mon compte bancaire",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "je n'arrive pas \u00e0 me connecter \u00e0 mon compte",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "\n    User: \n\n    Query: je n'arrive pas \u00e0 me connecter \u00e0 mon compte\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous rencontrez des difficult\u00e9s pour vous connecter \u00e0 votre compte. Pour pouvoir vous aider au mieux, pourriez-vous me pr\u00e9ciser si vous avez un message d'erreur ou si le probl\u00e8me survient \u00e0 un moment particulier ? Cela nous permettra de trouver une solution rapidement. N'h\u00e9sitez pas \u00e0 me donner plus de d\u00e9tails."
+  },
+  {
+    "query": "je n'arrive pas a me connecter",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "\n    User: \n\n    Query: je n'arrive pas a me connecter\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous rencontrez des difficult\u00e9s pour vous connecter. J'ai besoin de plus d'informations pour pouvoir vous aider au mieux. Pouvez-vous me pr\u00e9ciser si vous avez un message d'erreur, ou si le probl\u00e8me concerne votre identifiant, votre mot de passe, ou un autre aspect de la connexion ?"
+  },
+  {
+    "query": "je n'arrive pas a me connecter a mon compte",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "\n    User: \n\n    Query: je n'arrive pas a me connecter a mon compte\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous rencontrez des difficult\u00e9s pour vous connecter \u00e0 votre compte. J'ai besoin de plus d'informations pour pouvoir vous aider au mieux. Pouvez-vous me pr\u00e9ciser si vous avez un message d'erreur ou si le probl\u00e8me survient \u00e0 une \u00e9tape particuli\u00e8re ?"
+  },
+  {
+    "query": "je n'arrive pas a me connecter a mon compte",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "\n    User: \n\n    Query: je n'arrive pas a me connecter a mon compte\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous rencontrez des difficult\u00e9s pour vous connecter \u00e0 votre compte. J'ai besoin de plus d'informations pour pouvoir vous aider au mieux. Pouvez-vous me pr\u00e9ciser si vous avez un message d'erreur ou si le probl\u00e8me concerne votre identifiant ou votre mot de passe ?"
+  }
+]

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<title>AELON – Workflow Multi-Agents</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0d0d1a;
+    font-family: 'Segoe UI', sans-serif;
+    color: #e0e0f0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    min-height: 100vh;
+  }
+  h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, #7b61ff, #00c8ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 0.12em;
+    margin-bottom: 0.3rem;
+  }
+  .subtitle {
+    color: #7777aa;
+    font-size: 0.9rem;
+    margin-bottom: 2.5rem;
+    letter-spacing: 0.06em;
+  }
+  svg {
+    width: 100%;
+    max-width: 980px;
+    height: auto;
+  }
+
+  /* Nodes */
+  .node rect, .node ellipse {
+    stroke-width: 2;
+    rx: 12;
+  }
+  .node text {
+    font-size: 13px;
+    font-weight: 600;
+    fill: #ffffff;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    pointer-events: none;
+  }
+  .node .sub {
+    font-size: 10px;
+    font-weight: 400;
+    fill: #aaaacc;
+  }
+
+  /* Colors */
+  .user      rect { fill: #1a1a35; stroke: #00c8ff; }
+  .fraud     rect { fill: #1a0d2e; stroke: #ff5252; }
+  .sentiment rect { fill: #0d1a2e; stroke: #00c8ff; }
+  .l0        rect { fill: #0d2e1a; stroke: #00e676; }
+  .l1        rect { fill: #1a2e0d; stroke: #69ff47; }
+  .compliance rect { fill: #2e1a0d; stroke: #ffab00; }
+  .kb        rect { fill: #1a1a2e; stroke: #7b61ff; }
+  .memory    rect { fill: #1a1a2e; stroke: #7b61ff; }
+  .output    ellipse { fill: #13132b; stroke: #00c8ff; }
+  .blocked   rect { fill: #2e0d0d; stroke: #ff5252; }
+
+  /* Arrows */
+  .arrow { fill: none; stroke-width: 2; marker-end: url(#arrow); }
+  .arr-blue   { stroke: #00c8ff; }
+  .arr-green  { stroke: #00e676; }
+  .arr-red    { stroke: #ff5252; }
+  .arr-orange { stroke: #ffab00; }
+  .arr-purple { stroke: #7b61ff; }
+  .arr-lime   { stroke: #69ff47; }
+
+  /* Labels on arrows */
+  .alabel {
+    font-size: 10px;
+    fill: #aaaacc;
+    text-anchor: middle;
+  }
+  .alabel-red   { fill: #ff5252; font-weight: 700; }
+  .alabel-green { fill: #00e676; font-weight: 700; }
+  .alabel-orange { fill: #ffab00; font-weight: 700; }
+
+  /* Decision diamond */
+  .diamond polygon { fill: #13132b; stroke: #7b61ff; stroke-width: 2; }
+  .diamond text { font-size: 12px; fill: #ffffff; text-anchor: middle; dominant-baseline: middle; }
+</style>
+</head>
+<body>
+<h1>AELON</h1>
+<p class="subtitle">Workflow Multi-Agents — Support Bancaire</p>
+
+<svg viewBox="0 0 980 860" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#7777aa"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#00c8ff"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#00e676"/>
+    </marker>
+    <marker id="arrow-red" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#ff5252"/>
+    </marker>
+    <marker id="arrow-orange" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#ffab00"/>
+    </marker>
+    <marker id="arrow-purple" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#7b61ff"/>
+    </marker>
+    <marker id="arrow-lime" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#69ff47"/>
+    </marker>
+
+    <!-- Glow filters -->
+    <filter id="glow-blue">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow-green">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- ===================== NODES ===================== -->
+
+  <!-- USER (top center) -->
+  <g class="node user" transform="translate(490,40)">
+    <rect x="-80" y="-25" width="160" height="50" rx="25" filter="url(#glow-blue)"/>
+    <text y="0">👤 Utilisateur</text>
+  </g>
+
+  <!-- FRAUD AGENT -->
+  <g class="node fraud" transform="translate(490,140)">
+    <rect x="-95" y="-28" width="190" height="56" rx="10"/>
+    <text y="-7">🛡️ Fraud Agent</text>
+    <text class="sub" y="12">Détection phishing / mots-clés + LLM</text>
+  </g>
+
+  <!-- BLOCKED -->
+  <g class="node blocked" transform="translate(790,140)">
+    <rect x="-80" y="-25" width="160" height="50" rx="10"/>
+    <text y="0">🚨 Bloqué</text>
+  </g>
+
+  <!-- SENTIMENT AGENT -->
+  <g class="node sentiment" transform="translate(490,255)">
+    <rect x="-100" y="-28" width="200" height="56" rx="10"/>
+    <text y="-7">🧠 Sentiment Agent</text>
+    <text class="sub" y="12">Sentiment · Urgence · Tone hint</text>
+  </g>
+
+  <!-- L0 AGENT -->
+  <g class="node l0" transform="translate(490,375)">
+    <rect x="-100" y="-32" width="200" height="64" rx="10" filter="url(#glow-green)"/>
+    <text y="-10">🤖 L0 Agent</text>
+    <text class="sub" y="8">Azure AI Search (RAG)</text>
+    <text class="sub" y="22">+ Mémoire conversationnelle</text>
+  </g>
+
+  <!-- AZURE KB -->
+  <g class="node kb" transform="translate(760,375)">
+    <rect x="-85" y="-28" width="170" height="56" rx="10"/>
+    <text y="-7">🗄️ Azure AI Search</text>
+    <text class="sub" y="12">Knowledge Base</text>
+  </g>
+
+  <!-- MEMORY -->
+  <g class="node memory" transform="translate(220,375)">
+    <rect x="-80" y="-28" width="160" height="56" rx="10"/>
+    <text y="-7">🧠 L0 Memory</text>
+    <text class="sub" y="12">Historique requêtes</text>
+  </g>
+
+  <!-- DECISION DIAMOND -->
+  <g class="diamond" transform="translate(490,500)">
+    <polygon points="0,-40 120,0 0,40 -120,0"/>
+    <text y="-8">Réponse</text>
+    <text y="10">trouvée ?</text>
+  </g>
+
+  <!-- COMPLIANCE L0 -->
+  <g class="node compliance" transform="translate(250,600)">
+    <rect x="-100" y="-28" width="200" height="56" rx="10"/>
+    <text y="-7">⚖️ Compliance Agent</text>
+    <text class="sub" y="12">RGPD · PCI-DSS · DORA</text>
+  </g>
+
+  <!-- L1 AGENT -->
+  <g class="node l1" transform="translate(740,600)">
+    <rect x="-100" y="-32" width="200" height="64" rx="10"/>
+    <text y="-10">🔧 L1 Agent</text>
+    <text class="sub" y="8">Diagnostic technique</text>
+    <text class="sub" y="22">RAG approfondi</text>
+  </g>
+
+  <!-- COMPLIANCE L1 -->
+  <g class="node compliance" transform="translate(740,730)">
+    <rect x="-100" y="-28" width="200" height="56" rx="10"/>
+    <text y="-7">⚖️ Compliance Agent</text>
+    <text class="sub" y="12">RGPD · PCI-DSS · DORA</text>
+  </g>
+
+  <!-- OUTPUT -->
+  <g class="node output" transform="translate(490,820)">
+    <ellipse rx="120" ry="28" filter="url(#glow-blue)"/>
+    <text y="0">✅ Réponse finale → Utilisateur</text>
+  </g>
+
+  <!-- ===================== ARROWS ===================== -->
+
+  <!-- User → Fraud -->
+  <path class="arrow arr-blue" d="M490,65 L490,112" marker-end="url(#arrow-blue)"/>
+  <text class="alabel" x="505" y="92">requête</text>
+
+  <!-- Fraud → Blocked (fraud detected) -->
+  <path class="arrow arr-red" d="M585,140 L710,140" marker-end="url(#arrow-red)"/>
+  <text class="alabel alabel-red" x="648" y="133">🚨 Fraude</text>
+
+  <!-- Fraud → Sentiment (safe) -->
+  <path class="arrow arr-blue" d="M490,168 L490,227" marker-end="url(#arrow-blue)"/>
+  <text class="alabel alabel-green" x="510" y="200">✅ Sûr</text>
+
+  <!-- Sentiment → L0 -->
+  <path class="arrow arr-blue" d="M490,283 L490,343" marker-end="url(#arrow-blue)"/>
+  <text class="alabel" x="510" y="315">tone_hint</text>
+
+  <!-- L0 ↔ Azure KB -->
+  <path class="arrow arr-purple" d="M590,365 L675,365" marker-end="url(#arrow-purple)"/>
+  <path class="arrow arr-purple" d="M675,385 L590,385" marker-end="url(#arrow-purple)"/>
+  <text class="alabel" x="632" y="358">search()</text>
+  <text class="alabel" x="632" y="396">chunks</text>
+
+  <!-- L0 ↔ Memory -->
+  <path class="arrow arr-purple" d="M390,365 L300,365" marker-end="url(#arrow-purple)"/>
+  <path class="arrow arr-purple" d="M300,385 L390,385" marker-end="url(#arrow-purple)"/>
+  <text class="alabel" x="345" y="358">search()</text>
+  <text class="alabel" x="345" y="396">hits</text>
+
+  <!-- L0 → Decision -->
+  <path class="arrow arr-green" d="M490,407 L490,460" marker-end="url(#arrow-green)"/>
+  <text class="alabel" x="510" y="436">décision</text>
+
+  <!-- Decision → Compliance L0 (OUI) -->
+  <path class="arrow arr-green" d="M370,500 L350,500 L350,572" marker-end="url(#arrow-green)"/>
+  <text class="alabel alabel-green" x="330" y="535">✅ OUI</text>
+
+  <!-- Decision → L1 (NON) -->
+  <path class="arrow arr-orange" d="M610,500 L630,500 L630,568" marker-end="url(#arrow-orange)"/>
+  <text class="alabel alabel-orange" x="670" y="535">⚠️ NON</text>
+
+  <!-- Compliance L0 → Output -->
+  <path class="arrow arr-green" d="M250,628 L250,820 L370,820" marker-end="url(#arrow-green)"/>
+  <text class="alabel" x="230" y="730">réponse</text>
+  <text class="alabel" x="230" y="742">corrigée</text>
+
+  <!-- L1 → Compliance L1 -->
+  <path class="arrow arr-lime" d="M740,632 L740,702" marker-end="url(#arrow-lime)"/>
+  <text class="alabel" x="762" y="668">analyse</text>
+
+  <!-- Compliance L1 → Output -->
+  <path class="arrow arr-orange" d="M740,758 L740,820 L610,820" marker-end="url(#arrow-orange)"/>
+  <text class="alabel" x="770" y="790">réponse</text>
+  <text class="alabel" x="770" y="802">corrigée</text>
+
+  <!-- ===================== LEGEND ===================== -->
+  <g transform="translate(20, 20)">
+    <rect x="0" y="0" width="170" height="155" rx="10" fill="#13132b" stroke="#2a2a4a"/>
+    <text x="85" y="20" text-anchor="middle" font-size="11" fill="#7777aa" font-weight="600">LÉGENDE</text>
+    <circle cx="20" cy="42" r="5" fill="#00c8ff"/>
+    <text x="32" y="46" font-size="10" fill="#aaaacc">Flux principal</text>
+    <circle cx="20" cy="62" r="5" fill="#ff5252"/>
+    <text x="32" y="66" font-size="10" fill="#aaaacc">Fraude détectée</text>
+    <circle cx="20" cy="82" r="5" fill="#00e676"/>
+    <text x="32" y="86" font-size="10" fill="#aaaacc">L0 répond</text>
+    <circle cx="20" cy="102" r="5" fill="#ffab00"/>
+    <text x="32" y="106" font-size="10" fill="#aaaacc">Escalade L1</text>
+    <circle cx="20" cy="122" r="5" fill="#7b61ff"/>
+    <text x="32" y="126" font-size="10" fill="#aaaacc">Requêtes KB / Mémoire</text>
+    <circle cx="20" cy="142" r="5" fill="#69ff47"/>
+    <text x="32" y="146" font-size="10" fill="#aaaacc">L1 → Compliance</text>
+  </g>
+
+</svg>
+</body>
+</html>

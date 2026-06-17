@@ -1,0 +1,14 @@
+# Exclure tous les .env
+.env
+*.env
+#Exclure tout ce qu'il y'a dans le dossier .venv
+.venv/
+# Exclure tout ce qu'il y a dans le dossier __pycache__
+__pycache__/
+*.pyc
+
+# Exclure les fichiers de données volumineux
+data/
+*.csv
+*.xlsx
+*.json
