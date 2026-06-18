@@ -20,6 +20,8 @@ from multi_agent.l1.l1_agent import L1Agent
 from multi_agent.sentiment.sentiment_agent import SentimentAgent
 from multi_agent.compliance.compliance_agent import ComplianceAgent
 from multi_agent.orchestrator import Orchestrator
+from utils.category_detector import detect_category, CATEGORY_COLORS, CATEGORY_ICONS
+from utils.export_handler import to_csv_string
 
 
 
@@ -118,6 +120,28 @@ button {
     color: #1F2937 !important;
 }
 
+/* ===== CHAT MESSAGES — User (right) ===== */
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) {
+    flex-direction: row-reverse !important;
+}
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"])
+    [data-testid="stChatMessageContent"] {
+    background: linear-gradient(135deg, #EFF6FF, #DBEAFE) !important;
+    border-radius: 18px 3px 18px 18px !important;
+    border: 1px solid #BFDBFE !important;
+    color: #1e3a5f !important;
+    margin-left: auto;
+}
+
+/* ===== CHAT MESSAGES — Assistant (yellow) ===== */
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"])
+    [data-testid="stChatMessageContent"] {
+    background: linear-gradient(135deg, #FFFBEB, #FEF3C7) !important;
+    border-left: 4px solid #FCD34D !important;
+    border-radius: 3px 18px 18px 18px !important;
+    color: #1F2937 !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -185,31 +209,277 @@ def save_data(data):
 # ================= ADMIN =================
 if mode == "Admin":
     import pandas as pd
+    import altair as alt
 
-    st.title("📊 Dashboard Admin")
+    st.title("📊 Dashboard Admin — AELON Analytics")
 
     data = load_data()
 
     if not data:
-        st.warning("Pas de données encore")
+        st.warning("⚠️ Pas de données disponibles. Lancez quelques conversations en mode Utilisateur d'abord.")
+        st.stop()
 
     df = pd.DataFrame(data)
 
-    if "fraud_score" in df:
-        st.subheader("Fraud Score Distribution")
-        st.bar_chart(df["fraud_score"])
+    # ── Ensure required columns exist (backward compat with old records) ──
+    if "category" not in df.columns:
+        df["category"] = df["query"].apply(detect_category) if "query" in df.columns else "autre"
+    else:
+        df["category"] = df["category"].fillna("autre")
+        # Re-detect for records that were saved without a category
+        mask = df["category"].isin(["", "autre"])
+        if "query" in df.columns:
+            df.loc[mask, "category"] = df.loc[mask, "query"].apply(detect_category)
 
-    if "agent" in df:
-        st.subheader("Répartition L0 vs L1")
-        st.bar_chart(df["agent"].value_counts())
+    if "escalated" not in df.columns:
+        df["escalated"] = df["agent"].apply(lambda x: x == "L1") if "agent" in df.columns else False
+    df["escalated"] = df["escalated"].fillna(False).astype(bool)
 
-    if "sentiment" in df:
-        st.subheader("Sentiment")
-        st.bar_chart(df["sentiment"].value_counts())
+    if "fraud_score" not in df.columns:
+        df["fraud_score"] = 0
+    df["fraud_score"] = pd.to_numeric(df["fraud_score"], errors="coerce").fillna(0)
 
-    if "risk_level" in df:
-        st.subheader("Risque")
-        st.bar_chart(df["risk_level"].value_counts())
+    if "sentiment" not in df.columns:
+        df["sentiment"] = "neutre"
+    df["sentiment"] = df["sentiment"].fillna("neutre")
+
+    if "agent" not in df.columns:
+        df["agent"] = "L0"
+    df["agent"] = df["agent"].fillna("L0")
+
+    if "risk_level" not in df.columns:
+        df["risk_level"] = "LOW"
+
+    df["timestamp"] = pd.to_datetime(df.get("timestamp", pd.Series(dtype=str)), errors="coerce")
+
+    # ── SIDEBAR FILTERS ──────────────────────────────────────────────────
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("### 🔍 Filtres Dashboard")
+
+    categories_opts = ["Toutes"] + sorted(df["category"].unique().tolist())
+    sel_category = st.sidebar.selectbox("Catégorie", categories_opts)
+
+    agents_opts = ["Tous"] + sorted(df["agent"].unique().tolist())
+    sel_agent = st.sidebar.selectbox("Agent", agents_opts)
+
+    valid_dates = df["timestamp"].dropna()
+    if len(valid_dates) > 0:
+        min_date = valid_dates.min().date()
+        max_date = valid_dates.max().date()
+        date_range = st.sidebar.date_input(
+            "Période", value=(min_date, max_date),
+            min_value=min_date, max_value=max_date
+        )
+    else:
+        date_range = None
+
+    # ── Apply filters ────────────────────────────────────────────────────
+    filtered = df.copy()
+    if sel_category != "Toutes":
+        filtered = filtered[filtered["category"] == sel_category]
+    if sel_agent != "Tous":
+        filtered = filtered[filtered["agent"] == sel_agent]
+    if date_range and len(date_range) == 2:
+        filtered = filtered[
+            (filtered["timestamp"].dt.date >= date_range[0]) &
+            (filtered["timestamp"].dt.date <= date_range[1])
+        ]
+
+    total = len(filtered)
+
+    # ── KPIs ─────────────────────────────────────────────────────────────
+    st.subheader("📈 Indicateurs Clés")
+    k1, k2, k3, k4 = st.columns(4)
+
+    n_escalated = int(filtered["escalated"].sum())
+    escalation_rate = (n_escalated / total * 100) if total > 0 else 0
+    avg_fraud = float(filtered["fraud_score"].mean()) if total > 0 else 0
+    top_cat = filtered["category"].mode()[0] if total > 0 else "N/A"
+    top_icon = CATEGORY_ICONS.get(top_cat, "❓")
+
+    k1.metric("📊 Interactions", total)
+    k2.metric("🔄 Taux d'escalade", f"{escalation_rate:.1f}%",
+              delta=f"{n_escalated} escalades")
+    k3.metric("⚠️ Score fraude moyen", f"{avg_fraud:.1f}")
+    k4.metric("🏆 Catégorie principale", f"{top_icon} {top_cat.capitalize()}")
+
+    st.markdown("---")
+
+    # ── CHARTS ───────────────────────────────────────────────────────────
+    st.subheader("📊 Visualisations")
+
+    chart_col1, chart_col2 = st.columns(2)
+
+    # Category distribution (pie)
+    with chart_col1:
+        st.markdown("**Distribution par catégorie**")
+        if total > 0:
+            cat_counts = (
+                filtered["category"].value_counts()
+                .reset_index()
+                .rename(columns={"index": "category", "category": "count",
+                                 "count": "count"})
+            )
+            # pandas value_counts() returns Series; reset_index gives (category, count)
+            cat_counts.columns = ["category", "count"]
+            cat_counts["color"] = cat_counts["category"].map(CATEGORY_COLORS).fillna("#6B7280")
+            pie = (
+                alt.Chart(cat_counts)
+                .mark_arc(outerRadius=110)
+                .encode(
+                    theta=alt.Theta("count:Q"),
+                    color=alt.Color(
+                        "category:N",
+                        scale=alt.Scale(
+                            domain=list(CATEGORY_COLORS.keys()),
+                            range=list(CATEGORY_COLORS.values()),
+                        ),
+                        legend=alt.Legend(title="Catégorie"),
+                    ),
+                    tooltip=["category:N", "count:Q"],
+                )
+                .properties(height=250)
+            )
+            st.altair_chart(pie, use_container_width=True)
+        else:
+            st.info("Aucune donnée après filtrage.")
+
+    # Agent distribution (bar)
+    with chart_col2:
+        st.markdown("**Répartition L0 / L1**")
+        if total > 0:
+            agent_counts = (
+                filtered["agent"].value_counts()
+                .reset_index()
+            )
+            agent_counts.columns = ["agent", "count"]
+            bar_agent = (
+                alt.Chart(agent_counts)
+                .mark_bar(cornerRadiusTopLeft=6, cornerRadiusTopRight=6)
+                .encode(
+                    x=alt.X("agent:N", axis=alt.Axis(labelAngle=0), title="Agent"),
+                    y=alt.Y("count:Q", title="Nombre"),
+                    color=alt.Color(
+                        "agent:N",
+                        scale=alt.Scale(
+                            domain=["L0", "L1", "blocked"],
+                            range=["#3B82F6", "#10B981", "#EF4444"],
+                        ),
+                        legend=None,
+                    ),
+                    tooltip=["agent:N", "count:Q"],
+                )
+                .properties(height=250)
+            )
+            st.altair_chart(bar_agent, use_container_width=True)
+        else:
+            st.info("Aucune donnée après filtrage.")
+
+    chart_col3, chart_col4 = st.columns(2)
+
+    # Fraud score histogram
+    with chart_col3:
+        st.markdown("**Distribution des scores de fraude**")
+        if total > 0 and filtered["fraud_score"].sum() > 0:
+            hist = (
+                alt.Chart(filtered[["fraud_score"]].dropna())
+                .mark_bar(color="#EF4444", cornerRadiusTopLeft=4, cornerRadiusTopRight=4)
+                .encode(
+                    x=alt.X("fraud_score:Q", bin=alt.Bin(maxbins=10), title="Score"),
+                    y=alt.Y("count():Q", title="Fréquence"),
+                    tooltip=["count():Q"],
+                )
+                .properties(height=230)
+            )
+            st.altair_chart(hist, use_container_width=True)
+        else:
+            st.info("Scores de fraude tous à 0 ou aucune donnée.")
+
+    # Sentiment distribution
+    with chart_col4:
+        st.markdown("**Répartition des sentiments**")
+        if total > 0:
+            sent_counts = (
+                filtered["sentiment"].value_counts()
+                .reset_index()
+            )
+            sent_counts.columns = ["sentiment", "count"]
+            bar_sent = (
+                alt.Chart(sent_counts)
+                .mark_bar(cornerRadiusTopLeft=6, cornerRadiusTopRight=6)
+                .encode(
+                    x=alt.X("sentiment:N", axis=alt.Axis(labelAngle=-20), title="Sentiment"),
+                    y=alt.Y("count:Q", title="Nombre"),
+                    color=alt.Color(
+                        "sentiment:N",
+                        scale=alt.Scale(scheme="tableau10"),
+                        legend=None,
+                    ),
+                    tooltip=["sentiment:N", "count:Q"],
+                )
+                .properties(height=230)
+            )
+            st.altair_chart(bar_sent, use_container_width=True)
+        else:
+            st.info("Aucune donnée après filtrage.")
+
+    st.markdown("---")
+
+    # ── BUSINESS INSIGHTS ────────────────────────────────────────────────
+    st.subheader("💡 Insights Métier")
+
+    ins_col1, ins_col2, ins_col3 = st.columns(3)
+
+    with ins_col1:
+        st.markdown("**🔁 Problèmes récurrents**")
+        if "query" in filtered.columns and total > 0:
+            top_queries = filtered["query"].value_counts().head(3)
+            for q, cnt in top_queries.items():
+                st.markdown(f"- *{str(q)[:60]}* — **{cnt}x**")
+        else:
+            st.info("Pas de données.")
+
+    with ins_col2:
+        st.markdown("**📂 Catégories les plus fréquentes**")
+        if total > 0:
+            for cat, cnt in filtered["category"].value_counts().head(5).items():
+                icon = CATEGORY_ICONS.get(str(cat), "❓")
+                pct = cnt / total * 100
+                st.markdown(f"{icon} **{str(cat).capitalize()}** — {cnt} ({pct:.0f}%)")
+
+    with ins_col3:
+        st.markdown("**⚡ Taux de résolution**")
+        if total > 0:
+            fraud_blocked = int((filtered["agent"] == "blocked").sum()) if "agent" in filtered.columns else 0
+            resolved = total - fraud_blocked
+            st.markdown(f"✅ Résolus : **{resolved}** ({resolved/total*100:.0f}%)")
+            st.markdown(f"🔄 Escaladés L1 : **{n_escalated}** ({escalation_rate:.1f}%)")
+            st.markdown(f"🚨 Bloqués (fraude) : **{fraud_blocked}**")
+
+    st.markdown("---")
+
+    # ── DATA TABLE ───────────────────────────────────────────────────────
+    st.subheader("📋 Historique des interactions")
+
+    display_cols = [c for c in ["timestamp", "category", "query", "agent",
+                                "escalated", "fraud_score", "risk_level",
+                                "sentiment", "resolution_status"]
+                    if c in filtered.columns]
+    st.dataframe(filtered[display_cols].sort_values("timestamp", ascending=False),
+                 use_container_width=True, height=300)
+
+    # ── CSV EXPORT ───────────────────────────────────────────────────────
+    st.markdown("---")
+    export_data = filtered.copy()
+    export_data["timestamp"] = export_data["timestamp"].astype(str)
+    csv_content = to_csv_string(export_data.to_dict(orient="records"))
+    st.download_button(
+        label="📥 Exporter les interactions (CSV)",
+        data=csv_content,
+        file_name=f"aelon_interactions_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+        mime="text/csv",
+        use_container_width=True,
+    )
 
 # ================= USER =================
 else:
@@ -288,36 +558,65 @@ else:
         if fraud_result["is_fraud"]:
             response = "🚨 Message suspect détecté. Veuillez contacter le support."
             agent_used = "blocked"
+            escalated = False
+            escalation_reason = None
+            sentiment_value = "neutre"
 
         else:
-            # ===== ORCHESTRATOR (tu ne touches PAS) =====
-            response = orchestrator.handle_user_query(user_query)
+            # ===== ORCHESTRATOR =====
+            with st.spinner("AELON réfléchit..."):
+                orch_result = orchestrator.handle_user_query(user_query)
 
-            # déterminer agent (pour log)
-            l0_result = l0_agent.handle(user_query)
-            agent_used = "L0" if l0_result["decision"] == "answer" else "L1"
+            if isinstance(orch_result, dict):
+                response      = orch_result.get("response", "")
+                escalated     = orch_result.get("escalated", False)
+                escalation_reason = orch_result.get("escalation_reason")
+                agent_used    = orch_result.get("agent", "L0")
+                sentiment_value = orch_result.get("sentiment", "neutre")
+            else:
+                response          = str(orch_result)
+                escalated         = False
+                escalation_reason = None
+                agent_used        = "L0"
+                sentiment_value   = "neutre"
+
+            # ── Intermediate escalation message ──────────────────────────
+            if escalated:
+                escalation_msg = (
+                    "🔄 Je transmets votre demande à un conseiller spécialisé. "
+                    "Merci de patienter quelques instants..."
+                )
+                with st.chat_message("assistant"):
+                    st.markdown(escalation_msg)
+                st.session_state.messages.append({
+                    "role": "assistant",
+                    "content": escalation_msg
+                })
 
         # ===== AFFICHAGE =====
         with st.chat_message("assistant"):
-            with st.spinner("AELON réfléchit..."):
-                st.markdown(response)
+            st.markdown(response)
 
         st.session_state.messages.append({
             "role": "assistant",
             "content": response
         })
 
-        # ===== LOG DATA (backend inchangé) =====
+        # ===== LOG DATA =====
         record = {
-            "timestamp": datetime.now().isoformat(),
-            "query": user_query,
-            "query_length": len(user_query),
-            "fraud_score": fraud_result["score"],
-            "risk_level": fraud_result["risk_level"],
-            "is_fraud": fraud_result["is_fraud"],
-            "fraud_reasons": fraud_result.get("reasons", ""),
-            "agent": agent_used,
-            "response_preview": response[:100]
+            "timestamp":         datetime.now().isoformat(),
+            "query":             user_query,
+            "query_length":      len(user_query),
+            "category":          detect_category(user_query),
+            "fraud_score":       fraud_result["score"],
+            "risk_level":        fraud_result["risk_level"],
+            "is_fraud":          fraud_result["is_fraud"],
+            "agent":             agent_used,
+            "escalated":         escalated,
+            "escalation_reason": escalation_reason,
+            "response_preview":  response[:100],
+            "sentiment":         sentiment_value,
+            "resolution_status": "fraud_blocked" if fraud_result["is_fraud"] else "resolved",
         }
 
         data = load_data()

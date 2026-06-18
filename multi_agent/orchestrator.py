@@ -129,9 +129,14 @@ class Orchestrator:
         # -------------------------------
         # 9. L1 SI BESOIN
         # -------------------------------
-        if l0_result.get("decision") == "escalate":
+        escalated = l0_result.get("decision") == "escalate"
+        escalation_reason = l0_result.get("reason", "") if escalated else None
+
+        if escalated:
             try:
-                l1_result = self.l1.diagnose_from_escalation(full_context)
+                l1_result = self.l1.diagnose_from_escalation(
+                    {"user_query": query, "full_context": full_context}
+                )
                 raw_response = l1_result.get("technical_analysis", "")
             except:
                 raw_response = "Un expert va analyser votre problème."
@@ -156,10 +161,24 @@ class Orchestrator:
         )
 
         # -------------------------------
-        # 11. COMPLIANCE
+        # 11. COMPLIANCE + RETURN
         # -------------------------------
         try:
             compliance = self.compliance.check(final_response, query)
-            return compliance.get("corrected_response", final_response)
+            final_text = compliance.get("corrected_response", final_response)
         except:
-            return final_response
+            final_text = final_response
+
+        return {
+            "response":           final_text,
+            "summary":            final_text,
+            "recommendation":     "",
+            "confidence":         0.85,
+            "escalated":          escalated,
+            "escalation_reason":  escalation_reason,
+            "agent":              "L1" if escalated else "L0",
+            "agent_used":         "L1" if escalated else "L0",
+            "sentiment":          sentiment.get("sentiment", "neutre") if isinstance(sentiment, dict) else "neutre",
+            "related_logs":       [],
+            "compliance":         None,
+        }

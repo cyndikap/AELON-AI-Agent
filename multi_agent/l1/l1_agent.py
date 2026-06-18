@@ -14,7 +14,10 @@ class L1Agent:
 
     def diagnose_from_escalation(self, context):
         # 1. récupérer la requête utilisateur
-        user_query = context.get("user_query", "")
+        if isinstance(context, dict):
+            user_query = context.get("user_query", "")
+        else:
+            user_query = str(context)
 
         # 2. récupérer les données (RAG)
         retrieved_data = []
@@ -23,7 +26,7 @@ class L1Agent:
 
         # 3. construire le prompt
         prompt = f"""
-        Tu es un expert en support bancaire.
+        Tu es un conseiller expert en support bancaire de niveau L1.
 
         Problème client :
         {user_query}
@@ -35,16 +38,24 @@ class L1Agent:
         - un diagnostic clair
         - une solution recommandée
 
+        Commence toujours ta réponse par une présentation courte et professionnelle.
         Réponds dans la même langue que la question.
         """
 
         # 4. appel LLM
         response = self.llm(prompt)
 
+        # 5. préfixer avec la présentation du conseiller L1
+        introduction = (
+            "👨‍💼 **Bonjour, je suis votre conseiller spécialisé AELON.** "
+            "Je prends en charge votre demande et vais vous apporter une aide personnalisée.\n\n"
+        )
+        full_response = introduction + response
+
         # 5. retour structuré
         return {
-            "summary": response,
-            "technical_analysis": response,
+            "summary": full_response,
+            "technical_analysis": full_response,
             "confidence": 0.85,
             "related_logs": retrieved_data
         }
