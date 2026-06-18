@@ -52,7 +52,7 @@ class L1Agent:
         )
         full_response = introduction + response
 
-        # 5. retour structuré
+        # 6. retour structuré
         return {
             "summary": full_response,
             "technical_analysis": full_response,

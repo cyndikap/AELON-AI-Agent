@@ -250,7 +250,10 @@ if mode == "Admin":
     if "risk_level" not in df.columns:
         df["risk_level"] = "LOW"
 
-    df["timestamp"] = pd.to_datetime(df.get("timestamp", pd.Series(dtype=str)), errors="coerce")
+    df["timestamp"] = pd.to_datetime(
+        df["timestamp"] if "timestamp" in df.columns else pd.Series(dtype=str),
+        errors="coerce",
+    )
 
     # ── SIDEBAR FILTERS ──────────────────────────────────────────────────
     st.sidebar.markdown("---")
@@ -317,10 +320,7 @@ if mode == "Admin":
             cat_counts = (
                 filtered["category"].value_counts()
                 .reset_index()
-                .rename(columns={"index": "category", "category": "count",
-                                 "count": "count"})
             )
-            # pandas value_counts() returns Series; reset_index gives (category, count)
             cat_counts.columns = ["category", "count"]
             cat_counts["color"] = cat_counts["category"].map(CATEGORY_COLORS).fillna("#6B7280")
             pie = (
@@ -435,7 +435,8 @@ if mode == "Admin":
         if "query" in filtered.columns and total > 0:
             top_queries = filtered["query"].value_counts().head(3)
             for q, cnt in top_queries.items():
-                st.markdown(f"- *{str(q)[:60]}* — **{cnt}x**")
+                display_q = str(q)[:60] + ("..." if len(str(q)) > 60 else "")
+                st.markdown(f"- *{display_q}* — **{cnt}x**")
         else:
             st.info("Pas de données.")
 
