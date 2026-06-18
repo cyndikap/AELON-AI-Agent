@@ -14,16 +14,22 @@ class L1Agent:
 
     def diagnose_from_escalation(self, context):
         # 1. récupérer la requête utilisateur
-        user_query = context.get("user_query", "")
+        if isinstance(context, dict):
+            user_query = context.get("user_query", "")
+        else:
+            user_query = str(context)
 
         # 2. récupérer les données (RAG)
         retrieved_data = []
         if self.retriever:
-            retrieved_data = self.retriever.search(user_query)
+            try:
+                retrieved_data = self.retriever.search(user_query)
+            except Exception:
+                pass
 
         # 3. construire le prompt
         prompt = f"""
-        Tu es un expert en support bancaire.
+        Tu es un expert en support bancaire de niveau L1.
 
         Problème client :
         {user_query}
@@ -34,6 +40,7 @@ class L1Agent:
         Donne :
         - un diagnostic clair
         - une solution recommandée
+        - des étapes concrètes pour résoudre le problème
 
         Réponds dans la même langue que la question.
         """

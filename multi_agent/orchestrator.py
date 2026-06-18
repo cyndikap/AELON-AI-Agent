@@ -129,7 +129,12 @@ class Orchestrator:
         # -------------------------------
         # 9. L1 SI BESOIN
         # -------------------------------
+        escalated = False
+        escalation_reason = None
+
         if l0_result.get("decision") == "escalate":
+            escalated = True
+            escalation_reason = l0_result.get("reason", "Requête complexe nécessitant un expert")
             try:
                 l1_result = self.l1.diagnose_from_escalation(full_context)
                 raw_response = l1_result.get("technical_analysis", "")
@@ -141,8 +146,22 @@ class Orchestrator:
         # -------------------------------
         # 10.  HUMANISATION (CRITIQUE)
         # -------------------------------
-        final_response = self.llm(
-            f"""
+        if escalated:
+            humanization_prompt = f"""
+    Tu es un conseiller bancaire expert (niveau L1).
+    Commence ta réponse par une présentation : "Bonjour, je suis votre conseiller spécialisé. Je prends en charge votre demande."
+    Puis donne la réponse de manière humaine et empathique.
+
+    Sentiment client: {sentiment.get('sentiment')}
+    Ton attendu: {tone_hint}
+
+    Réponse technique:
+    {raw_response}
+
+    Transforme cette réponse en message humain, empathique et clair.
+    """
+        else:
+            humanization_prompt = f"""
     Tu es un assistant bancaire professionnel.
 
     Client: {sentiment.get('sentiment')}
@@ -153,13 +172,21 @@ class Orchestrator:
 
     Transforme cette réponse en message humain, empathique et clair.
     """
-        )
+
+        final_response = self.llm(humanization_prompt)
 
         # -------------------------------
         # 11. COMPLIANCE
         # -------------------------------
         try:
             compliance = self.compliance.check(final_response, query)
-            return compliance.get("corrected_response", final_response)
+            compliant_response = compliance.get("corrected_response", final_response)
         except:
-            return final_response
+            compliant_response = final_response
+
+        return {
+            "response": compliant_response,
+            "escalated": escalated,
+            "escalation_reason": escalation_reason,
+            "agent": "L1" if escalated else "L0",
+        }

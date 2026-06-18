@@ -8,3 +8,4 @@ tiktoken
 streamlit
 pandas
 python-dotenv
+plotly
