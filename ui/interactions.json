@@ -307,5 +307,20 @@
     "fraud_reasons": [],
     "agent": "L0",
     "response_preview": "Je comprends que c\u2019est frustrant de ne pas pouvoir se connecter, et je suis l\u00e0 pour vous aider. Pour"
+  },
+  {
+    "timestamp": "2026-06-19T08:49:45.097221",
+    "query": "JE N'arrive pas a me connecter a mon compte bancaire",
+    "query_length": 52,
+    "category": "connexion",
+    "fraud_score": 0,
+    "risk_level": "LOW",
+    "is_fraud": false,
+    "agent": "L0",
+    "escalated": false,
+    "escalation_reason": null,
+    "response_preview": "Je comprends tout \u00e0 fait que ne pas pouvoir acc\u00e9der \u00e0 votre compte puisse \u00eatre tr\u00e8s frustrant. Pour ",
+    "sentiment": "frustrated",
+    "resolution_status": "resolved"
   }
 ]

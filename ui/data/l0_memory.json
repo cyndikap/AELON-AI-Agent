@@ -598,5 +598,10 @@
     "query": "je n'arrive pa a me connecter",
     "decision": "answer",
     "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "\n    User: \n\n    Query: JE N'arrive pas a me connecter a mon compte bancaire\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je comprends que vous rencontrez des difficult\u00e9s pour vous connecter \u00e0 votre compte bancaire, cela peut \u00eatre frustrant. Cependant, je n'ai pas assez d'informations pour vous aider pr\u00e9cis\u00e9ment. Pourriez-vous me donner plus de d\u00e9tails sur le probl\u00e8me rencontr\u00e9, comme un message d'erreur ou le type d'appareil que vous utilisez ? Cela me permettra de mieux vous assister."
   }
 ]
