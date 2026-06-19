@@ -30,5 +30,282 @@
     "risk_level": "LOW",
     "sentiment": "frustrated",
     "agent": "L0"
+  },
+  {
+    "timestamp": "2026-06-17T15:41:08.264747",
+    "query": "ma carte est refus\u00e9e",
+    "query_length": 20,
+    "fraud_score": 0,
+    "risk_level": "LOW",
+    "is_fraud": false,
+    "fraud_reasons": [],
+    "agent": "L0",
+    "response_preview": "Je comprends \u00e0 quel point il est frustrant de voir sa carte refus\u00e9e, surtout quand on en a besoin ra"
+  },
+  {
+    "timestamp": "2026-06-17T15:41:31.868916",
+    "query": "je n'arrive pas \u00e0 me connecter \u00e0 mon compte",
+    "query_length": 43,
+    "fraud_score": 0,
+    "risk_level": "LOW",
+    "is_fraud": false,
+    "fraud_reasons": [],
+    "agent": "L0",
+    "response_preview": "Je comprends tout \u00e0 fait que ce soit frustrant de ne pas r\u00e9ussir \u00e0 acc\u00e9der \u00e0 votre compte. Pour que "
+  },
+  {
+    "timestamp": "2026-06-17T16:10:00.232788",
+    "query": "je n'arrive pas \u00e0 me connecter \u00e0 mon compte",
+    "query_length": 43,
+    "fraud_score": 0,
+    "risk_level": "LOW",
+    "is_fraud": false,
+    "fraud_reasons": [],
+    "agent": "L0",
+    "response_preview": "Je comprends que vous soyez frustr\u00e9 de ne pas pouvoir acc\u00e9der \u00e0 votre compte, et je suis l\u00e0 pour vou"
+  },
+  {
+    "timestamp": "2026-06-17T16:10:37.318767",
+    "query": "ma carte est refus\u00e9e",
+    "query_length": 20,
+    "fraud_score": 0,
+    "risk_level": "LOW",
+    "is_fraud": false,
+    "fraud_reasons": [],
+    "agent": "L0",
+    "response_preview": "Je comprends tout \u00e0 fait \u00e0 quel point il est frustrant de voir sa carte refus\u00e9e au moment o\u00f9 on en a"
+  },
+  {
+    "timestamp": "2026-06-17T16:11:10.827629",
+    "query": "elle est bien activ\u00e9",
+    "query_length": 20,
+    "fraud_score": 0,
+    "risk_level": "LOW",
+    "is_fraud": false,
+    "fraud_reasons": [],
+    "agent": "L0",
+    "response_preview": "Bonjour,  \\nMerci pour votre message. Afin de pouvoir vous aider au mieux, pourriez-vous m\u2019indiquer "
+  },
+  {
+    "timestamp": "2026-06-17T16:11:52.185274",
+    "query": "elle est bien activ\u00e9",
+    "query_length": 20,
+    "fraud_score": 0,
+    "risk_level": "LOW",
+    "is_fraud": false,
+    "fraud_reasons": [],
+    "agent": "L0",
+    "response_preview": "Bonjour,  \\nMerci pour votre message. Afin de pouvoir vous aider au mieux, pourriez-vous m\u2019indiquer "
+  },
+  {
+    "timestamp": "2026-06-17T16:23:06.270582",
+    "query": "ma carte est refus\u00e9e",
+    "query_length": 20,
+    "fraud_score": 0,
+    "risk_level": "LOW",
+    "is_fraud": false,
+    "fraud_reasons": [],
+    "agent": "L0",
+    "response_preview": "Je comprends \u00e0 quel point il est frustrant de voir sa carte refus\u00e9e, surtout quand on en a besoin ra"
+  },
+  {
+    "timestamp": "2026-06-17T16:23:37.740684",
+    "query": "je n'arrive pas a me connecter a mon compte bancaire",
+    "query_length": 52,
+    "fraud_score": 0,
+    "risk_level": "LOW",
+    "is_fraud": false,
+    "fraud_reasons": [],
+    "agent": "L0",
+    "response_preview": "Je comprends que c\u2019est vraiment frustrant de ne pas pouvoir acc\u00e9der \u00e0 votre compte bancaire, et je s"
+  },
+  {
+    "timestamp": "2026-06-17T16:25:12.639308",
+    "query": "je n'arrive pas a me conncter a mon compte bancaire",
+    "query_length": 51,
+    "fraud_score": 0,
+    "risk_level": "LOW",
+    "is_fraud": false,
+    "fraud_reasons": [],
+    "agent": "L0",
+    "response_preview": "Je comprends que c\u2019est vraiment frustrant de ne pas pouvoir acc\u00e9der \u00e0 votre compte. Pour que je puis"
+  },
+  {
+    "timestamp": "2026-06-18T13:12:44.367952",
+    "query": "Je n'arrive pas a me connecter a mo, compte bancaire",
+    "query_length": 52,
+    "fraud_score": 0,
+    "risk_level": "LOW",
+    "is_fraud": false,
+    "fraud_reasons": [],
+    "agent": "L0",
+    "response_preview": "Je comprends que vous soyez frustr\u00e9 de ne pas pouvoir acc\u00e9der \u00e0 votre compte, et je suis l\u00e0 pour vou"
+  },
+  {
+    "timestamp": "2026-06-18T13:14:07.170136",
+    "query": "JE n'arrive pas a me connecter a mon comte bancaire",
+    "query_length": 51,
+    "fraud_score": 0,
+    "risk_level": "LOW",
+    "is_fraud": false,
+    "fraud_reasons": [],
+    "agent": "L0",
+    "response_preview": "Je comprends que c\u2019est vraiment frustrant de ne pas pouvoir acc\u00e9der \u00e0 votre compte. Pour que je puis"
+  },
+  {
+    "timestamp": "2026-06-18T13:14:28.301849",
+    "query": "je n'ai pas de message d'erreur",
+    "query_length": 31,
+    "fraud_score": 0,
+    "risk_level": "LOW",
+    "is_fraud": false,
+    "fraud_reasons": [],
+    "agent": "L0",
+    "response_preview": "Pour pouvoir vous aider au mieux, pourriez-vous me fournir un peu plus de d\u00e9tails sur votre demande "
+  },
+  {
+    "timestamp": "2026-06-18T13:14:58.937991",
+    "query": "j'ai perdu ma carte bancaire",
+    "query_length": 28,
+    "fraud_score": 0,
+    "risk_level": "LOW",
+    "is_fraud": false,
+    "fraud_reasons": [],
+    "agent": "L0",
+    "response_preview": "Je comprends \u00e0 quel point perdre sa carte bancaire peut \u00eatre stressant, et je suis l\u00e0 pour vous aide"
+  },
+  {
+    "timestamp": "2026-06-18T13:21:03.107082",
+    "query": "je n'arrive pas \u00e0 me connecter a mon compte",
+    "query_length": 43,
+    "fraud_score": 0,
+    "risk_level": "LOW",
+    "is_fraud": false,
+    "fraud_reasons": [],
+    "agent": "L0",
+    "response_preview": "Je comprends que c\u2019est frustrant de ne pas pouvoir acc\u00e9der \u00e0 votre compte, et je suis l\u00e0 pour vous a"
+  },
+  {
+    "timestamp": "2026-06-18T13:42:05.454142",
+    "query": "Je n'arrive pas a me conncter \u00e0 mon compte bancaire",
+    "query_length": 51,
+    "fraud_score": 0,
+    "risk_level": "LOW",
+    "is_fraud": false,
+    "fraud_reasons": [],
+    "agent": "L0",
+    "response_preview": "Je comprends \u00e0 quel point il est frustrant de ne pas pouvoir acc\u00e9der \u00e0 votre compte bancaire. Pour q"
+  },
+  {
+    "timestamp": "2026-06-18T13:51:55.799791",
+    "query": "Je n'aariva pas ame connecter a mon compte bancaire",
+    "query_length": 51,
+    "fraud_score": 0,
+    "risk_level": "LOW",
+    "is_fraud": false,
+    "fraud_reasons": [],
+    "agent": "L0",
+    "response_preview": "Je comprends que c\u2019est vraiment frustrant de ne pas pouvoir acc\u00e9der \u00e0 votre compte. Pour que je puis"
+  },
+  {
+    "timestamp": "2026-06-18T13:59:36.925069",
+    "query": "Je n'arrive pas a me connecter a mon comte bancaire",
+    "query_length": 51,
+    "fraud_score": 0,
+    "risk_level": "LOW",
+    "is_fraud": false,
+    "fraud_reasons": [],
+    "agent": "L0",
+    "response_preview": "Je comprends que c\u2019est vraiment frustrant de ne pas pouvoir acc\u00e9der \u00e0 votre compte bancaire, et je s"
+  },
+  {
+    "timestamp": "2026-06-18T14:00:13.766962",
+    "query": "lorsque j'essai de me connecter",
+    "query_length": 31,
+    "fraud_score": 0,
+    "risk_level": "LOW",
+    "is_fraud": false,
+    "fraud_reasons": [],
+    "agent": "L0",
+    "response_preview": "Je comprends que cette situation puisse \u00eatre frustrante pour vous, et je suis l\u00e0 pour vous aider. Po"
+  },
+  {
+    "timestamp": "2026-06-18T14:00:38.028444",
+    "query": "cmpte personnel",
+    "query_length": 15,
+    "fraud_score": 0,
+    "risk_level": "LOW",
+    "is_fraud": false,
+    "fraud_reasons": [],
+    "agent": "L0",
+    "response_preview": "Pour pouvoir vous aider au mieux, pourriez-vous me fournir quelques informations suppl\u00e9mentaires, s'"
+  },
+  {
+    "timestamp": "2026-06-18T14:01:10.122440",
+    "query": "quoi comme information",
+    "query_length": 22,
+    "fraud_score": 0,
+    "risk_level": "LOW",
+    "is_fraud": false,
+    "fraud_reasons": [],
+    "agent": "L0",
+    "response_preview": "Pour pouvoir vous aider au mieux, pourriez-vous me fournir un peu plus de d\u00e9tails sur votre demande "
+  },
+  {
+    "timestamp": "2026-06-18T14:02:29.703583",
+    "query": "vous voulez quoi comme information suplementaire?",
+    "query_length": 49,
+    "fraud_score": 0,
+    "risk_level": "LOW",
+    "is_fraud": false,
+    "fraud_reasons": [],
+    "agent": "L0",
+    "response_preview": "Je comprends que la situation puisse \u00eatre frustrante, et je suis l\u00e0 pour vous aider. Pour mieux vous"
+  },
+  {
+    "timestamp": "2026-06-18T14:03:17.769172",
+    "query": "j'ai une tantaive de fraude",
+    "query_length": 27,
+    "fraud_score": 50,
+    "risk_level": "MEDIUM",
+    "is_fraud": false,
+    "fraud_reasons": [
+      "Mots-cl\u00e9s suspects d\u00e9tect\u00e9s"
+    ],
+    "agent": "L0",
+    "response_preview": "Je comprends \u00e0 quel point cette situation peut \u00eatre inqui\u00e9tante, et je suis l\u00e0 pour vous aider. Pour"
+  },
+  {
+    "timestamp": "2026-06-18T14:03:45.108719",
+    "query": "j'ai remarquer un transaction innabituelle",
+    "query_length": 42,
+    "fraud_score": 0,
+    "risk_level": "LOW",
+    "is_fraud": false,
+    "fraud_reasons": [],
+    "agent": "L0",
+    "response_preview": "Je comprends tout \u00e0 fait que cette situation puisse vous inqui\u00e9ter, et je suis l\u00e0 pour vous aider. P"
+  },
+  {
+    "timestamp": "2026-06-18T14:04:12.586448",
+    "query": "le 12juin a carrefour",
+    "query_length": 21,
+    "fraud_score": 0,
+    "risk_level": "LOW",
+    "is_fraud": false,
+    "fraud_reasons": [],
+    "agent": "L0",
+    "response_preview": "Bonjour, \\n\\nPour pouvoir vous aider au mieux, pourriez-vous s'il vous pla\u00eet me fournir plus de d\u00e9ta"
+  },
+  {
+    "timestamp": "2026-06-18T15:42:41.569314",
+    "query": "je n'arrive pa a me connecter",
+    "query_length": 29,
+    "fraud_score": 0,
+    "risk_level": "LOW",
+    "is_fraud": false,
+    "fraud_reasons": [],
+    "agent": "L0",
+    "response_preview": "Je comprends que c\u2019est frustrant de ne pas pouvoir se connecter, et je suis l\u00e0 pour vous aider. Pour"
   }
 ]

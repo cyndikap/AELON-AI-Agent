@@ -283,5 +283,320 @@
     "query": "\n    User: \n\n    Query: je n'arrive pas a me connecter a mon compte\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
     "decision": "answer",
     "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous rencontrez des difficult\u00e9s pour vous connecter \u00e0 votre compte. J'ai besoin de plus d'informations pour pouvoir vous aider au mieux. Pouvez-vous me pr\u00e9ciser si vous avez un message d'erreur ou si le probl\u00e8me concerne votre identifiant ou votre mot de passe ?"
+  },
+  {
+    "query": "\n    User: \n\n    Query: ma carte est refus\u00e9e\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que votre carte a \u00e9t\u00e9 refus\u00e9e, cela peut \u00eatre tr\u00e8s frustrant. Pour mieux vous aider, pourriez-vous me fournir plus de d\u00e9tails, comme le type de transaction que vous tentiez de faire ou si vous avez re\u00e7u un message d'erreur sp\u00e9cifique ? Cela me permettra de vous orienter vers la solution la plus adapt\u00e9e."
+  },
+  {
+    "query": "ma carte est refus\u00e9e",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "\n    User: \n\n    Query: je n'arrive pas \u00e0 me connecter \u00e0 mon compte\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je comprends que ce soit frustrant de ne pas pouvoir acc\u00e9der \u00e0 votre compte. Pour pouvoir vous aider au mieux, pourriez-vous me pr\u00e9ciser si vous rencontrez un message d'erreur particulier ou un probl\u00e8me sp\u00e9cifique lors de la connexion ? Cela me permettra de vous guider plus efficacement."
+  },
+  {
+    "query": "je n'arrive pas \u00e0 me connecter \u00e0 mon compte",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "\n    User: \n\n    Query: je n'arrive pas \u00e0 me connecter \u00e0 mon compte\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous rencontrez des difficult\u00e9s pour vous connecter \u00e0 votre compte. J'ai besoin de plus d'informations pour pouvoir vous aider au mieux. Pouvez-vous me pr\u00e9ciser si vous avez un message d'erreur ou si le probl\u00e8me survient \u00e0 une \u00e9tape particuli\u00e8re ?"
+  },
+  {
+    "query": "je n'arrive pas \u00e0 me connecter \u00e0 mon compte",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "\n    User: \n\n    Query: je n'arrive pas \u00e0 me connecter \u00e0 mon compte\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous rencontrez des difficult\u00e9s pour vous connecter \u00e0 votre compte. J'ai besoin de plus d'informations pour pouvoir vous aider au mieux. Pouvez-vous me pr\u00e9ciser si vous avez un message d'erreur ou si le probl\u00e8me survient \u00e0 une \u00e9tape particuli\u00e8re ?"
+  },
+  {
+    "query": "\n    User: \n\n    Query: ma carte est refus\u00e9e\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que votre carte a \u00e9t\u00e9 refus\u00e9e, cela peut \u00eatre frustrant. Pour mieux vous aider, pourriez-vous me donner plus de d\u00e9tails sur la situation ? Par exemple, o\u00f9 et quand la carte a-t-elle \u00e9t\u00e9 refus\u00e9e, ou si vous avez re\u00e7u un message d'erreur sp\u00e9cifique. Cela nous permettra de trouver une solution rapidement."
+  },
+  {
+    "query": "ma carte est refus\u00e9e",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "\n    User: \n\n    Query: ma carte est refus\u00e9e\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que votre carte a \u00e9t\u00e9 refus\u00e9e, cela peut \u00eatre frustrant. Malheureusement, je n'ai pas assez d'informations pour vous aider pr\u00e9cis\u00e9ment dans ce cas. Je vous recommande de v\u00e9rifier que votre carte est bien activ\u00e9e, que vous n'avez pas d\u00e9pass\u00e9 votre plafond de paiement, et que vos coordonn\u00e9es sont \u00e0 jour. Si le probl\u00e8me persiste, n'h\u00e9sitez pas \u00e0 contacter directement votre banque pour obtenir une assistance personnalis\u00e9e."
+  },
+  {
+    "query": "\n    User: \n\n    Query: elle est bien activ\u00e9\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations. Pourriez-vous pr\u00e9ciser de quel service ou produit vous parlez ?"
+  },
+  {
+    "query": "elle est bien activ\u00e9",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "\n    User: \n\n    Query: elle est bien activ\u00e9\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations pour pouvoir vous r\u00e9pondre pr\u00e9cis\u00e9ment. Pouvez-vous pr\u00e9ciser de quel service ou produit vous parlez ?"
+  },
+  {
+    "query": "\n    User: \n\n    Query: elle est bien activ\u00e9\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations pour pouvoir vous r\u00e9pondre pr\u00e9cis\u00e9ment. Pouvez-vous pr\u00e9ciser de quel service ou produit vous parlez ?"
+  },
+  {
+    "query": "elle est bien activ\u00e9",
+    "decision": "answer",
+    "response": "J'ai besoins de plus d'informations."
+  },
+  {
+    "query": "\n    User: \n\n    Query: elle est bien activ\u00e9\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations. Pouvez-vous pr\u00e9ciser de quel service ou produit vous parlez ?"
+  },
+  {
+    "query": "\n    User: \n\n    Query: ma carte est refus\u00e9e\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que votre carte a \u00e9t\u00e9 refus\u00e9e, cela peut \u00eatre tr\u00e8s frustrant. J'ai besoin de plus d'informations pour pouvoir vous aider au mieux. Pouvez-vous me dire o\u00f9 et quand cela s'est produit, ou si vous avez re\u00e7u un message d'erreur sp\u00e9cifique ?"
+  },
+  {
+    "query": "ma carte est refus\u00e9e",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "\n    User: \n\n    Query: ma carte est refus\u00e9e\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que votre carte a \u00e9t\u00e9 refus\u00e9e, cela peut \u00eatre frustrant. Pour mieux vous aider, pourriez-vous me donner plus de d\u00e9tails sur la situation ? Par exemple, o\u00f9 et quand la carte a-t-elle \u00e9t\u00e9 refus\u00e9e, ou si vous avez re\u00e7u un message d'erreur sp\u00e9cifique. Cela nous permettra de trouver une solution rapidement."
+  },
+  {
+    "query": "\n    User: \n\n    Query: je n'arrive pas a me connecter a mon compte bancaire\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous rencontrez des difficult\u00e9s pour vous connecter \u00e0 votre compte bancaire. J'ai besoin de plus d'informations pour pouvoir vous aider au mieux. Pouvez-vous me pr\u00e9ciser si vous avez un message d'erreur ou si le probl\u00e8me survient \u00e0 une \u00e9tape particuli\u00e8re de la connexion ?"
+  },
+  {
+    "query": "je n'arrive pas a me connecter a mon compte bancaire",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "\n    User: \n\n    Query: je n'arrive pas a me connecter a mon compte bancaire\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous rencontrez des difficult\u00e9s pour vous connecter \u00e0 votre compte bancaire. J'ai besoin de plus d'informations pour pouvoir vous aider au mieux. Pouvez-vous me pr\u00e9ciser si vous avez un message d'erreur ou si le probl\u00e8me survient \u00e0 une \u00e9tape particuli\u00e8re de la connexion ?"
+  },
+  {
+    "query": "\n    User: \n\n    Query: je n'arrive pas a me conncter a mon compte bancaire\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous rencontrez des difficult\u00e9s pour vous connecter \u00e0 votre compte bancaire. J'ai besoin de plus d'informations pour pouvoir vous aider au mieux. Pouvez-vous me pr\u00e9ciser si vous avez un message d'erreur ou si le probl\u00e8me survient \u00e0 une \u00e9tape particuli\u00e8re de la connexion ?"
+  },
+  {
+    "query": "je n'arrive pas a me conncter a mon compte bancaire",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "\n    User: \n\n    Query: je n'arrive pas a me conncter a mon compte bancaire\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous rencontrez des difficult\u00e9s pour vous connecter \u00e0 votre compte bancaire. Pour pouvoir vous aider au mieux, pourriez-vous me pr\u00e9ciser si vous avez un message d'erreur ou si le probl\u00e8me survient \u00e0 une \u00e9tape particuli\u00e8re ? Cela me permettra de vous guider plus efficacement."
+  },
+  {
+    "query": "\n    User: \n\n    Query: Je n'arrive pas a me connecter a mo, compte bancaire\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je comprends que c'est frustrant de ne pas pouvoir acc\u00e9der \u00e0 votre compte bancaire. Pour pouvoir vous aider au mieux, pourriez-vous me pr\u00e9ciser si vous rencontrez un probl\u00e8me avec votre identifiant, votre mot de passe, ou un autre souci lors de la connexion ? Cela me permettra de vous guider plus pr\u00e9cis\u00e9ment."
+  },
+  {
+    "query": "Je n'arrive pas a me connecter a mo, compte bancaire",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "\n    User: \n\n    Query: Je n'arrive pas a me connecter a mo, compte bancaire\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous avez des difficult\u00e9s \u00e0 vous connecter \u00e0 votre compte bancaire. J'ai besoin de plus d'informations pour pouvoir vous aider au mieux. Pouvez-vous me pr\u00e9ciser si vous rencontrez un message d'erreur particulier ou un probl\u00e8me sp\u00e9cifique lors de la connexion ?"
+  },
+  {
+    "query": "\n    User: \n\n    Query: JE n'arrive pas a me connecter a mon comte bancaire\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je comprends que c'est frustrant de ne pas pouvoir acc\u00e9der \u00e0 votre compte bancaire. J'ai besoin de plus d'informations pour pouvoir vous aider au mieux. Pouvez-vous me dire si vous rencontrez un message d'erreur particulier ou si le probl\u00e8me concerne votre identifiant ou votre mot de passe ?"
+  },
+  {
+    "query": "JE n'arrive pas a me connecter a mon comte bancaire",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "\n    User: \n\n    Query: JE n'arrive pas a me connecter a mon comte bancaire\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous rencontrez des difficult\u00e9s pour vous connecter \u00e0 votre compte bancaire. Pour pouvoir vous aider au mieux, pourriez-vous me pr\u00e9ciser si vous avez un message d'erreur ou si le probl\u00e8me survient \u00e0 un moment particulier de la connexion ? Cela me permettra de vous guider plus pr\u00e9cis\u00e9ment."
+  },
+  {
+    "query": "\n    User: \n\n    Query: je n'ai pas de message d'erreur\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "je n'ai pas de message d'erreur",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "\n    User: \n\n    Query: je n'ai pas de message d'erreur\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "\n    User: \n\n    Query: j'ai perdu ma carte bancaire\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous avez perdu votre carte bancaire. Pour votre s\u00e9curit\u00e9, je vous recommande de contacter rapidement votre banque afin de faire opposition sur votre carte. Cela permettra d'\u00e9viter toute utilisation frauduleuse. Si vous avez besoin, je peux vous guider pour trouver le num\u00e9ro de contact de votre banque. N'h\u00e9sitez pas \u00e0 me le demander."
+  },
+  {
+    "query": "j'ai perdu ma carte bancaire",
+    "decision": "answer",
+    "response": "J'ai besoins de plus d'informations."
+  },
+  {
+    "query": "\n    User: \n\n    Query: j'ai perdu ma carte bancaire\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous avez perdu votre carte bancaire. Pour votre s\u00e9curit\u00e9, je vous recommande de contacter rapidement votre banque afin de faire opposition sur votre carte. Cela \u00e9vitera toute utilisation frauduleuse. Si vous avez besoin d'aide pour trouver le num\u00e9ro \u00e0 appeler ou pour conna\u00eetre la proc\u00e9dure, n'h\u00e9sitez pas \u00e0 me le demander."
+  },
+  {
+    "query": "\n    User: \n\n    Query: je n'arrive pas \u00e0 me connecter a mon compte\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous rencontrez des difficult\u00e9s pour vous connecter \u00e0 votre compte. J'ai besoin de plus d'informations pour pouvoir vous aider au mieux. Pouvez-vous me pr\u00e9ciser si vous avez un message d'erreur ou si vous avez oubli\u00e9 votre mot de passe ?"
+  },
+  {
+    "query": "je n'arrive pas \u00e0 me connecter a mon compte",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "\n    User: \n\n    Query: je n'arrive pas \u00e0 me connecter a mon compte\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous rencontrez des difficult\u00e9s pour vous connecter \u00e0 votre compte. J'ai besoin de plus d'informations pour pouvoir vous aider au mieux. Pouvez-vous me pr\u00e9ciser si vous avez un message d'erreur ou si le probl\u00e8me survient \u00e0 une \u00e9tape particuli\u00e8re ?"
+  },
+  {
+    "query": "\n    User: \n\n    Query: Je n'arrive pas a me conncter \u00e0 mon compte bancaire\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je comprends que vous rencontrez des difficult\u00e9s pour vous connecter \u00e0 votre compte bancaire, cela peut \u00eatre frustrant. Cependant, je n'ai pas assez d'informations pour vous aider pr\u00e9cis\u00e9ment. Pourriez-vous me dire si vous avez un message d'erreur ou si le probl\u00e8me survient \u00e0 une \u00e9tape particuli\u00e8re ? Cela me permettra de mieux vous guider."
+  },
+  {
+    "query": "Je n'arrive pas a me conncter \u00e0 mon compte bancaire",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "\n    User: \n\n    Query: Je n'arrive pas a me conncter \u00e0 mon compte bancaire\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous rencontrez des difficult\u00e9s pour vous connecter \u00e0 votre compte bancaire. Pour pouvoir vous aider au mieux, pourriez-vous me pr\u00e9ciser si vous avez un message d'erreur ou si le probl\u00e8me survient \u00e0 une \u00e9tape particuli\u00e8re de la connexion ? Cela me permettra de vous guider plus efficacement."
+  },
+  {
+    "query": "\n    User: \n\n    Query: Je n'aariva pas ame connecter a mon compte bancaire\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous rencontrez des difficult\u00e9s pour vous connecter \u00e0 votre compte bancaire. J'ai besoin de plus d'informations pour pouvoir vous aider au mieux. Pouvez-vous me pr\u00e9ciser si vous avez un message d'erreur ou si le probl\u00e8me survient \u00e0 une \u00e9tape particuli\u00e8re de la connexion ?"
+  },
+  {
+    "query": "Je n'aariva pas ame connecter a mon compte bancaire",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "\n    User: \n\n    Query: Je n'arrive pas a me connecter a mon comte bancaire\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous rencontrez des difficult\u00e9s pour vous connecter \u00e0 votre compte bancaire. J'ai besoin de plus d'informations pour pouvoir vous aider au mieux. Pouvez-vous me pr\u00e9ciser si vous avez un message d'erreur ou si le probl\u00e8me survient \u00e0 une \u00e9tape particuli\u00e8re de la connexion ?"
+  },
+  {
+    "query": "Je n'arrive pas a me connecter a mon comte bancaire",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "\n    User: \n\n    Query: lorsque j'essai de me connecter\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations pour pouvoir vous aider avec votre probl\u00e8me de connexion. Pouvez-vous me pr\u00e9ciser le type de compte ou le service auquel vous essayez d'acc\u00e9der, ainsi que le message d'erreur \u00e9ventuel que vous recevez ? Cela me permettra de mieux comprendre la situation et de vous guider efficacement."
+  },
+  {
+    "query": "lorsque j'essai de me connecter",
+    "decision": "answer",
+    "response": "J'ai besoins de plus d'informations."
+  },
+  {
+    "query": "\n    User: \n\n    Query: cmpte personnel\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "cmpte personnel",
+    "decision": "answer",
+    "response": "J'ai besoins de plus d'informations."
+  },
+  {
+    "query": "\n    User: \n\n    Query: quoi comme information\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "quoi comme information",
+    "decision": "answer",
+    "response": "J'ai besoins de plus d'informations."
+  },
+  {
+    "query": "\n    User: \n\n    Query: vous voulez quoi comme information suplementaire?\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations pour pouvoir vous aider au mieux. Pourriez-vous pr\u00e9ciser votre demande ou la nature de votre probl\u00e8me bancaire ? Je suis l\u00e0 pour vous accompagner."
+  },
+  {
+    "query": "vous voulez quoi comme information suplementaire?",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "\n    User: \n\n    Query: j'ai une tantaive de fraude\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous avez rencontr\u00e9 une tentative de fraude. Pour pouvoir vous aider au mieux, pourriez-vous me fournir plus de d\u00e9tails sur la situation ? Par exemple, avez-vous re\u00e7u un message suspect, une transaction inhabituelle, ou autre chose ? Cela nous permettra de vous guider efficacement."
+  },
+  {
+    "query": "j'ai une tantaive de fraude",
+    "decision": "answer",
+    "response": "J'ai besoins de plus d'informations."
+  },
+  {
+    "query": "\n    User: \n\n    Query: j'ai remarquer un transaction innabituelle\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je comprends que cette situation puisse vous inqui\u00e9ter. Cependant, je n'ai pas assez d'informations pour vous aider concernant cette transaction inhabituelle. Pourriez-vous me fournir plus de d\u00e9tails, comme la date, le montant ou le commer\u00e7ant concern\u00e9 ? Cela me permettra de mieux vous assister."
+  },
+  {
+    "query": "j'ai remarquer un transaction innabituelle",
+    "decision": "answer",
+    "response": "J'ai besoins de plus d'informations."
+  },
+  {
+    "query": "\n    User: \n\n    Query: le 12juin a carrefour\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "le 12juin a carrefour",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "\n    User: \n\n    Query: je n'arrive pa a me connecter\n\n    Knowledge Base:\n    \n\n    Data:\n    \n\n    Memory:\n    \n    ",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous rencontrez des difficult\u00e9s pour vous connecter. J'ai besoin de plus d'informations pour pouvoir vous aider au mieux. Pouvez-vous me pr\u00e9ciser si vous avez un message d'erreur, ou si le probl\u00e8me concerne votre identifiant, votre mot de passe, ou autre chose ?"
+  },
+  {
+    "query": "je n'arrive pa a me connecter",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
   }
 ]
