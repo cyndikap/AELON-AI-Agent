@@ -89,14 +89,21 @@ def create_incident_endpoint(payload: IncidentRequest):
 @app.post("/support/query", response_model=AgentResponse, dependencies=[Depends(authenticate)])
 def handle_query(payload: UserQueryRequest):
     response = orchestrator.handle_user_query(payload.query)
+    if not isinstance(response, dict):
+        response = {
+            "response": str(response),
+            "escalated": False,
+            "escalation_reason": None,
+            "agent": "unknown",
+            "sentiment": None,
+        }
+
     return AgentResponse(
-        summary=response["summary"],
-        recommendation=response["recommendation"],
-        confidence=response["confidence"],
-        related_logs=response.get("related_logs", []),
-        agent_used=response.get("agent_used", "unknown"),
+        response=response.get("response", ""),
+        escalated=bool(response.get("escalated", False)),
+        escalation_reason=response.get("escalation_reason"),
+        agent=response.get("agent", "unknown"),
         sentiment=response.get("sentiment"),
-        compliance=response.get("compliance"),
     )
 
 @app.get("/analytics", dependencies=[Depends(authenticate)])

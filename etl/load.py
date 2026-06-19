@@ -3,7 +3,14 @@ from azure_embeddings import AzureEmbeddingClient
 
 PROCESSED_PATH = "data/processed/logs_clean.json"
 
-def load_to_delta (docs: list[dict], table_name: str = "banking.tickets_clean"):
+def load_to_delta(docs: list[dict], table_name: str = "banking.tickets_clean") -> int:
+    """Minimal placeholder for Delta persistence.
+
+    Returns the number of documents received so pipeline callers can keep
+    predictable behavior even when Delta write is not configured yet.
+    """
+    _ = table_name
+    return len(docs or [])
 
 def load_to_json(records: list):
     os.makedirs("data/processed", exist_ok=True)

@@ -4,6 +4,7 @@
 
 import sys
 import json
+import html
 from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
@@ -41,8 +42,72 @@ html, body, .stApp {
 
 /* ===== SIDEBAR ===== */
 section[data-testid="stSidebar"] {
-    background-color: #FFFFFF;
-    border-right: 1px solid #E5E7EB;
+    background: linear-gradient(180deg, #071629 0%, #0B2447 100%);
+    border-right: 1px solid #16355F;
+}
+
+section[data-testid="stSidebar"] * {
+    color: #F8FAFC !important;
+}
+
+.sidebar-brand {
+    text-align: center;
+    padding: 12px 8px 6px 8px;
+}
+
+.sidebar-avatar {
+    width: 86px;
+    height: 86px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #2C6CA6;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+
+.sidebar-title {
+    margin-top: 10px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+}
+
+.sidebar-subtitle {
+    margin-top: 2px;
+    font-size: 0.82rem;
+    color: #C7D2FE !important;
+}
+
+.sidebar-section {
+    margin-top: 8px;
+    margin-bottom: 4px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #93C5FD !important;
+}
+
+.sidebar-sep {
+    border: 0;
+    border-top: 1px solid rgba(147, 197, 253, 0.25);
+    margin: 10px 0 12px 0;
+}
+
+.sidebar-info {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(147, 197, 253, 0.22);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    font-size: 0.92rem;
+}
+
+.sidebar-footer {
+    text-align: center;
+    font-size: 0.78rem;
+    color: #CBD5E1 !important;
+    margin-top: 8px;
+    margin-bottom: 4px;
 }
 
 /* ===== TITRES ===== */
@@ -120,26 +185,314 @@ button {
     color: #1F2937 !important;
 }
 
-/* ===== CHAT MESSAGES — User (right) ===== */
-[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) {
-    flex-direction: row-reverse !important;
+[data-testid="chatAvatarIcon-assistant"] {
+    background: linear-gradient(135deg, #facc15, #fbbf24) !important;
+    border-radius: 14px !important;
+    padding: 10px !important;
+    box-shadow: 0 4px 12px rgba(250, 204, 21, 0.6) !important;
 }
-[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"])
-    [data-testid="stChatMessageContent"] {
-    background: linear-gradient(135deg, #EFF6FF, #DBEAFE) !important;
-    border-radius: 18px 3px 18px 18px !important;
-    border: 1px solid #BFDBFE !important;
-    color: #1e3a5f !important;
+
+.chat-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 6px;
+    margin-bottom: 14px;
+}
+
+.chat-header-avatar {
+    width: 78px;
+    height: 78px;
+    border-radius: 50%;
+    border: 2px solid #f4d165;
+    box-shadow: 0 10px 24px rgba(252, 211, 77, 0.28);
+}
+
+.chat-header-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #eef2ff;
+    letter-spacing: 0.02em;
+}
+
+[data-testid="stChatMessage"] {
+    margin-bottom: 0.45rem;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+[data-testid="stChatMessage"] [data-testid="stChatMessageAvatar"],
+[data-testid="stChatMessage"] [data-testid="stChatMessageAvatarUser"],
+[data-testid="stChatMessage"] [data-testid="stChatMessageAvatarAssistant"] {
+    width: 2.35rem !important;
+    height: 2.35rem !important;
+    min-width: 2.35rem !important;
+    min-height: 2.35rem !important;
+    flex: 0 0 2.35rem !important;
+}
+
+[data-testid="stChatMessage"] [data-testid="stChatMessageAvatar"] img,
+[data-testid="stChatMessage"] [data-testid="stChatMessageAvatar"] svg,
+[data-testid="stChatMessage"] [data-testid="stChatMessageAvatarUser"] img,
+[data-testid="stChatMessage"] [data-testid="stChatMessageAvatarUser"] svg,
+[data-testid="stChatMessage"] [data-testid="stChatMessageAvatarAssistant"] img,
+[data-testid="stChatMessage"] [data-testid="stChatMessageAvatarAssistant"] svg {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+}
+
+[data-testid="stChatMessage"] [data-testid="stChatMessageContent"] {
+    position: relative;
+    max-width: min(78%, 760px);
+    border-radius: 18px;
+    padding: 0.7rem 0.9rem;
+    transition: transform 0.28s ease, opacity 0.28s ease, box-shadow 0.28s ease;
+    box-shadow: 0 10px 20px rgba(2, 8, 23, 0.16);
+}
+
+/* Neutralise le fond natif pour laisser les bulles custom visibles */
+[data-testid="stChatMessage"] [data-testid="stChatMessageContent"] {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"],
+[data-testid="stChatMessage"] [data-testid="stElementContainer"],
+[data-testid="stChatMessage"] [data-testid="stVerticalBlock"],
+[data-testid="stChatMessage"] [data-testid="stHorizontalBlock"] {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.aelon-bubble {
+    position: relative;
+    display: inline-block;
+    width: fit-content;
+    max-width: min(78%, 760px);
+    padding: 0.72rem 0.95rem;
+    border-radius: 18px;
+    box-shadow: 0 12px 24px rgba(2, 8, 23, 0.18);
+    transition: transform 0.28s ease, opacity 0.28s ease, box-shadow 0.28s ease;
+    line-height: 1.45;
+    word-wrap: break-word;
+}
+
+.aelon-bubble-wrap {
+    width: fit-content;
+    max-width: 100%;
+    display: flex;
+}
+
+.aelon-bubble-wrap-user {
+    justify-content: flex-end;
     margin-left: auto;
 }
 
-/* ===== CHAT MESSAGES — Assistant (yellow) ===== */
-[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"])
+.aelon-bubble-wrap-assistant {
+    justify-content: flex-start;
+    margin-right: auto;
+}
+
+.aelon-bubble-user {
+    background: #2563EB;
+    border: 1px solid #1D4ED8;
+    color: #FFFFFF;
+    border-radius: 18px 4px 18px 18px;
+    animation: fadeSlideInRight 0.36s ease both;
+}
+
+.aelon-bubble-user::after {
+    content: "";
+    position: absolute;
+    right: -9px;
+    bottom: 10px;
+    width: 0;
+    height: 0;
+    border-left: 10px solid #2563EB;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+}
+
+.aelon-bubble-assistant {
+    background: #FDE68A;
+    border: 1px solid #F5C84B;
+    color: #1F2937;
+    border-radius: 4px 18px 18px 18px;
+    box-shadow: 0 0 0 1px rgba(245, 200, 75, 0.15), 0 8px 20px rgba(245, 200, 75, 0.32);
+    animation: fadeSlideInLeft 0.36s ease both;
+}
+
+.aelon-bubble-assistant::before {
+    content: "";
+    position: absolute;
+    left: -9px;
+    bottom: 10px;
+    width: 0;
+    height: 0;
+    border-right: 10px solid #FDE68A;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+}
+
+.aelon-bubble p {
+    margin: 0;
+}
+
+.aelon-bubble * {
+    color: inherit !important;
+    background: transparent !important;
+}
+
+@keyframes fadeSlideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-18px) translateY(2px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) translateY(0);
+    }
+}
+
+@keyframes fadeSlideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(18px) translateY(2px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) translateY(0);
+    }
+}
+
+/* ===== CHAT MESSAGES — User (right) ===== */
+[data-testid="stChatMessage"]:has(.aelon-bubble-user) {
+    flex-direction: row-reverse !important;
+    justify-content: flex-end !important;
+    text-align: right !important;
+   gap: 0rem
+}
+
+/* Avatar utilisateur: forcer bleu (pas rouge) */
+[data-testid="stChatMessage"]:has(.aelon-bubble-user) [data-testid="stChatMessageAvatar"],
+[data-testid="stChatMessage"]:has(.aelon-bubble-user) [data-testid="stChatMessageAvatarUser"],
+[data-testid="stChatMessage"][aria-label*="user" i] [data-testid="stChatMessageAvatar"],
+[data-testid="stChatMessage"][aria-label*="user" i] [data-testid="stChatMessageAvatarUser"] {
+    background: #2563EB !important;
+    border: 2px solid #1D4ED8 !important;
+    color: #FFFFFF !important;
+}
+
+[data-testid="stChatMessage"]:has(.aelon-bubble-user) [data-testid="stChatMessageAvatar"] svg,
+[data-testid="stChatMessage"]:has(.aelon-bubble-user) [data-testid="stChatMessageAvatarUser"] svg,
+[data-testid="stChatMessage"][aria-label*="user" i] [data-testid="stChatMessageAvatar"] svg,
+[data-testid="stChatMessage"][aria-label*="user" i] [data-testid="stChatMessageAvatarUser"] svg {
+    fill: #FFFFFF !important;
+    color: #FFFFFF !important;
+    stroke: #FFFFFF !important;
+}
+
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]),
+[data-testid="stChatMessage"][aria-label*="user" i] {
+    flex-direction: row-reverse !important;
+    justify-content: flex-end !important;
+    text-align: right !important;
+    gap: 0rem !important;
+    animation: fadeSlideInRight 0.36s ease both;
+}
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"])
+    [data-testid="stChatMessageContent"],
+[data-testid="stChatMessage"][aria-label*="user" i]
     [data-testid="stChatMessageContent"] {
-    background: linear-gradient(135deg, #FFFBEB, #FEF3C7) !important;
-    border-left: 4px solid #FCD34D !important;
+    background: #2563EB !important;
+    border: 1px solid #1D4ED8 !important;
+    border-radius: 18px 4px 18px 18px !important;
+    color: #FFFFFF !important;
+    display: inline-block;
+    width: fit-content;
+    max-width: min(78%, 760px);
+    margin-left: auto;
+    box-shadow: 0 12px 24px rgba(37, 99, 235, 0.35);
+}
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"])
+    [data-testid="stChatMessageContent"]::after,
+[data-testid="stChatMessage"][aria-label*="user" i]
+    [data-testid="stChatMessageContent"]::after {
+    content: "";
+    position: absolute;
+    right: -9px;
+    bottom: 10px;
+    width: 0;
+    height: 0;
+    border-left: 10px solid #2563EB;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+}
+
+/* ===== CHAT MESSAGES — Assistant (yellow) ===== */
+[data-testid="stChatMessage"]:has(.aelon-bubble-assistant) {
+    flex-direction: row !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    gap: 0rem !important;
+}
+
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]),
+[data-testid="stChatMessage"][aria-label*="assistant" i] {
+    justify-content: flex-start !important;
+    gap: 0rem !important;
+    animation: fadeSlideInLeft 0.36s ease both;
+}
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"])
+    [data-testid="stChatMessageContent"],
+[data-testid="stChatMessage"][aria-label*="assistant" i]
+    [data-testid="stChatMessageContent"] {
+    background: #FDE68A !important;
+    border: 1px solid #F5C84B !important;
     border-radius: 3px 18px 18px 18px !important;
     color: #1F2937 !important;
+    display: inline-block;
+    width: fit-content;
+    max-width: min(78%, 760px);
+    box-shadow: 0 0 0 1px rgba(245, 200, 75, 0.15), 0 8px 20px rgba(245, 200, 75, 0.32);
+}
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"])
+    [data-testid="stChatMessageContent"]::before,
+[data-testid="stChatMessage"][aria-label*="assistant" i]
+    [data-testid="stChatMessageContent"]::before {
+    content: "";
+    position: absolute;
+    left: -9px;
+    bottom: 10px;
+    width: 0;
+    height: 0;
+    border-right: 10px solid #FDE68A;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+}
+
+[data-testid="stSidebar"] [role="radiogroup"] {
+    gap: 0.35rem;
+}
+
+[data-testid="stSidebar"] [role="radio"] {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(147, 197, 253, 0.28);
+    border-radius: 10px;
+    padding: 0.45rem 0.55rem;
+}
+
+[data-testid="stSidebar"] [role="radio"][aria-checked="true"] {
+    background: rgba(59, 130, 246, 0.22);
+    border-color: #60A5FA;
 }
 
 </style>
@@ -192,8 +545,35 @@ orchestrator = Orchestrator()
 
 # ================= SIDEBAR =================
 with st.sidebar:
-    st.title("🤖 AELON")
-    mode = st.selectbox("Mode", ["Utilisateur", "Admin"])
+    st.markdown(
+        """
+        <div class="sidebar-brand">
+            <img class="sidebar-avatar" src="https://cdn-icons-png.flaticon.com/512/4712/4712100.png" alt="AELON Avatar" />
+            <div class="sidebar-title">AELON</div>
+            <div class="sidebar-subtitle">Banking Assistant</div>
+        </div>
+        <hr class="sidebar-sep" />
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown('<div class="sidebar-section">Navigation</div>', unsafe_allow_html=True)
+    nav_choice = st.radio(
+        "Choisissez une vue",
+        ["💬 Chat Assistant", "📊 Dashboard Admin"],
+        label_visibility="collapsed",
+    )
+    mode = "Utilisateur" if nav_choice == "💬 Chat Assistant" else "Admin"
+
+    st.markdown('<hr class="sidebar-sep" />', unsafe_allow_html=True)
+    st.markdown('<div class="sidebar-section">Informations</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sidebar-info">Ne partagez jamais vos identifiants</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sidebar-info">Vérifiez vos transactions</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sidebar-info">📞 Contacter le support en cas de doute</div>', unsafe_allow_html=True)
+
+    st.markdown('<hr class="sidebar-sep" />', unsafe_allow_html=True)
+    st.markdown('<div class="sidebar-section"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="sidebar-footer">© AELON - 2026</div>', unsafe_allow_html=True)
 
 # ================= STORAGE =================
 INTERACTIONS_FILE = "interactions.json"
@@ -205,6 +585,21 @@ def load_data():
 
 def save_data(data):
     json.dump(data, open(INTERACTIONS_FILE, "w"), indent=2)
+
+
+def render_chat_bubble(role: str, content: str) -> None:
+    """Render chat content with stable custom bubbles independent of Streamlit internals."""
+    bubble_class = "aelon-bubble-user" if role == "user" else "aelon-bubble-assistant"
+    wrap_class = "aelon-bubble-wrap-user" if role == "user" else "aelon-bubble-wrap-assistant"
+    safe_content = html.escape(str(content)).replace("\n", "<br>")
+    st.markdown(
+        (
+            f'<div class="aelon-bubble-wrap {wrap_class}">'
+            f'<div class="aelon-bubble {bubble_class}">{safe_content}</div>'
+            f'</div>'
+        ),
+        unsafe_allow_html=True,
+    )
 
 # ================= ADMIN =================
 if mode == "Admin":
@@ -453,7 +848,7 @@ if mode == "Admin":
         if total > 0:
             fraud_blocked = int((filtered["agent"] == "blocked").sum()) if "agent" in filtered.columns else 0
             resolved = total - fraud_blocked
-            st.markdown(f"✅ Résolus : **{resolved}** ({resolved/total*100:.0f}%)")
+            st.markdown(f" Résolus : **{resolved}** ({resolved/total*100:.0f}%)")
             st.markdown(f"🔄 Escaladés L1 : **{n_escalated}** ({escalation_rate:.1f}%)")
             st.markdown(f"🚨 Bloqués (fraude) : **{fraud_blocked}**")
 
@@ -489,13 +884,13 @@ else:
     if "messages" not in st.session_state:
         st.session_state.messages = []
 
-        # ✅ message de bienvenue
+        #  message de bienvenue
         st.session_state.messages.append({
             "role": "assistant",
-            "content": "👋 Bonjour, je suis **AELON**, votre assistant bancaire.\n\nComment puis-je vous aider aujourd’hui ?"
+            "content": "👋 Bonjour, je suis AELON, votre assistant bancaire.\n\nComment puis-je vous aider aujourd’hui ?"
         })
 
-        # ✅ message sécurité
+        #  message sécurité
         st.session_state.messages.append({
             "role": "assistant",
             "content": "🔐 **Important :** Ne partagez jamais vos informations sensibles (mot de passe, code OTP, numéro de carte)."
@@ -511,41 +906,35 @@ else:
         </style>
     """, unsafe_allow_html=True)
 
-    col1, col2 = st.columns([1,6])
-
-    with col1:
-        st.image("https://cdn-icons-png.flaticon.com/512/4712/4712100.png", width=60)
-
-    with col2:
-        st.markdown("## 💬 Assistant AELON")
-
-    st.markdown("---")
-
-    # ===== QUESTIONS RAPIDES =====
-    st.markdown("### ⚡ Questions fréquentes")
-
-    col1, col2, col3 = st.columns(3)
-
-    if col1.button("🔐 Problème de connexion"):
-        st.session_state.messages.append({"role": "user", "content": "je n'arrive pas à me connecter à mon compte"})
-
-    if col2.button("💳 Carte refusée"):
-        st.session_state.messages.append({"role": "user", "content": "ma carte est refusée"})
-
-    if col3.button("💸 Virement échoué"):
-        st.session_state.messages.append({"role": "user", "content": "mon virement ne passe pas"})
+    st.markdown(
+        """
+        <div class="chat-header">
+            <img class="chat-header-avatar" src="https://cdn-icons-png.flaticon.com/512/4712/4712100.png" alt="AELON - Banking Assistant" />
+            <div class="chat-header-title">AELON - Banking Assistant</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     st.markdown("---")
+
 
     # ===== CHAT HISTORY =====
     for msg in st.session_state.messages:
-        with st.chat_message(msg["role"]):
-            st.markdown(msg["content"])
+        if msg["role"] == "assistant":
+            with st.chat_message("assistant", avatar="🤖"):
+                render_chat_bubble(msg["role"], msg["content"])
+        else:
+            with st.chat_message(msg["role"]):
+                render_chat_bubble(msg["role"], msg["content"])
 
     # ===== INPUT =====
     user_input = st.chat_input("Écrivez votre message...")
 
     if user_input:
+        # Affichage immédiat du message utilisateur + persistance dans l'historique.
+        with st.chat_message("user"):
+            render_chat_bubble("user", user_input)
         st.session_state.messages.append({"role": "user", "content": user_input})
 
     # ===== TRAITEMENT =====
@@ -584,19 +973,18 @@ else:
             # ── Intermediate escalation message ──────────────────────────
             if escalated:
                 escalation_msg = (
-                    "🔄 Je transmets votre demande à un conseiller spécialisé. "
-                    "Merci de patienter quelques instants..."
+                    "🔄 Je transmets votre demande à un conseiller."
                 )
-                with st.chat_message("assistant"):
-                    st.markdown(escalation_msg)
+                with st.chat_message("assistant", avatar="🤖"):
+                    render_chat_bubble("assistant", escalation_msg)
                 st.session_state.messages.append({
                     "role": "assistant",
                     "content": escalation_msg
                 })
 
         # ===== AFFICHAGE =====
-        with st.chat_message("assistant"):
-            st.markdown(response)
+        with st.chat_message("assistant", avatar="🤖"):
+            render_chat_bubble("assistant", response)
 
         st.session_state.messages.append({
             "role": "assistant",
