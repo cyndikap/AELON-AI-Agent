@@ -4,54 +4,69 @@
 
 CATEGORY_KEYWORDS = {
     "connexion": [
-        "mot de passe", "password", "accès", "connexion", "login", "compte",
+        "mot de passe", "password", "acces", "accès", "connexion", "login", "compte",
         "connecter", "identifiant", "authentification", "otp", "session",
-        "déconnecté", "verrouillé", "code secret",
+        "deconnecte", "déconnecté", "verrouille", "verrouillé", "code secret",
+        "reinitialiser", "réinitialiser", "réinitialisation", "compte bloque", "compte bloqué",
     ],
     "paiement": [
-        "paiement", "virement", "transfert", "transaction", "payer", "régler",
-        "prélèvement", "solde", "facture", "remboursement",
-        "montant", "somme", "argent", "euros",
+        "paiement", "virement", "transfert", "transfer", "transaction", "payer", "regler", "régler",
+        "prelevement", "prélèvement", "solde", "facture", "remboursement", "recu", "reçu",
+        "montant", "somme", "argent", "euros", "debit", "débit", "paiement refuse", "paiement refusé",
+        "virement echoue", "virement échoué",
     ],
     "fraude": [
-        "fraude", "suspect", "volé", "voler", "arnaque", "phishing",
-        "frauduleux", "fraudulent", "piratage", "hacké", "usurpation",
-        "escroquerie", "inconnu", "non autorisé",
+        "fraude", "suspect", "vole", "volé", "voler", "arnaque", "phishing",
+        "frauduleux", "fraudulent", "piratage", "hack", "hacke", "hacké", "pirate", "usurpation",
+        "escroquerie", "inconnu", "non autorise", "non autorisé", "activite suspecte", "activité suspecte",
+        "je ne reconnais pas",
     ],
     "carte": [
-        "carte", "cb", "visa", "mastercard", "retrait", "distributeur",
-        "plafond", "bloquée", "bloqué", "désactivée", "puce",
+        "carte", "cb", "visa", "mastercard", "carte bancaire", "carte refusee", "carte refusée",
+        "retrait", "distributeur", "guichet automatique", "plafond", "opposition",
+        "bloquee", "bloquée", "bloque", "bloqué", "desactivee", "désactivée", "puce",
         "sans contact", "tpe",
     ],
 }
 
 CATEGORY_COLORS = {
-    "connexion": "#3B82F6",   # blue
-    "paiement":  "#10B981",   # green
-    "fraude":    "#EF4444",   # red
-    "carte":     "#F59E0B",   # amber
-    "autre":     "#6B7280",   # gray
+    "connexion": "#3B82F6",
+    "paiement": "#10B981",
+    "fraude": "#EF4444",
+    "carte": "#F59E0B",
+    "autre": "#6B7280",
 }
 
 CATEGORY_ICONS = {
     "connexion": "🔐",
-    "paiement":  "💸",
-    "fraude":    "🚨",
-    "carte":     "💳",
-    "autre":     "❓",
+    "paiement": "💸",
+    "fraude": "🚨",
+    "carte": "💳",
+    "autre": "❓",
+}
+
+CATEGORY_LABELS = {
+    "connexion": "🔐 Connexion",
+    "paiement": "💸 Paiement",
+    "carte": "💳 Carte bancaire",
+    "fraude": "🚨 Fraude",
+    "autre": "📌 Autre",
 }
 
 
 def detect_category(query: str) -> str:
-    """Return the best-matching category for *query* based on keywords.
-
-    Returns one of: 'connexion', 'paiement', 'fraude', 'carte', 'autre'.
-    """
+    """Return the best-matching category for *query* based on keywords."""
     if not query:
         return "autre"
-    query_lower = query.lower()
+
+    text = query.lower()
     for category, keywords in CATEGORY_KEYWORDS.items():
-        for kw in keywords:
-            if kw in query_lower:
-                return category
+        if any(kw in text for kw in keywords):
+            return category
+
     return "autre"
+
+
+def get_category_label(category: str) -> str:
+    """Return a human-readable label for a category."""
+    return CATEGORY_LABELS.get(category, "📌 Autre")

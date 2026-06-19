@@ -8,22 +8,12 @@ from typing import Any, Dict, List
 
 
 def to_csv_string(data: List[Dict[str, Any]]) -> str:
-    """Serialize a list of dicts to a UTF-8 CSV string.
-
-    All keys found across all records are used as column headers so that
-    sparse data (missing keys in some records) is exported cleanly.
-    """
+    """Serialize a list of dicts to a UTF-8 CSV string."""
     if not data:
         return ""
 
-    # Collect all field names preserving insertion order
-    fieldnames: List[str] = []
-    seen = set()
-    for record in data:
-        for key in record.keys():
-            if key not in seen:
-                fieldnames.append(key)
-                seen.add(key)
+    # Gather all field names preserving insertion order and deduplicating.
+    fieldnames = list(dict.fromkeys(key for record in data for key in record.keys()))
 
     output = io.StringIO()
     writer = csv.DictWriter(
@@ -33,5 +23,12 @@ def to_csv_string(data: List[Dict[str, Any]]) -> str:
         restval="",
     )
     writer.writeheader()
-    writer.writerows(data)
+    for record in data:
+        writer.writerow({k: record.get(k, "") for k in fieldnames})
+
     return output.getvalue()
+
+
+def interactions_to_csv(data: List[Dict[str, Any]]) -> str:
+    """Backward-compatible alias for CSV export."""
+    return to_csv_string(data)

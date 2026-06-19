@@ -129,10 +129,7 @@ class Orchestrator:
         # -------------------------------
         # 9. L1 SI BESOIN
         # -------------------------------
-        escalated = l0_result.get("decision") == "escalate"
-        escalation_reason = l0_result.get("reason", "") if escalated else None
-
-        if escalated:
+        if l0_result.get("decision") == "escalate":
             try:
                 l1_result = self.l1.diagnose_from_escalation(
                     {"user_query": query, "full_context": full_context}
@@ -146,8 +143,22 @@ class Orchestrator:
         # -------------------------------
         # 10.  HUMANISATION (CRITIQUE)
         # -------------------------------
-        final_response = self.llm(
-            f"""
+        if escalated:
+            humanization_prompt = f"""
+    Tu es un conseiller bancaire expert (niveau L1).
+    Commence ta réponse par une présentation : "Bonjour, je suis votre conseiller spécialisé. Je prends en charge votre demande."
+    Puis donne la réponse de manière humaine et empathique.
+
+    Sentiment client: {sentiment.get('sentiment')}
+    Ton attendu: {tone_hint}
+
+    Réponse technique:
+    {raw_response}
+
+    Transforme cette réponse en message humain, empathique et clair.
+    """
+        else:
+            humanization_prompt = f"""
     Tu es un assistant bancaire professionnel.
 
     Client: {sentiment.get('sentiment')}
@@ -158,27 +169,14 @@ class Orchestrator:
 
     Transforme cette réponse en message humain, empathique et clair.
     """
-        )
+
+        final_response = self.llm(humanization_prompt)
 
         # -------------------------------
         # 11. COMPLIANCE + RETURN
         # -------------------------------
         try:
             compliance = self.compliance.check(final_response, query)
-            final_text = compliance.get("corrected_response", final_response)
+            return compliance.get("corrected_response", final_response)
         except:
-            final_text = final_response
-
-        return {
-            "response":           final_text,
-            "summary":            final_text,
-            "recommendation":     "",
-            "confidence":         0.85,
-            "escalated":          escalated,
-            "escalation_reason":  escalation_reason,
-            "agent":              "L1" if escalated else "L0",
-            "agent_used":         "L1" if escalated else "L0",
-            "sentiment":          sentiment.get("sentiment", "neutre") if isinstance(sentiment, dict) else "neutre",
-            "related_logs":       [],
-            "compliance":         None,
-        }
+            return final_response

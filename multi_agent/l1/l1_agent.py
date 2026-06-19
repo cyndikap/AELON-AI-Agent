@@ -22,7 +22,10 @@ class L1Agent:
         # 2. récupérer les données (RAG)
         retrieved_data = []
         if self.retriever:
-            retrieved_data = self.retriever.search(user_query)
+            try:
+                retrieved_data = self.retriever.search(user_query)
+            except Exception:
+                pass
 
         # 3. construire le prompt
         prompt = f"""
@@ -37,6 +40,7 @@ class L1Agent:
         Donne :
         - un diagnostic clair
         - une solution recommandée
+        - des étapes concrètes pour résoudre le problème
 
         Commence toujours ta réponse par une présentation courte et professionnelle.
         Réponds dans la même langue que la question.
