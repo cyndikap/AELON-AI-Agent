@@ -32,18 +32,55 @@ from utils.export_handler import to_csv_string
 st.set_page_config(page_title="AELON", page_icon="🤖", layout="wide")
 st.markdown("""
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* ===== GLOBAL ===== */
+:root {
+    --bg-main: #071629;
+    --bg-side-top: #061224;
+    --bg-side-bottom: #0B2447;
+    --panel: #0C1C34;
+    --border: #19395F;
+    --text-main: #F8FAFC;
+    --text-muted: #B8C7DE;
+    --user-bg: #2563EB;
+    --user-border: #1D4ED8;
+    --assistant-bg: #FDE68A;
+    --assistant-border: #F5C84B;
+    --assistant-text: #111827;
+    --input-bg: #102745;
+    --send-yellow: #FACC15;
+}
+
+/* Global layout */
 html, body, .stApp {
-    background-color: #F5F7FA;
-    color: #1F2937;
+    background: var(--bg-main) !important;
+    color: var(--text-main);
     font-family: 'Inter', sans-serif;
 }
 
-/* ===== SIDEBAR ===== */
+[data-testid="stAppViewContainer"] {
+    background: transparent !important;
+}
+
+.block-container {
+    padding-top: 1rem !important;
+    padding-bottom: 4.2rem !important;
+    max-width: 1080px !important;
+}
+
+h1, h2, h3 {
+    letter-spacing: -0.01em;
+    color: var(--text-main);
+}
+
+p {
+    color: var(--text-muted);
+}
+
+/* Sidebar */
 section[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #071629 0%, #0B2447 100%);
-    border-right: 1px solid #16355F;
+    background: linear-gradient(180deg, var(--bg-side-top) 0%, var(--bg-side-bottom) 100%);
+    border-right: 1px solid var(--border);
 }
 
 section[data-testid="stSidebar"] * {
@@ -68,7 +105,7 @@ section[data-testid="stSidebar"] * {
     margin-top: 10px;
     font-size: 1.25rem;
     font-weight: 700;
-    letter-spacing: 0.4px;
+    letter-spacing: 0.3px;
 }
 
 .sidebar-subtitle {
@@ -94,8 +131,8 @@ section[data-testid="stSidebar"] * {
 }
 
 .sidebar-info {
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(147, 197, 253, 0.22);
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(147, 197, 253, 0.25);
     border-radius: 10px;
     padding: 10px 12px;
     margin-bottom: 8px;
@@ -110,33 +147,42 @@ section[data-testid="stSidebar"] * {
     margin-bottom: 4px;
 }
 
-/* ===== TITRES ===== */
-h1, h2, h3 {
-    color: #1F2937;
-}
-
-/* ===== INPUT ===== */
+/* Core controls */
 input, textarea {
     background-color: #FFFFFF !important;
-    color: #1F2937 !important;
+    color: var(--text-main) !important;
     border-radius: 10px !important;
-    border: 1px solid #E5E7EB !important;
+    border: 1px solid #294A74 !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
 }
 
-/* ===== SELECTBOX ===== */
+input:focus, textarea:focus {
+    border-color: #38BDF8 !important;
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25) !important;
+}
+
 div[data-baseweb="select"] {
     background-color: #FFFFFF !important;
-    border: 1px solid #E5E7EB !important;
+    border: 1px solid #294A74 !important;
     border-radius: 10px !important;
+    min-height: 42px;
 }
 
 div[data-baseweb="select"] div,
 div[data-baseweb="select"] span,
 div[data-baseweb="select"] input {
-    color: #1F2937 !important;
+    color: #0F172A !important;
 }
 
-/* ===== DROPDOWN ===== */
+/* Date input — match selectbox text color */
+div[data-baseweb="input"] input,
+div[data-baseweb="input"] span,
+[data-testid="stDateInput"] input,
+[data-testid="stDateInput"] span {
+    color: #0F172A !important;
+    background-color: #FFFFFF !important;
+}
+
 div[role="listbox"] {
     background-color: #FFFFFF !important;
 }
@@ -149,47 +195,130 @@ div[role="option"]:hover {
     background-color: #EEF2FF !important;
 }
 
-/* ===== BUTTON ===== */
+button[kind="primary"],
+[data-testid="baseButton-primary"] {
+    background: linear-gradient(135deg, #FACC15, #FBBF24) !important;
+    color: #111827 !important;
+    font-weight: 700 !important;
+    border-radius: 12px !important;
+    border: 1px solid #F4B400 !important;
+}
+
 button {
-    background: linear-gradient(135deg, #3B82F6, #06B6D4) !important;
+    background: linear-gradient(135deg, #1D4ED8, #0EA5E9) !important;
     color: white !important;
     border-radius: 10px !important;
     border: none !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
 }
 
-/* ===== CARD STYLE ===== */
+button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 16px rgba(14, 165, 233, 0.25);
+}
+
+/* Admin cards */
 .card {
-    background: #FFFFFF;
+    background: var(--panel);
     border-radius: 14px;
     padding: 1rem;
-    border: 1px solid #E5E7EB;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid var(--border);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.22);
 }
 
-/* ===== METRIC ===== */
+.decision-card {
+    background: #0F2747;
+    border: 1px solid #2C4F78;
+    border-radius: 14px;
+    padding: 12px 14px;
+    color: #E2E8F0;
+    box-shadow: 0 10px 20px rgba(2, 6, 23, 0.26);
+    margin-bottom: 0.6rem;
+}
+
+.decision-card p,
+.decision-card li,
+.decision-card strong {
+    color: #E2E8F0 !important;
+}
+
+.admin-hero {
+    background:
+        linear-gradient(120deg, rgba(37, 99, 235, 0.16) 0%, rgba(14, 165, 233, 0.12) 55%, rgba(250, 204, 21, 0.12) 100%),
+        rgba(13, 34, 61, 0.85);
+    border: 1px solid #2A4D78;
+    border-radius: 16px;
+    padding: 14px 16px;
+    box-shadow: 0 14px 26px rgba(2, 6, 23, 0.35);
+    margin-bottom: 10px;
+}
+
+.admin-hero h4 {
+    margin: 0;
+    color: #F8FAFC;
+    font-size: 1.02rem;
+}
+
+.admin-hero p {
+    margin: 6px 0 0 0;
+    color: #B8C7DE;
+    font-size: 0.92rem;
+}
+
 [data-testid="stMetric"] {
-    background: #FFFFFF;
+    background: linear-gradient(180deg, #0F2747 0%, #112D50 100%);
     padding: 15px;
     border-radius: 12px;
-    border: 1px solid #E5E7EB;
+    border: 1px solid #2A4D78;
+    box-shadow: 0 12px 22px rgba(2, 6, 23, 0.28);
+    border-top: 4px solid #FACC15;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* ===== CHART ===== */
+[data-testid="stMetric"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 28px rgba(2, 6, 23, 0.36);
+}
+
+[data-testid="stMetricValue"] {
+    color: #F8FAFC !important;
+}
+
+[data-testid="stMetricLabel"] {
+    color: #C7D6EA !important;
+}
+
 .vega-embed text {
-    fill: #1F2937 !important;
+    fill: #E2E8F0 !important;
 }
 
-/* ===== CHAT ===== */
+/* Chat input zone */
 [data-testid="stChatInput"] textarea {
-    background: #FFFFFF !important;
-    color: #1F2937 !important;
+    background: var(--input-bg) !important;
+    color: #F8FAFC !important;
+    border: 1px solid #2A4D78 !important;
+    box-shadow: 0 6px 14px rgba(2, 6, 23, 0.34) !important;
+    min-height: 52px !important;
+    border-radius: 14px !important;
+}
+
+[data-testid="stChatInput"] textarea:focus {
+    border-color: #38BDF8 !important;
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2) !important;
+}
+
+[data-testid="stChatInput"] button {
+    background: linear-gradient(135deg, #FACC15, #FBBF24) !important;
+    color: #111827 !important;
+    border: 1px solid #EAB308 !important;
+    border-radius: 12px !important;
 }
 
 [data-testid="chatAvatarIcon-assistant"] {
-    background: linear-gradient(135deg, #facc15, #fbbf24) !important;
-    border-radius: 14px !important;
-    padding: 10px !important;
-    box-shadow: 0 4px 12px rgba(250, 204, 21, 0.6) !important;
+    background: linear-gradient(135deg, #FACC15, #FBBF24) !important;
+    border-radius: 10px !important;
+    padding: 8px !important;
+    box-shadow: 0 0 12px rgba(250, 204, 21, 0.52) !important;
 }
 
 .chat-header {
@@ -213,7 +342,7 @@ button {
 .chat-header-title {
     font-size: 1.3rem;
     font-weight: 700;
-    color: #eef2ff;
+    color: #F8FAFC;
     letter-spacing: 0.02em;
 }
 
@@ -227,11 +356,11 @@ button {
 [data-testid="stChatMessage"] [data-testid="stChatMessageAvatar"],
 [data-testid="stChatMessage"] [data-testid="stChatMessageAvatarUser"],
 [data-testid="stChatMessage"] [data-testid="stChatMessageAvatarAssistant"] {
-    width: 2.35rem !important;
-    height: 2.35rem !important;
-    min-width: 2.35rem !important;
-    min-height: 2.35rem !important;
-    flex: 0 0 2.35rem !important;
+    width: 2.2rem !important;
+    height: 2.2rem !important;
+    min-width: 2.2rem !important;
+    min-height: 2.2rem !important;
+    flex: 0 0 2.2rem !important;
 }
 
 [data-testid="stChatMessage"] [data-testid="stChatMessageAvatar"] img,
@@ -242,7 +371,7 @@ button {
 [data-testid="stChatMessage"] [data-testid="stChatMessageAvatarAssistant"] svg {
     width: 100% !important;
     height: 100% !important;
-    border-radius: 50% !important;
+    border-radius: 12px !important;
     object-fit: cover !important;
 }
 
@@ -302,11 +431,11 @@ button {
 }
 
 .aelon-bubble-user {
-    background: #2563EB;
-    border: 1px solid #1D4ED8;
+    background: var(--user-bg);
+    border: 1px solid var(--user-border);
     color: #FFFFFF;
     border-radius: 18px 4px 18px 18px;
-    animation: fadeSlideInRight 0.36s ease both;
+    animation: fadeSlideInRight 0.34s ease both;
 }
 
 .aelon-bubble-user::after {
@@ -316,18 +445,18 @@ button {
     bottom: 10px;
     width: 0;
     height: 0;
-    border-left: 10px solid #2563EB;
+    border-left: 10px solid var(--user-bg);
     border-top: 8px solid transparent;
     border-bottom: 8px solid transparent;
 }
 
 .aelon-bubble-assistant {
-    background: #FDE68A;
-    border: 1px solid #F5C84B;
-    color: #1F2937;
+    background: var(--assistant-bg);
+    border: 1px solid var(--assistant-border);
+    color: var(--assistant-text);
     border-radius: 4px 18px 18px 18px;
-    box-shadow: 0 0 0 1px rgba(245, 200, 75, 0.15), 0 8px 20px rgba(245, 200, 75, 0.32);
-    animation: fadeSlideInLeft 0.36s ease both;
+    box-shadow: 0 0 0 1px rgba(245, 200, 75, 0.2), 0 0 16px rgba(245, 200, 75, 0.24), 0 8px 20px rgba(245, 200, 75, 0.28);
+    animation: fadeSlideInLeft 0.34s ease both;
 }
 
 .aelon-bubble-assistant::before {
@@ -337,7 +466,7 @@ button {
     bottom: 10px;
     width: 0;
     height: 0;
-    border-right: 10px solid #FDE68A;
+    border-right: 10px solid var(--assistant-bg);
     border-top: 8px solid transparent;
     border-bottom: 8px solid transparent;
 }
@@ -378,7 +507,7 @@ button {
     flex-direction: row-reverse !important;
     justify-content: flex-end !important;
     text-align: right !important;
-   gap: 0rem
+    gap: 0rem !important;
 }
 
 /* Avatar utilisateur: forcer bleu (pas rouge) */
@@ -412,8 +541,8 @@ button {
     [data-testid="stChatMessageContent"],
 [data-testid="stChatMessage"][aria-label*="user" i]
     [data-testid="stChatMessageContent"] {
-    background: #2563EB !important;
-    border: 1px solid #1D4ED8 !important;
+    background: var(--user-bg) !important;
+    border: 1px solid var(--user-border) !important;
     border-radius: 18px 4px 18px 18px !important;
     color: #FFFFFF !important;
     display: inline-block;
@@ -432,7 +561,7 @@ button {
     bottom: 10px;
     width: 0;
     height: 0;
-    border-left: 10px solid #2563EB;
+    border-left: 10px solid var(--user-bg);
     border-top: 8px solid transparent;
     border-bottom: 8px solid transparent;
 }
@@ -455,14 +584,14 @@ button {
     [data-testid="stChatMessageContent"],
 [data-testid="stChatMessage"][aria-label*="assistant" i]
     [data-testid="stChatMessageContent"] {
-    background: #FDE68A !important;
-    border: 1px solid #F5C84B !important;
+    background: var(--assistant-bg) !important;
+    border: 1px solid var(--assistant-border) !important;
     border-radius: 3px 18px 18px 18px !important;
-    color: #1F2937 !important;
+    color: var(--assistant-text) !important;
     display: inline-block;
     width: fit-content;
     max-width: min(78%, 760px);
-    box-shadow: 0 0 0 1px rgba(245, 200, 75, 0.15), 0 8px 20px rgba(245, 200, 75, 0.32);
+    box-shadow: 0 0 0 1px rgba(245, 200, 75, 0.18), 0 0 16px rgba(245, 200, 75, 0.26), 0 8px 20px rgba(245, 200, 75, 0.28);
 }
 [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"])
     [data-testid="stChatMessageContent"]::before,
@@ -474,52 +603,105 @@ button {
     bottom: 10px;
     width: 0;
     height: 0;
-    border-right: 10px solid #FDE68A;
+    border-right: 10px solid var(--assistant-bg);
     border-top: 8px solid transparent;
     border-bottom: 8px solid transparent;
 }
 
+/* ===== SIDEBAR NAV ITEMS ===== */
 [data-testid="stSidebar"] [role="radiogroup"] {
-    gap: 0.35rem;
+    gap: 0;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
+/* Inactive card — mirrors .sidebar-info exactly */
 [data-testid="stSidebar"] [role="radio"] {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(147, 197, 253, 0.28);
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(147, 197, 253, 0.25);
     border-radius: 10px;
-    padding: 0.45rem 0.55rem;
+    padding: 10px 12px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
+/* Hover */
+[data-testid="stSidebar"] [role="radio"]:hover {
+    background: rgba(255, 255, 255, 0.11);
+    border-color: rgba(147, 197, 253, 0.5);
+}
+
+/* Active card — yellow accent */
 [data-testid="stSidebar"] [role="radio"][aria-checked="true"] {
-    background: rgba(59, 130, 246, 0.22);
-    border-color: #60A5FA;
+    background: rgba(250, 204, 21, 0.10);
+    border-color: rgba(250, 204, 21, 0.45);
+    border-left: 3px solid #FACC15;
+    box-shadow: 0 4px 14px rgba(250, 204, 21, 0.10);
 }
 
-</style>
-""", unsafe_allow_html=True)
-
-
-# ================= CSS FIX =================
-st.markdown("""
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
-html, body {
-    background: #071629;
-    color: #eef2ff;
-    font-family: 'Inter', sans-serif;
+/* Hide native radio circle dot */
+[data-testid="stSidebar"] [role="radio"] svg {
+    display: none !important;
 }
 
-/* Fix dropdown visibility */
-div[data-baseweb="select"] div,
-div[data-baseweb="select"] span,
-div[data-baseweb="select"] input {
-    color: #ffffff !important;
+/* Remove gap left by hidden svg container */
+[data-testid="stSidebar"] [role="radio"] > div:first-child {
+    display: none !important;
 }
 
-div[role="option"] {
-    color: white !important;
+/* Nav label text — inactive */
+[data-testid="stSidebar"] [role="radio"] p,
+[data-testid="stSidebar"] [role="radio"] label,
+[data-testid="stSidebar"] [role="radio"] span {
+    font-size: 0.92rem !important;
+    font-weight: 500 !important;
+    color: #B8C7DE !important;
+    letter-spacing: 0.01em;
+    transition: color 0.15s ease;
 }
+
+/* Nav label text — active */
+[data-testid="stSidebar"] [role="radio"][aria-checked="true"] p,
+[data-testid="stSidebar"] [role="radio"][aria-checked="true"] label,
+[data-testid="stSidebar"] [role="radio"][aria-checked="true"] span {
+    color: #FACC15 !important;
+    font-weight: 600 !important;
+}
+
+[data-testid="stDataFrame"] {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 12px 22px rgba(2, 6, 23, 0.28);
+}
+
+[data-testid="stAlert"] {
+    border-radius: 12px !important;
+    border: 1px solid var(--border) !important;
+}
+
+@media (max-width: 900px) {
+    .block-container {
+        padding-top: 0.8rem !important;
+        padding-left: 0.85rem !important;
+        padding-right: 0.85rem !important;
+    }
+
+    .chat-header-avatar {
+        width: 64px;
+        height: 64px;
+    }
+
+    .chat-header-title {
+        font-size: 1.1rem;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -557,21 +739,44 @@ with st.sidebar:
         unsafe_allow_html=True,
     )
 
-    st.markdown('<div class="sidebar-section">Navigation</div>', unsafe_allow_html=True)
-    nav_choice = st.radio(
-        "Choisissez une vue",
-        ["💬 Chat Assistant", "📊 Dashboard Admin"],
-        label_visibility="collapsed",
+
+with st.sidebar:
+
+    st.markdown("###  Navigation")
+
+    page = st.selectbox(
+        "",
+        ["💬 Chat Assistant", " Dashboard Admin"]
     )
-    mode = "Utilisateur" if nav_choice == "💬 Chat Assistant" else "Admin"
+
+    mode = "Utilisateur" if page == "💬 Chat Assistant" else "Admin"
+
+    if mode == "Admin":
+        st.markdown('<hr class="sidebar-sep" />', unsafe_allow_html=True)
+        st.markdown('<div class="sidebar-section">Dashboard</div>', unsafe_allow_html=True)
+        page = st.radio(
+            "Page dashboard",
+            [
+                "📊 Vue globale",
+                "📈 Analyse des sentiments",
+                "🔁 Analyse des escalades (L0 / L1)",
+                "🚨 Analyse des fraudes",
+                "📂 Analyse des requêtes / catégories",
+            ],
+            label_visibility="collapsed",
+        )
+    else:
+        page = None
 
     st.markdown('<hr class="sidebar-sep" />', unsafe_allow_html=True)
-    st.markdown('<div class="sidebar-section">Informations</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sidebar-info">Ne partagez jamais vos identifiants</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sidebar-info">Vérifiez vos transactions</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sidebar-info">📞 Contacter le support en cas de doute</div>', unsafe_allow_html=True)
+    if mode == "Utilisateur":
+        st.markdown('<div class="sidebar-section">Informations</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="sidebar-info">Mode actif : <b>{mode}</b></div>', unsafe_allow_html=True)
+        st.markdown('<div class="sidebar-info">Ne partagez jamais vos identifiants</div>', unsafe_allow_html=True)
+        st.markdown('<div class="sidebar-info">Paiements et fraude : priorité élevée</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="sidebar-info">Dernière mise à jour : {datetime.now().strftime("%H:%M")}</div>', unsafe_allow_html=True)
+        st.markdown('<hr class="sidebar-sep" />', unsafe_allow_html=True)
 
-    st.markdown('<hr class="sidebar-sep" />', unsafe_allow_html=True)
     st.markdown('<div class="sidebar-section"></div>', unsafe_allow_html=True)
     st.markdown('<div class="sidebar-footer">© AELON - 2026</div>', unsafe_allow_html=True)
 
@@ -606,58 +811,67 @@ if mode == "Admin":
     import pandas as pd
     import altair as alt
 
-    st.title("📊 Dashboard Admin — AELON Analytics")
+    st.title("📊 Dashboard Administrateur — AELON")
+    st.markdown(
+        """
+        <div class="admin-hero">
+            <h4>Centre de Décision Métier</h4>
+            <p>Analysez les tendances, comprenez les causes et appliquez des recommandations concrètes.</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     data = load_data()
-
     if not data:
         st.warning("⚠️ Pas de données disponibles. Lancez quelques conversations en mode Utilisateur d'abord.")
         st.stop()
 
     df = pd.DataFrame(data)
 
-    # ── Ensure required columns exist (backward compat with old records) ──
+    if "query" not in df.columns:
+        df["query"] = ""
+
     if "category" not in df.columns:
-        df["category"] = df["query"].apply(detect_category) if "query" in df.columns else "autre"
+        df["category"] = df["query"].apply(detect_category)
     else:
         df["category"] = df["category"].fillna("autre")
-        # Re-detect for records that were saved without a category
-        mask = df["category"].isin(["", "autre"])
-        if "query" in df.columns:
-            df.loc[mask, "category"] = df.loc[mask, "query"].apply(detect_category)
-
-    if "escalated" not in df.columns:
-        df["escalated"] = df["agent"].apply(lambda x: x == "L1") if "agent" in df.columns else False
-    df["escalated"] = df["escalated"].fillna(False).astype(bool)
-
-    if "fraud_score" not in df.columns:
-        df["fraud_score"] = 0
-    df["fraud_score"] = pd.to_numeric(df["fraud_score"], errors="coerce").fillna(0)
-
-    if "sentiment" not in df.columns:
-        df["sentiment"] = "neutre"
-    df["sentiment"] = df["sentiment"].fillna("neutre")
 
     if "agent" not in df.columns:
         df["agent"] = "L0"
     df["agent"] = df["agent"].fillna("L0")
 
+    if "escalated" not in df.columns:
+        df["escalated"] = df["agent"].eq("L1")
+    df["escalated"] = df["escalated"].fillna(False).astype(bool)
+
+    if "sentiment" not in df.columns:
+        df["sentiment"] = "neutral"
+    df["sentiment"] = df["sentiment"].fillna("neutral")
+
+    if "fraud_score" not in df.columns:
+        df["fraud_score"] = 0
+    df["fraud_score"] = pd.to_numeric(df["fraud_score"], errors="coerce").fillna(0)
+
     if "risk_level" not in df.columns:
         df["risk_level"] = "LOW"
+
+    if "is_fraud" not in df.columns:
+        df["is_fraud"] = df["agent"].eq("blocked")
 
     df["timestamp"] = pd.to_datetime(
         df["timestamp"] if "timestamp" in df.columns else pd.Series(dtype=str),
         errors="coerce",
     )
 
-    # ── SIDEBAR FILTERS ──────────────────────────────────────────────────
+    # Filters
     st.sidebar.markdown("---")
     st.sidebar.markdown("### 🔍 Filtres Dashboard")
 
-    categories_opts = ["Toutes"] + sorted(df["category"].unique().tolist())
+    categories_opts = ["Toutes"] + sorted(df["category"].dropna().unique().tolist())
     sel_category = st.sidebar.selectbox("Catégorie", categories_opts)
 
-    agents_opts = ["Tous"] + sorted(df["agent"].unique().tolist())
+    agents_opts = ["Tous"] + sorted(df["agent"].dropna().unique().tolist())
     sel_agent = st.sidebar.selectbox("Agent", agents_opts)
 
     valid_dates = df["timestamp"].dropna()
@@ -665,13 +879,11 @@ if mode == "Admin":
         min_date = valid_dates.min().date()
         max_date = valid_dates.max().date()
         date_range = st.sidebar.date_input(
-            "Période", value=(min_date, max_date),
-            min_value=min_date, max_value=max_date
+            "Période", value=(min_date, max_date), min_value=min_date, max_value=max_date
         )
     else:
         date_range = None
 
-    # ── Apply filters ────────────────────────────────────────────────────
     filtered = df.copy()
     if sel_category != "Toutes":
         filtered = filtered[filtered["category"] == sel_category]
@@ -679,192 +891,230 @@ if mode == "Admin":
         filtered = filtered[filtered["agent"] == sel_agent]
     if date_range and len(date_range) == 2:
         filtered = filtered[
-            (filtered["timestamp"].dt.date >= date_range[0]) &
-            (filtered["timestamp"].dt.date <= date_range[1])
+            (filtered["timestamp"].dt.date >= date_range[0])
+            & (filtered["timestamp"].dt.date <= date_range[1])
         ]
 
     total = len(filtered)
+    if total == 0:
+        st.info("Aucune interaction pour les filtres sélectionnés.")
+        st.stop()
 
-    # ── KPIs ─────────────────────────────────────────────────────────────
-    st.subheader("📈 Indicateurs Clés")
-    k1, k2, k3, k4 = st.columns(4)
-
-    n_escalated = int(filtered["escalated"].sum())
-    escalation_rate = (n_escalated / total * 100) if total > 0 else 0
-    avg_fraud = float(filtered["fraud_score"].mean()) if total > 0 else 0
-    top_cat = filtered["category"].mode()[0] if total > 0 else "N/A"
-    top_icon = CATEGORY_ICONS.get(top_cat, "❓")
-
-    k1.metric("📊 Interactions", total)
-    k2.metric("🔄 Taux d'escalade", f"{escalation_rate:.1f}%",
-              delta=f"{n_escalated} escalades")
-    k3.metric("⚠️ Score fraude moyen", f"{avg_fraud:.1f}")
-    k4.metric("🏆 Catégorie principale", f"{top_icon} {top_cat.capitalize()}")
-
-    st.markdown("---")
-
-    # ── CHARTS ───────────────────────────────────────────────────────────
-    st.subheader("📊 Visualisations")
-
-    chart_col1, chart_col2 = st.columns(2)
-
-    # Category distribution (pie)
-    with chart_col1:
-        st.markdown("**Distribution par catégorie**")
-        if total > 0:
-            cat_counts = (
-                filtered["category"].value_counts()
-                .reset_index()
-            )
-            cat_counts.columns = ["category", "count"]
-            cat_counts["color"] = cat_counts["category"].map(CATEGORY_COLORS).fillna("#6B7280")
-            pie = (
-                alt.Chart(cat_counts)
-                .mark_arc(outerRadius=110)
-                .encode(
-                    theta=alt.Theta("count:Q"),
-                    color=alt.Color(
-                        "category:N",
-                        scale=alt.Scale(
-                            domain=list(CATEGORY_COLORS.keys()),
-                            range=list(CATEGORY_COLORS.values()),
-                        ),
-                        legend=alt.Legend(title="Catégorie"),
-                    ),
-                    tooltip=["category:N", "count:Q"],
-                )
-                .properties(height=250)
-            )
-            st.altair_chart(pie, use_container_width=True)
-        else:
-            st.info("Aucune donnée après filtrage.")
-
-    # Agent distribution (bar)
-    with chart_col2:
-        st.markdown("**Répartition L0 / L1**")
-        if total > 0:
-            agent_counts = (
-                filtered["agent"].value_counts()
-                .reset_index()
-            )
-            agent_counts.columns = ["agent", "count"]
-            bar_agent = (
-                alt.Chart(agent_counts)
-                .mark_bar(cornerRadiusTopLeft=6, cornerRadiusTopRight=6)
-                .encode(
-                    x=alt.X("agent:N", axis=alt.Axis(labelAngle=0), title="Agent"),
-                    y=alt.Y("count:Q", title="Nombre"),
-                    color=alt.Color(
-                        "agent:N",
-                        scale=alt.Scale(
-                            domain=["L0", "L1", "blocked"],
-                            range=["#3B82F6", "#10B981", "#EF4444"],
-                        ),
-                        legend=None,
-                    ),
-                    tooltip=["agent:N", "count:Q"],
-                )
-                .properties(height=250)
-            )
-            st.altair_chart(bar_agent, use_container_width=True)
-        else:
-            st.info("Aucune donnée après filtrage.")
-
-    chart_col3, chart_col4 = st.columns(2)
-
-    # Fraud score histogram
-    with chart_col3:
-        st.markdown("**Distribution des scores de fraude**")
-        if total > 0 and filtered["fraud_score"].sum() > 0:
-            hist = (
-                alt.Chart(filtered[["fraud_score"]].dropna())
-                .mark_bar(color="#EF4444", cornerRadiusTopLeft=4, cornerRadiusTopRight=4)
-                .encode(
-                    x=alt.X("fraud_score:Q", bin=alt.Bin(maxbins=10), title="Score"),
-                    y=alt.Y("count():Q", title="Fréquence"),
-                    tooltip=["count():Q"],
-                )
-                .properties(height=230)
-            )
-            st.altair_chart(hist, use_container_width=True)
-        else:
-            st.info("Scores de fraude tous à 0 ou aucune donnée.")
-
-    # Sentiment distribution
-    with chart_col4:
-        st.markdown("**Répartition des sentiments**")
-        if total > 0:
-            sent_counts = (
-                filtered["sentiment"].value_counts()
-                .reset_index()
-            )
-            sent_counts.columns = ["sentiment", "count"]
-            bar_sent = (
-                alt.Chart(sent_counts)
-                .mark_bar(cornerRadiusTopLeft=6, cornerRadiusTopRight=6)
-                .encode(
-                    x=alt.X("sentiment:N", axis=alt.Axis(labelAngle=-20), title="Sentiment"),
-                    y=alt.Y("count:Q", title="Nombre"),
-                    color=alt.Color(
-                        "sentiment:N",
-                        scale=alt.Scale(scheme="tableau10"),
-                        legend=None,
-                    ),
-                    tooltip=["sentiment:N", "count:Q"],
-                )
-                .properties(height=230)
-            )
-            st.altair_chart(bar_sent, use_container_width=True)
-        else:
-            st.info("Aucune donnée après filtrage.")
+    def render_decision_cards(analysis_text: str, recommendations: list[str]) -> None:
+        st.markdown("### 🔎 Analyse")
+        st.markdown(
+            f'<div class="decision-card"><p>{analysis_text}</p></div>',
+            unsafe_allow_html=True,
+        )
+        rec_html = "".join([f"<li>{r}</li>" for r in recommendations])
+        st.markdown("### 💡 Recommandations")
+        st.markdown(
+            f'<div class="decision-card"><ul>{rec_html}</ul></div>',
+            unsafe_allow_html=True,
+        )
 
     st.markdown("---")
 
-    # ── BUSINESS INSIGHTS ────────────────────────────────────────────────
-    st.subheader("💡 Insights Métier")
+    if page == "📊 Vue globale":
+        st.subheader("📊 Vue globale")
 
-    ins_col1, ins_col2, ins_col3 = st.columns(3)
+        n_escalated = int(filtered["escalated"].sum())
+        escalation_rate = (n_escalated / total * 100) if total else 0
+        avg_fraud = float(filtered["fraud_score"].mean()) if total else 0
+        neg_rate = float(filtered["sentiment"].isin(["frustrated", "angry", "negative"]).mean() * 100)
+        top_cat = filtered["category"].mode()[0] if total else "N/A"
 
-    with ins_col1:
-        st.markdown("**🔁 Problèmes récurrents**")
-        if "query" in filtered.columns and total > 0:
-            top_queries = filtered["query"].value_counts().head(3)
-            for q, cnt in top_queries.items():
-                display_q = str(q)[:60] + ("..." if len(str(q)) > 60 else "")
-                st.markdown(f"- *{display_q}* — **{cnt}x**")
+        k1, k2, k3, k4 = st.columns(4)
+        k1.metric("Interactions", total)
+        k2.metric("Taux d'escalade", f"{escalation_rate:.1f}%")
+        k3.metric("Score fraude moyen", f"{avg_fraud:.1f}")
+        k4.metric("Catégorie principale", f"{CATEGORY_ICONS.get(top_cat, '❓')} {str(top_cat).capitalize()}")
+
+        timeline = filtered.copy()
+        timeline["day"] = timeline["timestamp"].dt.floor("D")
+        vol = timeline.groupby(["day", "agent"]).size().reset_index(name="count")
+        main_chart = (
+            alt.Chart(vol)
+            .mark_area(opacity=0.7)
+            .encode(
+                x=alt.X("day:T", title="Date"),
+                y=alt.Y("count:Q", title="Volume"),
+                color=alt.Color(
+                    "agent:N",
+                    scale=alt.Scale(domain=["L0", "L1", "blocked"], range=["#2563EB", "#14B8A6", "#EF4444"]),
+                    legend=alt.Legend(title="Agent"),
+                ),
+                tooltip=["day:T", "agent:N", "count:Q"],
+            )
+            .properties(height=320)
+        )
+        st.altair_chart(main_chart, use_container_width=True)
+
+        if escalation_rate > 35 or neg_rate > 40:
+            analysis = "Le tableau global montre une pression opérationnelle élevée. Les signaux combinés (escalades + sentiments négatifs) indiquent un risque de dégradation de l'expérience client."
+        elif avg_fraud > 35:
+            analysis = "La dynamique globale est marquée par une hausse du risque fraude. La surveillance opérationnelle doit être renforcée à court terme."
         else:
-            st.info("Pas de données.")
+            analysis = "La performance globale est stable. Les indicateurs restent maîtrisés et permettent une amélioration continue par optimisation ciblée."
 
-    with ins_col2:
-        st.markdown("**📂 Catégories les plus fréquentes**")
-        if total > 0:
-            for cat, cnt in filtered["category"].value_counts().head(5).items():
-                icon = CATEGORY_ICONS.get(str(cat), "❓")
-                pct = cnt / total * 100
-                st.markdown(f"{icon} **{str(cat).capitalize()}** — {cnt} ({pct:.0f}%)")
+        recs = [
+            "Prioriser les catégories les plus fréquentes dans le plan d'amélioration.",
+            "Renforcer les réponses L0 sur les motifs d'escalade les plus courants.",
+            "Suivre hebdomadairement les KPI risque/satisfaction pour ajuster les actions.",
+        ]
+        render_decision_cards(analysis, recs)
 
-    with ins_col3:
-        st.markdown("**⚡ Taux de résolution**")
-        if total > 0:
-            fraud_blocked = int((filtered["agent"] == "blocked").sum()) if "agent" in filtered.columns else 0
-            resolved = total - fraud_blocked
-            st.markdown(f" Résolus : **{resolved}** ({resolved/total*100:.0f}%)")
-            st.markdown(f"🔄 Escaladés L1 : **{n_escalated}** ({escalation_rate:.1f}%)")
-            st.markdown(f"🚨 Bloqués (fraude) : **{fraud_blocked}**")
+    elif page == "📈 Analyse des sentiments":
+        st.subheader("📈 Analyse des sentiments")
 
-    st.markdown("---")
+        sent_counts = filtered["sentiment"].value_counts().reset_index()
+        sent_counts.columns = ["sentiment", "count"]
+        sentiment_chart = (
+            alt.Chart(sent_counts)
+            .mark_bar(cornerRadiusTopLeft=6, cornerRadiusTopRight=6)
+            .encode(
+                x=alt.X("sentiment:N", title="Sentiment"),
+                y=alt.Y("count:Q", title="Nombre d'interactions"),
+                color=alt.Color("sentiment:N", scale=alt.Scale(scheme="tableau10"), legend=None),
+                tooltip=["sentiment:N", "count:Q"],
+            )
+            .properties(height=320)
+        )
+        st.altair_chart(sentiment_chart, use_container_width=True)
 
-    # ── DATA TABLE ───────────────────────────────────────────────────────
-    st.subheader("📋 Historique des interactions")
+        neg_rate = float(filtered["sentiment"].isin(["frustrated", "angry", "negative"]).mean() * 100)
+        if neg_rate >= 35:
+            analysis = "Un nombre important d’interactions est associé à un sentiment négatif, ce qui peut indiquer des problèmes dans l’expérience client."
+        elif neg_rate >= 20:
+            analysis = "Le sentiment client devient sensible sur une part notable des échanges. Une action préventive est recommandée pour éviter une dégradation."
+        else:
+            analysis = "La perception client reste globalement positive ou neutre, ce qui suggère une expérience relativement fluide."
 
-    display_cols = [c for c in ["timestamp", "category", "query", "agent",
-                                "escalated", "fraud_score", "risk_level",
-                                "sentiment", "resolution_status"]
-                    if c in filtered.columns]
-    st.dataframe(filtered[display_cols].sort_values("timestamp", ascending=False),
-                 use_container_width=True, height=300)
+        recs = [
+            "Améliorer les réponses du chatbot sur les cas d'incompréhension fréquents.",
+            "Simplifier les parcours utilisateurs sur les demandes récurrentes.",
+            "Créer des réponses courtes et rassurantes pour les situations à forte frustration.",
+        ]
+        render_decision_cards(analysis, recs)
 
-    # ── CSV EXPORT ───────────────────────────────────────────────────────
+    elif page == "🔁 Analyse des escalades (L0 / L1)":
+        st.subheader("🔁 Analyse des escalades (L0 / L1)")
+
+        agent_counts = filtered["agent"].value_counts().reset_index()
+        agent_counts.columns = ["agent", "count"]
+        escalation_chart = (
+            alt.Chart(agent_counts)
+            .mark_bar(cornerRadiusTopLeft=6, cornerRadiusTopRight=6)
+            .encode(
+                x=alt.X("agent:N", title="Niveau de traitement"),
+                y=alt.Y("count:Q", title="Nombre de cas"),
+                color=alt.Color(
+                    "agent:N",
+                    scale=alt.Scale(domain=["L0", "L1", "blocked"], range=["#2563EB", "#14B8A6", "#EF4444"]),
+                    legend=None,
+                ),
+                tooltip=["agent:N", "count:Q"],
+            )
+            .properties(height=320)
+        )
+        st.altair_chart(escalation_chart, use_container_width=True)
+
+        l1_rate = float((filtered["agent"] == "L1").mean() * 100)
+        if l1_rate >= 30:
+            analysis = "Le taux d’escalade est élevé, ce qui suggère que les requêtes ne sont pas suffisamment traitées au niveau L0."
+        elif l1_rate >= 18:
+            analysis = "Le volume d'escalade reste significatif. Certains motifs pourraient être absorbés par une meilleure couverture L0."
+        else:
+            analysis = "Le routage est globalement efficace, avec une majorité de cas résolus au niveau L0."
+
+        recs = [
+            "Améliorer le routage L0 sur les catégories les plus escaladées.",
+            "Enrichir la base de connaissances avec les cas transférés vers L1.",
+            "Mettre en place une revue hebdomadaire des raisons d'escalade.",
+        ]
+        render_decision_cards(analysis, recs)
+
+    elif page == "🚨 Analyse des fraudes":
+        st.subheader("🚨 Analyse des fraudes")
+
+        fraud_counts = filtered.groupby("risk_level").size().reset_index(name="count")
+        fraud_chart = (
+            alt.Chart(fraud_counts)
+            .mark_bar(cornerRadiusTopLeft=6, cornerRadiusTopRight=6)
+            .encode(
+                x=alt.X("risk_level:N", title="Niveau de risque"),
+                y=alt.Y("count:Q", title="Nombre de cas"),
+                color=alt.Color(
+                    "risk_level:N",
+                    scale=alt.Scale(domain=["LOW", "MEDIUM", "HIGH", "low", "medium", "high"],
+                                    range=["#22C55E", "#F59E0B", "#EF4444", "#22C55E", "#F59E0B", "#EF4444"]),
+                    legend=None,
+                ),
+                tooltip=["risk_level:N", "count:Q"],
+            )
+            .properties(height=320)
+        )
+        st.altair_chart(fraud_chart, use_container_width=True)
+
+        fraud_rate = float(filtered["is_fraud"].fillna(False).mean() * 100)
+        if fraud_rate >= 12 or float(filtered["fraud_score"].mean()) >= 40:
+            analysis = "Une augmentation des cas potentiellement frauduleux a été détectée, nécessitant une surveillance renforcée."
+        elif fraud_rate >= 5:
+            analysis = "Des signaux de risque fraude sont présents à un niveau modéré. Une vigilance accrue est recommandée."
+        else:
+            analysis = "Le niveau de risque fraude reste contenu sur la période sélectionnée."
+
+        recs = [
+            "Renforcer les contrôles sur les scénarios de risque les plus fréquents.",
+            "Améliorer les alertes temps réel et les seuils de déclenchement.",
+            "Analyser les motifs textuels des cas suspects pour affiner les règles.",
+        ]
+        render_decision_cards(analysis, recs)
+
+    else:
+        st.subheader("📂 Analyse des requêtes / catégories")
+
+        cat_counts = filtered["category"].value_counts().reset_index()
+        cat_counts.columns = ["category", "count"]
+        category_chart = (
+            alt.Chart(cat_counts)
+            .mark_bar(cornerRadiusTopLeft=6, cornerRadiusTopRight=6)
+            .encode(
+                x=alt.X("count:Q", title="Volume"),
+                y=alt.Y("category:N", sort="-x", title="Catégorie"),
+                color=alt.Color(
+                    "category:N",
+                    scale=alt.Scale(
+                        domain=list(CATEGORY_COLORS.keys()),
+                        range=list(CATEGORY_COLORS.values()),
+                    ),
+                    legend=None,
+                ),
+                tooltip=["category:N", "count:Q"],
+            )
+            .properties(height=340)
+        )
+        st.altair_chart(category_chart, use_container_width=True)
+
+        top_queries = filtered["query"].value_counts().head(5).reset_index()
+        top_queries.columns = ["requête", "fréquence"]
+        st.dataframe(top_queries, use_container_width=True, hide_index=True)
+
+        top_ratio = float(cat_counts.iloc[0]["count"] / total * 100) if total else 0
+        if top_ratio >= 35:
+            analysis = "Une catégorie domine nettement le volume de requêtes. Cela indique un besoin métier prioritaire sur ce segment."
+        elif top_ratio >= 20:
+            analysis = "La répartition des demandes montre quelques pôles majeurs, offrant des opportunités ciblées d'automatisation."
+        else:
+            analysis = "Les requêtes sont diversifiées, ce qui invite à une stratégie d'amélioration équilibrée par thématique."
+
+        recs = [
+            "Automatiser les cas récurrents à forte fréquence.",
+            "Créer une FAQ orientée sur les 5 requêtes les plus posées.",
+            "Mesurer l'impact des actions via un suivi hebdomadaire des volumes par catégorie.",
+        ]
+        render_decision_cards(analysis, recs)
+
     st.markdown("---")
     export_data = filtered.copy()
     export_data["timestamp"] = export_data["timestamp"].astype(str)
@@ -897,20 +1147,11 @@ else:
         })
 
     # ===== HEADER =====
-    st.markdown("""
-        <style>
-        .stApp {
-            background-color: #0b1e3b;
-            color: white;
-        }
-        </style>
-    """, unsafe_allow_html=True)
-
     st.markdown(
         """
         <div class="chat-header">
             <img class="chat-header-avatar" src="https://cdn-icons-png.flaticon.com/512/4712/4712100.png" alt="AELON - Banking Assistant" />
-            <div class="chat-header-title">AELON - Banking Assistant</div>
+            <div class="chat-header-title">Assistant AELON</div>
         </div>
         """,
         unsafe_allow_html=True,
