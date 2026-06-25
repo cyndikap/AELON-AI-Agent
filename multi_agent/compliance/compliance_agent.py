@@ -46,6 +46,8 @@ Vérifie qu'elle respecte ces règles :
 Question du client : {user_query}
 Réponse à analyser : {response}
 
+IMPORTANT : Le champ "corrected_response" doit être rédigé dans la même langue que la question du client.
+
 Réponds uniquement en JSON :
 {{
   "is_compliant": true | false,

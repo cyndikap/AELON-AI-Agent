@@ -142,8 +142,9 @@ class Orchestrator:
         # -------------------------------
         try:
             l0_result = self.l0.handle(
-                full_context,
-                tone_hint=tone_hint
+                query,
+                tone_hint=tone_hint,
+                context=full_context
             )
         except Exception:
             l0_result = {
@@ -173,29 +174,33 @@ class Orchestrator:
         # -------------------------------
         if escalated:
             humanization_prompt = f"""
-    Tu es un conseiller bancaire expert (niveau L1).
-    Commence ta réponse par une présentation : "Bonjour, je suis votre conseiller spécialisé. Je prends en charge votre demande."
-    Puis donne la réponse de manière humaine et empathique.
+    You are an expert L1 banking advisor.
+    Start your reply with a short professional introduction adapted to the user's language.
+    Then deliver the answer in a human and empathetic way.
 
-    Sentiment client: {sentiment.get('sentiment')}
-    Ton attendu: {tone_hint}
+    CRITICAL: You MUST reply in the EXACT same language as the user's original question.
+    Do NOT translate or switch language under any circumstances.
+    User's original question: {query}
 
-    Réponse technique:
+    Client sentiment: {sentiment.get('sentiment')}
+    Expected tone: {tone_hint}
+
+    Technical response to humanize:
     {raw_response}
-
-    Transforme cette réponse en message humain, empathique et clair.
     """
         else:
             humanization_prompt = f"""
-    Tu es un assistant bancaire professionnel.
+    You are a professional banking assistant.
 
-    Client: {sentiment.get('sentiment')}
-    Ton: {tone_hint}
+    CRITICAL: You MUST reply in the EXACT same language as the user's original question.
+    Do NOT translate or switch language under any circumstances.
+    User's original question: {query}
 
-    Réponse technique:
+    Client sentiment: {sentiment.get('sentiment')}
+    Tone: {tone_hint}
+
+    Technical response to humanize:
     {raw_response}
-
-    Transforme cette réponse en message humain, empathique et clair.
     """
 
         final_response = self.llm(humanization_prompt)

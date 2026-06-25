@@ -930,6 +930,14 @@ else:
 
     # ===== INPUT =====
     user_input = st.chat_input("Écrivez votre message...")
+    st.markdown(
+        '<div style="position:fixed;bottom:6px;left:0;right:0;text-align:center;'
+        'font-size:0.68rem;color:#9CA3AF;pointer-events:none;z-index:9999;">'
+        'En continuant cette conversation, vous acceptez que vos informations soient collectées '
+        'et traitées conformément à notre politique de confidentialité.'
+        '</div>',
+        unsafe_allow_html=True,
+    )
 
     if user_input:
         # Affichage immédiat du message utilisateur + persistance dans l'historique.

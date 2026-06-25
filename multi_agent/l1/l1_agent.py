@@ -29,32 +29,26 @@ class L1Agent:
 
         # 3. construire le prompt
         prompt = f"""
-        Tu es un conseiller expert en support bancaire de niveau L1.
+        You are an expert L1 banking support advisor.
 
-        Problème client :
+        CRITICAL: You MUST reply in the EXACT same language as the user's question.
+        Do NOT translate or switch language under any circumstances.
+        Start with a short professional introduction in that same language.
+
+        Client problem:
         {user_query}
 
-        Données disponibles :
+        Available data:
         {retrieved_data}
 
-        Donne :
-        - un diagnostic clair
-        - une solution recommandée
-        - des étapes concrètes pour résoudre le problème
-
-        Commence toujours ta réponse par une présentation courte et professionnelle.
-        Réponds dans la même langue que la question.
+        Provide:
+        - a clear diagnosis
+        - a recommended solution
+        - concrete steps to resolve the issue
         """
 
         # 4. appel LLM
-        response = self.llm(prompt)
-
-        # 5. préfixer avec la présentation du conseiller L1
-        introduction = (
-            "👨‍💼 **Bonjour, je suis votre conseiller spécialisé AELON.** "
-            "Je prends en charge votre demande et vais vous apporter une aide personnalisée.\n\n"
-        )
-        full_response = introduction + response
+        full_response = self.llm(prompt)
 
         # 6. retour structuré
         return {

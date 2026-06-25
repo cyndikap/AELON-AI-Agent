@@ -284,4 +284,294 @@ Le client a des difficultés avec la double authentification.
 ### Escalade vers L1
 - Si le compte est totalement inaccessible suite à la perte du second facteur
 
+---
+
+## KB-016 — Débit en double
+
+### Problème
+Le client constate que le même montant a été débité deux fois pour une seule opération.
+
+### Symptômes
+- Deux lignes identiques (montant, bénéficiaire, date) dans l'historique
+- Solde anormalement bas après un paiement
+
+### Causes fréquentes
+- Erreur technique du terminal de paiement (double envoi)
+- Problème de synchronisation entre la banque et le marchand
+- Tentative de paiement répétée par l'utilisateur lors d'un timeout
+
+### Résolution
+- Vérifier l'historique des transactions et confirmer le double débit
+- Informer le client que le marchand peut avoir émis un remboursement automatique (délai 3-5 jours)
+- Si aucun remboursement prévu : ouvrir une contestation de transaction
+
+### Escalade vers L1
+- Si le double débit n'est pas résolu sous 5 jours ouvrés
+- Si le montant dépasse 500€
+
+---
+
+## KB-017 — Prélèvement inconnu ou frauduleux
+
+### Problème
+Le client identifie un prélèvement automatique qu'il ne reconnaît pas ou n'a pas autorisé.
+
+### Symptômes
+- Libellé inconnu dans l'historique
+- Montant récurrent non attendu
+- Prélèvement venant d'un pays étranger
+
+### Résolution
+1. Demander au client de vérifier tous ses abonnements actifs (streaming, assurances, etc.)
+2. Rechercher le libellé exact sur Internet pour identifier le créancier
+3. Si fraude confirmée : bloquer la carte et ouvrir une réclamation DSP2
+4. Le client peut révoquer le mandat de prélèvement SEPA dans son espace bancaire
+
+### Escalade vers L1
+- Si le prélèvement est frauduleux et que la carte doit être bloquée
+- Si plusieurs prélèvements non autorisés sont détectés
+
+---
+
+## KB-018 — Plafond de paiement insuffisant sans notification
+
+### Problème
+Le client a atteint son plafond de paiement mais n'a pas été notifié, ce qui a entraîné un refus inattendu.
+
+### Causes fréquentes
+- Notifications désactivées dans l'application
+- Plafond par défaut trop bas pour les habitudes du client
+- Cumul de paiements sur une courte période
+
+### Résolution
+- Vérifier et activer les alertes de plafond dans l'application mobile (Paramètres > Notifications)
+- Proposer une augmentation temporaire ou permanente du plafond (délai : immédiat via app, ou J+1 via conseiller)
+- Expliquer que le plafond est journalier / hebdomadaire (selon la carte)
+
+### Escalade vers L1
+- Si le client souhaite un plafond supérieur au maximum autorisé pour son type de carte
+
+---
+
+## KB-019 — Erreur sur le solde affiché
+
+### Problème
+Le solde visible dans l'application ou sur le relevé ne correspond pas au solde attendu par le client.
+
+### Symptômes
+- Solde différent sur l'application et au DAB
+- Opérations en attente non comptabilisées
+- Solde non mis à jour après un virement reçu
+
+### Causes fréquentes
+- Opérations en cours d'autorisation (non encore compensées)
+- Problème de synchronisation de l'application
+- Décalage entre solde comptable et solde disponible
+
+### Résolution
+- Expliquer la différence entre solde comptable et solde disponible
+- Rafraîchir l'application (tirer vers le bas sur l'écran du compte)
+- Vérifier les opérations en attente dans l'historique détaillé
+- Vider le cache de l'application si l'affichage est figé
+
+### Escalade vers L1
+- Si le solde est inexact depuis plus de 24h sans opération en attente
+- Si une opération créditrice confirmée n'apparaît pas
+
+---
+
+## KB-020 — Frais bancaires jugés injustifiés
+
+### Problème
+Le client conteste des frais prélevés sur son compte (frais de tenue de compte, agios, commissions).
+
+### Types de frais fréquemment contestés
+- Frais de tenue de compte
+- Agios pour découvert
+- Frais d'incident (rejet de chèque ou prélèvement)
+- Commission d'intervention
+- Frais pour retrait hors réseau
+
+### Résolution
+- Communiquer la grille tarifaire en vigueur (accessible dans l'espace bancaire > Documents > Tarifs)
+- Vérifier si le client est éligible à une offre sans frais ou à une formule plus adaptée
+- En cas de contestation fondée (erreur de la banque) : proposer un geste commercial ou un remboursement
+
+### Escalade vers L1
+- Si le client demande un remboursement supérieur aux limites L0
+- Si les frais résultent d'une erreur système avérée
+
+---
+
+## KB-021 — Mauvaise catégorisation des dépenses
+
+### Problème
+Une transaction est classée dans une catégorie incorrecte (ex. : achat alimentaire classé en "Loisirs").
+
+### Résolution
+- Guider le client vers la modification manuelle : Historique > Sélectionner la transaction > Modifier la catégorie
+- Expliquer que la catégorisation automatique est basée sur le libellé du marchand et peut être imprécise
+- Indiquer que la correction manuelle est immédiate et persistante pour ce marchand
+
+### Escalade vers L1
+- Non applicable : ce problème est entièrement gérable en L0
+
+---
+
+## KB-022 — Difficulté à télécharger un relevé bancaire
+
+### Problème
+Le client ne peut pas accéder à ses relevés ou les télécharger au format PDF.
+
+### Causes fréquentes
+- Relevé pas encore disponible (génération en fin de mois)
+- Bloqueur de téléchargement (popup blocker) dans le navigateur
+- Session expirée lors du téléchargement
+- Application mobile : autorisation de stockage non accordée
+
+### Résolution
+- Vérifier que le relevé est disponible (délai : 3 à 5 jours après fin de mois)
+- Sur PC : désactiver le bloqueur de popups pour le site bancaire
+- Sur mobile : vérifier Paramètres du téléphone > Applications > Banque > Autorisations > Stockage
+- Proposer l'envoi par e-mail sécurisé si le téléchargement échoue
+
+### Escalade vers L1
+- Si les relevés sont manquants pour une période antérieure à 6 mois
+- Si l'envoi par e-mail est demandé pour usage légal ou judiciaire
+
+---
+
+## KB-023 — Modification de coordonnées non prise en compte
+
+### Problème
+Le client a modifié son adresse, numéro de téléphone ou e-mail, mais le changement n'est pas effectif.
+
+### Causes fréquentes
+- Modification en attente de validation (pièce justificative non soumise)
+- Délai de propagation (jusqu'à 48h)
+- Erreur lors de la saisie du formulaire
+
+### Résolution
+- Vérifier le statut de la demande dans l'espace client > Mes informations personnelles
+- Si pièce justificative requise (changement d'adresse) : guider le client pour soumettre le document
+- Confirmer que le nouveau contact (e-mail / téléphone) est bien celui souhaité pour les alertes et le MFA
+
+### Escalade vers L1
+- Si le changement est bloqué pour raison réglementaire (vérification d'identité requise)
+- Si le client ne reçoit plus aucune notification suite à la modification
+
+---
+
+## KB-024 — Document indisponible (RIB, attestation de compte, IBAN)
+
+### Problème
+Le client ne trouve pas ou ne peut pas générer un document officiel (RIB, attestation de solde, attestation de domiciliation).
+
+### Résolution
+- RIB / IBAN : disponible dans l'application > Mon compte > Télécharger mon RIB
+- Attestation de compte : disponible dans Espace client > Documents > Attestations (génération instantanée)
+- Attestation de solde : générée sur demande, délai 24h
+- Si le document n'apparaît pas : vider le cache et réessayer, ou utiliser un autre navigateur
+
+### Escalade vers L1
+- Si le client a besoin d'un document certifié ou apostillé
+- Si le document est requis dans un délai urgent pour une démarche administrative ou juridique
+
+---
+
+## KB-025 — Retard dans le traitement d'un dossier
+
+### Problème
+Le client signale qu'une demande (crédit, changement de situation, réclamation) n'a pas été traitée dans les délais annoncés.
+
+### Délais standards de référence
+- Demande de crédit consommation : 72h ouvrées
+- Réclamation standard : 10 jours ouvrés (max légal : 2 mois)
+- Changement de coordonnées : 48h
+- Opposition carte / remboursement fraude : 10 jours ouvrés (DSP2)
+
+### Résolution
+- Vérifier le statut du dossier dans l'espace client > Mes demandes
+- Confirmer la date de dépôt et le type de demande
+- Informer le client du délai réglementaire applicable
+- Si délai dépassé : créer un ticket d'escalade interne avec référence dossier
+
+### Escalade vers L1
+- Systématique si le délai légal est dépassé
+- Si le client a fourni des pièces complémentaires non intégrées au dossier
+
+---
+
+## KB-026 — Temps d'attente long au service client
+
+### Problème
+Le client se plaint d'un temps d'attente excessif avant d'être pris en charge.
+
+### Résolution
+- Proposer les canaux alternatifs sans attente :
+  - Chat en ligne (disponible 8h-22h en semaine)
+  - Messagerie sécurisée dans l'espace client (réponse sous 24h)
+  - FAQ et agent virtuel disponibles 24h/24
+- Informer des horaires de faible affluence téléphonique (généralement 9h-11h et 14h-16h)
+- Proposer un rappel automatique si l'option est disponible
+
+### Escalade vers L1
+- Non applicable : orienter vers les canaux disponibles
+
+---
+
+## KB-027 — Réponse non satisfaisante ou incomplète
+
+### Problème
+Le client estime que la réponse reçue ne résout pas son problème ou est insuffisante.
+
+### Résolution
+- Reformuler le problème avec le client pour s'assurer de bien le comprendre
+- Consulter la base de connaissances pour une réponse plus complète
+- Reconnaître la situation du client sans valider ni nier la plainte
+- Proposer d'escalader à un conseiller spécialisé si la réponse L0 est insuffisante
+
+### Escalade vers L1
+- Si le client demande explicitement à parler à un superviseur
+- Si le problème nécessite un accès à des systèmes back-office
+
+---
+
+## KB-028 — Difficulté à joindre un conseiller
+
+### Problème
+Le client n'arrive pas à contacter un conseiller humain.
+
+### Résolution
+- Rappeler les différents canaux de contact disponibles :
+  - Téléphone : numéro dédié selon le type de carte/compte (disponible sur le site et l'application)
+  - Messagerie sécurisée : espace client > Mes messages > Nouveau message
+  - Chat live : disponible sur l'application mobile et le site web aux heures ouvrées
+  - Rendez-vous en agence : réservable en ligne
+- Informer que certains conseillers sont joignables le samedi matin
+
+### Escalade vers L1
+- Si le problème est urgent (fraude, opposition) : traitement prioritaire déclenché immédiatement sans attente conseiller
+
+---
+
+## KB-029 — Mauvaise gestion d'une réclamation précédente
+
+### Problème
+Le client signale qu'une réclamation antérieure n'a pas été correctement traitée (réponse erronée, dossier perdu, remboursement non effectué).
+
+### Résolution
+1. Retrouver la référence de la réclamation initiale dans l'espace client > Mes réclamations
+2. Vérifier le statut et la date de clôture
+3. Si le dossier a été clôturé à tort : rouvrir et escalader immédiatement en L1
+4. Informer le client de son droit de saisir le Médiateur Bancaire si la réclamation n'est pas résolue sous 2 mois
+
+### Droits du client
+- Droit de saisine du Médiateur Bancaire (gratuit, obligatoire avant recours judiciaire)
+- Coordonnées du médiateur disponibles dans les conditions générales et sur le site de la banque
+
+### Escalade vers L1
+- Systématique pour toute réclamation rouverte
+- Si le client mentionne une action en justice ou le médiateur bancaire
+
 
