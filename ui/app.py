@@ -24,330 +24,472 @@ from multi_agent.orchestrator import Orchestrator
 from utils.category_detector import detect_category, CATEGORY_COLORS, CATEGORY_ICONS
 from utils.export_handler import to_csv_string
 
-
-
-
+# ================= AVATAR =================
+AELON_AVATAR = Path(__file__).resolve().parent / "aelon_avatar.png"
+AELON_AVATAR_BYTES = AELON_AVATAR.read_bytes()
 
 # ================= CONFIG =================
-st.set_page_config(page_title="AELON", page_icon="🤖", layout="wide")
+st.set_page_config(page_title="AELON", page_icon="⚡", layout="wide")
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-    --bg-main: #071629;
-    --bg-side-top: #061224;
-    --bg-side-bottom: #0B2447;
-    --panel: #0C1C34;
-    --border: #19395F;
-    --text-main: #F8FAFC;
-    --text-muted: #B8C7DE;
-    --user-bg: #2563EB;
-    --user-border: #1D4ED8;
-    --assistant-bg: #FDE68A;
-    --assistant-border: #F5C84B;
-    --assistant-text: #111827;
-    --input-bg: #102745;
-    --send-yellow: #FACC15;
+    --bg-deep: #071629;
+    --bg-page: #0A1D3A;
+    --bg-card: #0F2747;
+    --bg-surface: #112D50;
+    --border: #1E446E;
+    --border-bold: 3px solid #1E446E;
+    --border-heavy: 4px solid #1E446E;
+    --shadow: 0 8px 0 0 #0A1D3A;
+    --shadow-sm: 0 4px 0 0 #0A1D3A;
+    --shadow-lg: 0 10px 0 0 #0A1D3A;
+    --yellow: #FACC15;
+    --yellow-bg: #FDE68A;
+    --yellow-border: #F5C84B;
+    --gold: #FBBF24;
+    --blue: #2563EB;
+    --blue-dark: #1D4ED8;
+    --teal: #14B8A6;
+    --pink: #F87171;
+    --text-main: #F1F5F9;
+    --text-muted: #94A3B8;
+    --text-dim: #64748B;
+    /* === SaaS Accent (purple / pink) === */
+    --purple: #7C3AED;
+    --purple-dark: #6D28D9;
+    --purple-light: #8B5CF6;
+    --pink: #EC4899;
+    --gradient-accent: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
+    --gradient-accent-soft: linear-gradient(135deg, rgba(124,58,237,0.15) 0%, rgba(236,72,153,0.10) 100%);
 }
 
-/* Global layout */
 html, body, .stApp {
-    background: var(--bg-main) !important;
-    color: var(--text-main);
+    background: var(--bg-deep) !important;
     font-family: 'Inter', sans-serif;
+    color: var(--text-main);
 }
 
 [data-testid="stAppViewContainer"] {
-    background: transparent !important;
+    background: var(--bg-deep) !important;
 }
 
 .block-container {
-    padding-top: 1rem !important;
-    padding-bottom: 4.2rem !important;
-    max-width: 1080px !important;
+    padding-top: 0.8rem !important;
+    padding-bottom: 5rem !important;
+    max-width: 1100px !important;
 }
 
 h1, h2, h3 {
-    letter-spacing: -0.01em;
+    font-weight: 700;
+    color: var(--text-main);
+    letter-spacing: -0.02em;
+}
+
+h4, h5, h6 {
+    font-weight: 600;
     color: var(--text-main);
 }
 
-p {
-    color: var(--text-muted);
+p, li, span, div {
+    color: var(--text-main);
 }
 
-/* Sidebar */
+/* ===== SIDEBAR ===== */
 section[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, var(--bg-side-top) 0%, var(--bg-side-bottom) 100%);
-    border-right: 1px solid var(--border);
+    background: var(--bg-card) !important;
+    border-right: 3px solid var(--border);
+    box-shadow: 6px 0 20px rgba(0, 0, 0, 0.3) !important;
+    margin: 0;
+    border-radius: 0 !important;
+}
+
+section[data-testid="stSidebar"] > div {
+    padding: 0 !important;
 }
 
 section[data-testid="stSidebar"] * {
-    color: #F8FAFC !important;
+    color: var(--text-main) !important;
 }
 
 .sidebar-brand {
     text-align: center;
-    padding: 12px 8px 6px 8px;
+    padding: 28px 16px 18px 16px;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 12px;
+    background: linear-gradient(180deg, rgba(37, 99, 235, 0.12) 0%, transparent 100%);
 }
 
 .sidebar-avatar {
-    width: 86px;
-    height: 86px;
-    border-radius: 50%;
+    width: 72px;
+    height: 72px;
+    border-radius: 16px;
     object-fit: cover;
-    border: 2px solid #2C6CA6;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+    border: 3px solid var(--border);
+    background: linear-gradient(135deg, var(--blue) 0%, #1E40AF 100%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
 }
 
 .sidebar-title {
-    margin-top: 10px;
-    font-size: 1.25rem;
-    font-weight: 700;
-    letter-spacing: 0.3px;
+    margin-top: 14px;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-main);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
 }
 
 .sidebar-subtitle {
     margin-top: 2px;
-    font-size: 0.82rem;
-    color: #C7D2FE !important;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-dim) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
 }
 
-.sidebar-section {
-    margin-top: 8px;
-    margin-bottom: 4px;
-    font-size: 0.82rem;
+.sidebar-nav-label {
+    font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #93C5FD !important;
+    letter-spacing: 0.12em;
+    padding: 12px 16px 6px 16px;
+    color: var(--text-dim) !important;
 }
 
 .sidebar-sep {
     border: 0;
-    border-top: 1px solid rgba(147, 197, 253, 0.25);
-    margin: 10px 0 12px 0;
+    border-top: 1px solid var(--border);
+    margin: 12px 16px;
+    opacity: 0.6;
 }
 
 .sidebar-info {
-    background: rgba(255, 255, 255, 0.07);
-    border: 1px solid rgba(147, 197, 253, 0.25);
-    border-radius: 10px;
-    padding: 10px 12px;
-    margin-bottom: 8px;
-    font-size: 0.92rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin: 0 12px 10px 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    backdrop-filter: blur(4px);
+}
+
+.sidebar-info b {
+    color: var(--yellow) !important;
 }
 
 .sidebar-footer {
     text-align: center;
-    font-size: 0.78rem;
-    color: #CBD5E1 !important;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--text-dim) !important;
+    padding: 14px 16px;
+    border-top: 1px solid var(--border);
     margin-top: 8px;
-    margin-bottom: 4px;
 }
 
-/* Core controls */
-input, textarea {
-    background-color: #FFFFFF !important;
-    color: var(--text-main) !important;
-    border-radius: 10px !important;
-    border: 1px solid #294A74 !important;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+/* ===== SIDEBAR NAV RADIO ===== */
+[data-testid="stSidebar"] [role="radiogroup"] {
+    gap: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 0 12px;
 }
 
-input:focus, textarea:focus {
-    border-color: #38BDF8 !important;
-    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25) !important;
+[data-testid="stSidebar"] [role="radio"] {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid transparent;
+    border-radius: 10px;
+    padding: 11px 14px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    transition: all 0.18s ease;
 }
 
+[data-testid="stSidebar"] [role="radio"]:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: var(--border);
+}
+
+[data-testid="stSidebar"] [role="radio"][aria-checked="true"] {
+    background: var(--gradient-accent-soft);
+    border-color: var(--purple-light);
+    border-left: 3px solid var(--purple-light);
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.12);
+}
+
+[data-testid="stSidebar"] [role="radio"] svg {
+    display: none !important;
+}
+
+[data-testid="stSidebar"] [role="radio"] > div:first-child {
+    display: none !important;
+}
+
+[data-testid="stSidebar"] [role="radio"] p,
+[data-testid="stSidebar"] [role="radio"] label,
+[data-testid="stSidebar"] [role="radio"] span {
+    font-size: 0.88rem !important;
+    font-weight: 600 !important;
+    color: var(--text-muted) !important;
+}
+
+[data-testid="stSidebar"] [role="radio"][aria-checked="true"] p,
+[data-testid="stSidebar"] [role="radio"][aria-checked="true"] label,
+[data-testid="stSidebar"] [role="radio"][aria-checked="true"] span {
+    color: var(--purple-light) !important;
+    font-weight: 700 !important;
+}
+
+/* ===== SELECT BOX ===== */
 div[data-baseweb="select"] {
-    background-color: #FFFFFF !important;
-    border: 1px solid #294A74 !important;
+    background: var(--bg-surface) !important;
+    border: 2px solid var(--border) !important;
     border-radius: 10px !important;
     min-height: 42px;
+    transition: border-color 0.2s ease;
+}
+
+div[data-baseweb="select"]:focus-within {
+    border-color: var(--yellow) !important;
 }
 
 div[data-baseweb="select"] div,
 div[data-baseweb="select"] span,
 div[data-baseweb="select"] input {
-    color: #0F172A !important;
+    color: var(--text-main) !important;
+    font-weight: 500 !important;
 }
 
-/* Date input — match selectbox text color */
+div[role="listbox"] {
+    background: var(--bg-card) !important;
+    border: 2px solid var(--border) !important;
+    border-radius: 10px !important;
+}
+
+div[role="option"] {
+    color: var(--text-main) !important;
+    font-weight: 500 !important;
+    padding: 10px 14px !important;
+}
+
+div[role="option"]:hover {
+    background: rgba(37, 99, 235, 0.2) !important;
+}
+
+/* ===== DATE INPUT ===== */
 div[data-baseweb="input"] input,
 div[data-baseweb="input"] span,
 [data-testid="stDateInput"] input,
 [data-testid="stDateInput"] span {
-    color: #0F172A !important;
-    background-color: #FFFFFF !important;
+    color: var(--text-main) !important;
+    background: var(--bg-surface) !important;
+    font-weight: 500 !important;
 }
 
-div[role="listbox"] {
-    background-color: #FFFFFF !important;
-}
-
-div[role="option"] {
-    color: #1F2937 !important;
-}
-
-div[role="option"]:hover {
-    background-color: #EEF2FF !important;
-}
-
-button[kind="primary"],
-[data-testid="baseButton-primary"] {
-    background: linear-gradient(135deg, #FACC15, #FBBF24) !important;
-    color: #111827 !important;
-    font-weight: 700 !important;
-    border-radius: 12px !important;
-    border: 1px solid #F4B400 !important;
-}
-
-button {
-    background: linear-gradient(135deg, #1D4ED8, #0EA5E9) !important;
-    color: white !important;
+[data-testid="stDateInput"] > div {
+    border: 2px solid var(--border) !important;
     border-radius: 10px !important;
-    border: none !important;
-    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    background: var(--bg-surface) !important;
+}
+
+/* ===== BUTTONS ===== */
+button {
+    border: 2px solid var(--border) !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    transition: all 0.18s ease !important;
+    padding: 10px 20px !important;
 }
 
 button:hover {
     transform: translateY(-1px);
-    box-shadow: 0 8px 16px rgba(14, 165, 233, 0.25);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.2) !important;
 }
 
-/* Admin cards */
+button[kind="primary"],
+[data-testid="baseButton-primary"] {
+    background: linear-gradient(135deg, var(--yellow) 0%, var(--gold) 100%) !important;
+    color: #0F172A !important;
+    border: 2px solid var(--yellow-border) !important;
+    font-weight: 700 !important;
+}
+
+button:not([kind="primary"]) {
+    background: linear-gradient(135deg, var(--blue) 0%, #1E40AF 100%) !important;
+    color: white !important;
+    border: 2px solid var(--blue-dark) !important;
+}
+
+button[kind="secondary"] {
+    background: linear-gradient(135deg, var(--teal) 0%, #0D9488 100%) !important;
+    border: 2px solid #0D9488 !important;
+}
+
+/* ===== ADMIN CARDS ===== */
 .card {
-    background: var(--panel);
-    border-radius: 14px;
-    padding: 1rem;
+    background: var(--bg-card);
     border: 1px solid var(--border);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.22);
+    border-radius: 14px;
+    padding: 1.2rem;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
 }
 
 .decision-card {
-    background: #0F2747;
-    border: 1px solid #2C4F78;
-    border-radius: 14px;
-    padding: 12px 14px;
-    color: #E2E8F0;
-    box-shadow: 0 10px 20px rgba(2, 6, 23, 0.26);
-    margin-bottom: 0.6rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    color: var(--text-main);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    margin-bottom: 0.8rem;
 }
 
 .decision-card p,
 .decision-card li,
 .decision-card strong {
-    color: #E2E8F0 !important;
+    color: var(--text-main) !important;
 }
 
 .admin-hero {
-    background:
-        linear-gradient(120deg, rgba(37, 99, 235, 0.16) 0%, rgba(14, 165, 233, 0.12) 55%, rgba(250, 204, 21, 0.12) 100%),
-        rgba(13, 34, 61, 0.85);
-    border: 1px solid #2A4D78;
-    border-radius: 16px;
-    padding: 14px 16px;
-    box-shadow: 0 14px 26px rgba(2, 6, 23, 0.35);
-    margin-bottom: 10px;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.12) 0%, rgba(250, 204, 21, 0.08) 100%);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+    margin-bottom: 14px;
 }
 
 .admin-hero h4 {
     margin: 0;
-    color: #F8FAFC;
-    font-size: 1.02rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--yellow);
 }
 
 .admin-hero p {
-    margin: 6px 0 0 0;
-    color: #B8C7DE;
-    font-size: 0.92rem;
+    margin: 8px 0 0 0;
+    font-weight: 400;
+    color: var(--text-muted);
 }
 
+/* ===== METRICS ===== */
 [data-testid="stMetric"] {
-    background: linear-gradient(180deg, #0F2747 0%, #112D50 100%);
-    padding: 15px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
     border-radius: 12px;
-    border: 1px solid #2A4D78;
-    box-shadow: 0 12px 22px rgba(2, 6, 23, 0.28);
-    border-top: 4px solid #FACC15;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    padding: 16px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease;
+    border-top: 3px solid var(--yellow);
 }
 
 [data-testid="stMetric"]:hover {
     transform: translateY(-2px);
-    box-shadow: 0 16px 28px rgba(2, 6, 23, 0.36);
-}
-
-[data-testid="stMetricValue"] {
-    color: #F8FAFC !important;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+    border-color: var(--yellow);
 }
 
 [data-testid="stMetricLabel"] {
-    color: #C7D6EA !important;
+    font-weight: 600 !important;
+    color: var(--text-dim) !important;
+    text-transform: uppercase !important;
+    font-size: 0.68rem !important;
+    letter-spacing: 0.06em !important;
 }
 
-.vega-embed text {
-    fill: #E2E8F0 !important;
+[data-testid="stMetricValue"] {
+    font-weight: 700 !important;
+    color: var(--text-main) !important;
+    font-size: 1.8rem !important;
 }
 
-/* Chat input zone */
-[data-testid="stChatInput"] textarea {
-    background: var(--input-bg) !important;
-    color: #F8FAFC !important;
-    border: 1px solid #2A4D78 !important;
-    box-shadow: 0 6px 14px rgba(2, 6, 23, 0.34) !important;
-    min-height: 52px !important;
-    border-radius: 14px !important;
+/* ===== DATA FRAME ===== */
+[data-testid="stDataFrame"] {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
 }
 
-[data-testid="stChatInput"] textarea:focus {
-    border-color: #38BDF8 !important;
-    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2) !important;
+[data-testid="stDataFrame"] th {
+    background: var(--bg-surface) !important;
+    color: var(--yellow) !important;
+    font-weight: 600 !important;
+    border-bottom: 2px solid var(--border) !important;
 }
 
-[data-testid="stChatInput"] button {
-    background: linear-gradient(135deg, #FACC15, #FBBF24) !important;
-    color: #111827 !important;
-    border: 1px solid #EAB308 !important;
-    border-radius: 12px !important;
+[data-testid="stDataFrame"] td {
+    background: var(--bg-card) !important;
+    color: var(--text-main) !important;
+    font-weight: 400 !important;
 }
 
-[data-testid="chatAvatarIcon-assistant"] {
-    background: linear-gradient(135deg, #FACC15, #FBBF24) !important;
+/* ===== ALERTS ===== */
+[data-testid="stAlert"] {
     border-radius: 10px !important;
-    padding: 8px !important;
-    box-shadow: 0 0 12px rgba(250, 204, 21, 0.52) !important;
+    border: 1px solid var(--border) !important;
 }
 
+[data-testid="stAlert"] > div {
+    background: var(--bg-card) !important;
+    color: var(--text-main) !important;
+    font-weight: 500 !important;
+}
+
+/* ===== CHAT HEADER ===== */
 .chat-header {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    margin-top: 6px;
-    margin-bottom: 14px;
+    margin-top: 4px;
+    margin-bottom: 18px;
 }
 
 .chat-header-avatar {
-    width: 78px;
-    height: 78px;
-    border-radius: 50%;
-    border: 2px solid #f4d165;
-    box-shadow: 0 10px 24px rgba(252, 211, 77, 0.28);
+    width: 76px;
+    height: 76px;
+    border-radius: 18px;
+    border: 2px solid var(--border);
+    background: linear-gradient(135deg, var(--blue) 0%, #1E40AF 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
 }
 
 .chat-header-title {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #F8FAFC;
-    letter-spacing: 0.02em;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text-main);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-top: 4px;
 }
 
+.chat-header-sub {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+/* ===== CHAT MESSAGES ===== */
 [data-testid="stChatMessage"] {
-    margin-bottom: 0.45rem;
+    margin-bottom: 0.7rem;
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
@@ -356,11 +498,11 @@ button:hover {
 [data-testid="stChatMessage"] [data-testid="stChatMessageAvatar"],
 [data-testid="stChatMessage"] [data-testid="stChatMessageAvatarUser"],
 [data-testid="stChatMessage"] [data-testid="stChatMessageAvatarAssistant"] {
-    width: 2.2rem !important;
-    height: 2.2rem !important;
-    min-width: 2.2rem !important;
-    min-height: 2.2rem !important;
-    flex: 0 0 2.2rem !important;
+    width: 2.4rem !important;
+    height: 2.4rem !important;
+    min-width: 2.4rem !important;
+    min-height: 2.4rem !important;
+    flex: 0 0 2.4rem !important;
 }
 
 [data-testid="stChatMessage"] [data-testid="stChatMessageAvatar"] img,
@@ -375,16 +517,136 @@ button:hover {
     object-fit: cover !important;
 }
 
-[data-testid="stChatMessage"] [data-testid="stChatMessageContent"] {
-    position: relative;
-    max-width: min(78%, 760px);
-    border-radius: 18px;
-    padding: 0.7rem 0.9rem;
-    transition: transform 0.28s ease, opacity 0.28s ease, box-shadow 0.28s ease;
-    box-shadow: 0 10px 20px rgba(2, 8, 23, 0.16);
+/* ===== CHAT INPUT ===== */
+[data-testid="stChatInput"] textarea {
+    background: var(--bg-surface) !important;
+    color: var(--text-main) !important;
+    border: 2px solid var(--border) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+    min-height: 54px !important;
+    font-weight: 400;
+    font-size: 0.9rem;
+    padding: 12px 16px !important;
+    transition: border-color 0.2s ease !important;
 }
 
-/* Neutralise le fond natif pour laisser les bulles custom visibles */
+[data-testid="stChatInput"] textarea:focus {
+    border-color: var(--blue) !important;
+    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.15) !important;
+}
+
+[data-testid="stChatInput"] button {
+    background: linear-gradient(135deg, var(--yellow) 0%, var(--gold) 100%) !important;
+    color: #0F172A !important;
+    border: 2px solid var(--yellow-border) !important;
+    border-radius: 12px !important;
+    font-weight: 700 !important;
+    margin-left: 8px !important;
+    font-size: 1.1rem !important;
+}
+
+[data-testid="stChatInput"] button:hover {
+    box-shadow: 0 4px 16px rgba(250, 204, 21, 0.3) !important;
+}
+
+/* ===== NATIVE CHAT BUBBLES ===== */
+/* User message */
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]),
+[data-testid="stChatMessage"][aria-label*="user" i] {
+    flex-direction: row-reverse !important;
+    justify-content: flex-end !important;
+    text-align: right !important;
+    gap: 0.4rem !important;
+    animation: aeSlideRight 0.3s ease both;
+}
+
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"])
+    [data-testid="stChatMessageContent"],
+[data-testid="stChatMessage"][aria-label*="user" i]
+    [data-testid="stChatMessageContent"] {
+    background: var(--blue) !important;
+    border: 1px solid var(--blue-dark) !important;
+    border-radius: 18px 4px 18px 18px !important;
+    color: #FFFFFF !important;
+    display: inline-block;
+    width: fit-content;
+    max-width: min(78%, 760px);
+    margin-left: auto;
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+    padding: 0.7rem 0.9rem !important;
+    font-weight: 400;
+}
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"])
+    [data-testid="stChatMessageContent"] *,
+[data-testid="stChatMessage"][aria-label*="user" i]
+    [data-testid="stChatMessageContent"] * {
+    color: #FFFFFF !important;
+}
+
+/* Assistant message */
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]),
+[data-testid="stChatMessage"][aria-label*="assistant" i] {
+    justify-content: flex-start !important;
+    gap: 0.4rem !important;
+    animation: aeSlideLeft 0.3s ease both;
+}
+
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"])
+    [data-testid="stChatMessageContent"],
+[data-testid="stChatMessage"][aria-label*="assistant" i]
+    [data-testid="stChatMessageContent"] {
+    background: var(--yellow-bg) !important;
+    border: 1px solid var(--yellow-border) !important;
+    border-radius: 4px 18px 18px 18px !important;
+    color: #0F172A !important;
+    display: inline-block;
+    width: fit-content;
+    max-width: min(78%, 760px);
+    box-shadow: 0 4px 12px rgba(250, 204, 21, 0.15);
+    padding: 0.7rem 0.9rem !important;
+    font-weight: 400;
+}
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"])
+    [data-testid="stChatMessageContent"] *,
+[data-testid="stChatMessage"][aria-label*="assistant" i]
+    [data-testid="stChatMessageContent"] * {
+    color: #0F172A !important;
+}
+
+/* User avatar styling */
+[data-testid="stChatMessage"]:has(.ae-bubble-user) [data-testid="stChatMessageAvatar"],
+[data-testid="stChatMessage"]:has(.ae-bubble-user) [data-testid="stChatMessageAvatarUser"],
+[data-testid="stChatMessage"][aria-label*="user" i] [data-testid="stChatMessageAvatar"],
+[data-testid="stChatMessage"][aria-label*="user" i] [data-testid="stChatMessageAvatarUser"] {
+    background: var(--blue) !important;
+    border: 2px solid var(--blue-dark) !important;
+    border-radius: 12px !important;
+    color: #FFFFFF !important;
+}
+
+[data-testid="stChatMessage"]:has(.ae-bubble-user) [data-testid="stChatMessageAvatar"] svg,
+[data-testid="stChatMessage"]:has(.ae-bubble-user) [data-testid="stChatMessageAvatarUser"] svg {
+    fill: #FFFFFF !important;
+    color: #FFFFFF !important;
+    stroke: #FFFFFF !important;
+}
+
+[data-testid="chatAvatarIcon-assistant"] {
+    background: linear-gradient(135deg, var(--yellow) 0%, var(--gold) 100%) !important;
+    border: 2px solid var(--yellow-border) !important;
+    border-radius: 12px !important;
+    padding: 8px !important;
+    color: #0F172A !important;
+}
+
+[data-testid="chatAvatarIcon-assistant"] svg {
+    fill: #0F172A !important;
+    color: #0F172A !important;
+    stroke: #0F172A !important;
+}
+
+/* ===== CUSTOM BUBBLE OVERRIDES ===== */
 [data-testid="stChatMessage"] [data-testid="stChatMessageContent"] {
     background: transparent !important;
     border: none !important;
@@ -401,305 +663,481 @@ button:hover {
     box-shadow: none !important;
 }
 
-.aelon-bubble {
+/* ===== CUSTOM BUBBLE WRAPPERS ===== */
+.ae-bubble {
     position: relative;
     display: inline-block;
     width: fit-content;
     max-width: min(78%, 760px);
     padding: 0.72rem 0.95rem;
-    border-radius: 18px;
-    box-shadow: 0 12px 24px rgba(2, 8, 23, 0.18);
-    transition: transform 0.28s ease, opacity 0.28s ease, box-shadow 0.28s ease;
-    line-height: 1.45;
+    font-weight: 400;
+    line-height: 1.5;
     word-wrap: break-word;
+    font-size: 0.9rem;
 }
 
-.aelon-bubble-wrap {
+.ae-bubble-wrap {
     width: fit-content;
     max-width: 100%;
     display: flex;
+    margin-bottom: 2px;
 }
 
-.aelon-bubble-wrap-user {
+.ae-bubble-wrap-user {
     justify-content: flex-end;
     margin-left: auto;
 }
 
-.aelon-bubble-wrap-assistant {
+.ae-bubble-wrap-assistant {
     justify-content: flex-start;
     margin-right: auto;
 }
 
-.aelon-bubble-user {
-    background: var(--user-bg);
-    border: 1px solid var(--user-border);
-    color: #FFFFFF;
+.ae-bubble-user {
+    background: var(--blue);
+    border: 1px solid var(--blue-dark);
     border-radius: 18px 4px 18px 18px;
-    animation: fadeSlideInRight 0.34s ease both;
+    color: #FFFFFF;
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+    animation: aeSlideRight 0.3s ease both;
 }
 
-.aelon-bubble-user::after {
+.ae-bubble-user::after {
     content: "";
     position: absolute;
-    right: -9px;
-    bottom: 10px;
+    right: -8px;
+    bottom: 12px;
     width: 0;
     height: 0;
-    border-left: 10px solid var(--user-bg);
-    border-top: 8px solid transparent;
-    border-bottom: 8px solid transparent;
+    border-left: 9px solid var(--blue);
+    border-top: 7px solid transparent;
+    border-bottom: 7px solid transparent;
 }
 
-.aelon-bubble-assistant {
-    background: var(--assistant-bg);
-    border: 1px solid var(--assistant-border);
-    color: var(--assistant-text);
+.ae-bubble-assistant {
+    background: var(--yellow-bg);
+    border: 1px solid var(--yellow-border);
     border-radius: 4px 18px 18px 18px;
-    box-shadow: 0 0 0 1px rgba(245, 200, 75, 0.2), 0 0 16px rgba(245, 200, 75, 0.24), 0 8px 20px rgba(245, 200, 75, 0.28);
-    animation: fadeSlideInLeft 0.34s ease both;
+    color: #0F172A;
+    box-shadow: 0 4px 12px rgba(250, 204, 21, 0.12);
+    animation: aeSlideLeft 0.3s ease both;
 }
 
-.aelon-bubble-assistant::before {
+.ae-bubble-assistant::before {
     content: "";
     position: absolute;
-    left: -9px;
-    bottom: 10px;
+    left: -8px;
+    bottom: 12px;
     width: 0;
     height: 0;
-    border-right: 10px solid var(--assistant-bg);
-    border-top: 8px solid transparent;
-    border-bottom: 8px solid transparent;
+    border-right: 9px solid var(--yellow-bg);
+    border-top: 7px solid transparent;
+    border-bottom: 7px solid transparent;
 }
 
-.aelon-bubble p {
+.ae-bubble p {
     margin: 0;
 }
 
-.aelon-bubble * {
+.ae-bubble * {
     color: inherit !important;
     background: transparent !important;
-}
-
-@keyframes fadeSlideInLeft {
-    from {
-        opacity: 0;
-        transform: translateX(-18px) translateY(2px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0) translateY(0);
-    }
-}
-
-@keyframes fadeSlideInRight {
-    from {
-        opacity: 0;
-        transform: translateX(18px) translateY(2px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0) translateY(0);
-    }
-}
-
-/* ===== CHAT MESSAGES — User (right) ===== */
-[data-testid="stChatMessage"]:has(.aelon-bubble-user) {
-    flex-direction: row-reverse !important;
-    justify-content: flex-end !important;
-    text-align: right !important;
-    gap: 0rem !important;
-}
-
-/* Avatar utilisateur: forcer bleu (pas rouge) */
-[data-testid="stChatMessage"]:has(.aelon-bubble-user) [data-testid="stChatMessageAvatar"],
-[data-testid="stChatMessage"]:has(.aelon-bubble-user) [data-testid="stChatMessageAvatarUser"],
-[data-testid="stChatMessage"][aria-label*="user" i] [data-testid="stChatMessageAvatar"],
-[data-testid="stChatMessage"][aria-label*="user" i] [data-testid="stChatMessageAvatarUser"] {
-    background: #2563EB !important;
-    border: 2px solid #1D4ED8 !important;
-    color: #FFFFFF !important;
-}
-
-[data-testid="stChatMessage"]:has(.aelon-bubble-user) [data-testid="stChatMessageAvatar"] svg,
-[data-testid="stChatMessage"]:has(.aelon-bubble-user) [data-testid="stChatMessageAvatarUser"] svg,
-[data-testid="stChatMessage"][aria-label*="user" i] [data-testid="stChatMessageAvatar"] svg,
-[data-testid="stChatMessage"][aria-label*="user" i] [data-testid="stChatMessageAvatarUser"] svg {
-    fill: #FFFFFF !important;
-    color: #FFFFFF !important;
-    stroke: #FFFFFF !important;
-}
-
-[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]),
-[data-testid="stChatMessage"][aria-label*="user" i] {
-    flex-direction: row-reverse !important;
-    justify-content: flex-end !important;
-    text-align: right !important;
-    gap: 0rem !important;
-    animation: fadeSlideInRight 0.36s ease both;
-}
-[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"])
-    [data-testid="stChatMessageContent"],
-[data-testid="stChatMessage"][aria-label*="user" i]
-    [data-testid="stChatMessageContent"] {
-    background: var(--user-bg) !important;
-    border: 1px solid var(--user-border) !important;
-    border-radius: 18px 4px 18px 18px !important;
-    color: #FFFFFF !important;
-    display: inline-block;
-    width: fit-content;
-    max-width: min(78%, 760px);
-    margin-left: auto;
-    box-shadow: 0 12px 24px rgba(37, 99, 235, 0.35);
-}
-[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"])
-    [data-testid="stChatMessageContent"]::after,
-[data-testid="stChatMessage"][aria-label*="user" i]
-    [data-testid="stChatMessageContent"]::after {
-    content: "";
-    position: absolute;
-    right: -9px;
-    bottom: 10px;
-    width: 0;
-    height: 0;
-    border-left: 10px solid var(--user-bg);
-    border-top: 8px solid transparent;
-    border-bottom: 8px solid transparent;
-}
-
-/* ===== CHAT MESSAGES — Assistant (yellow) ===== */
-[data-testid="stChatMessage"]:has(.aelon-bubble-assistant) {
-    flex-direction: row !important;
-    justify-content: flex-start !important;
-    text-align: left !important;
-    gap: 0rem !important;
-}
-
-[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]),
-[data-testid="stChatMessage"][aria-label*="assistant" i] {
-    justify-content: flex-start !important;
-    gap: 0rem !important;
-    animation: fadeSlideInLeft 0.36s ease both;
-}
-[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"])
-    [data-testid="stChatMessageContent"],
-[data-testid="stChatMessage"][aria-label*="assistant" i]
-    [data-testid="stChatMessageContent"] {
-    background: var(--assistant-bg) !important;
-    border: 1px solid var(--assistant-border) !important;
-    border-radius: 3px 18px 18px 18px !important;
-    color: var(--assistant-text) !important;
-    display: inline-block;
-    width: fit-content;
-    max-width: min(78%, 760px);
-    box-shadow: 0 0 0 1px rgba(245, 200, 75, 0.18), 0 0 16px rgba(245, 200, 75, 0.26), 0 8px 20px rgba(245, 200, 75, 0.28);
-}
-[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"])
-    [data-testid="stChatMessageContent"]::before,
-[data-testid="stChatMessage"][aria-label*="assistant" i]
-    [data-testid="stChatMessageContent"]::before {
-    content: "";
-    position: absolute;
-    left: -9px;
-    bottom: 10px;
-    width: 0;
-    height: 0;
-    border-right: 10px solid var(--assistant-bg);
-    border-top: 8px solid transparent;
-    border-bottom: 8px solid transparent;
-}
-
-/* ===== SIDEBAR NAV ITEMS ===== */
-[data-testid="stSidebar"] [role="radiogroup"] {
-    gap: 0;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-}
-
-/* Inactive card — mirrors .sidebar-info exactly */
-[data-testid="stSidebar"] [role="radio"] {
-    background: rgba(255, 255, 255, 0.07);
-    border: 1px solid rgba(147, 197, 253, 0.25);
-    border-radius: 10px;
-    padding: 10px 12px;
-    margin-bottom: 6px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    width: 100%;
-    transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
-}
-
-/* Hover */
-[data-testid="stSidebar"] [role="radio"]:hover {
-    background: rgba(255, 255, 255, 0.11);
-    border-color: rgba(147, 197, 253, 0.5);
-}
-
-/* Active card — yellow accent */
-[data-testid="stSidebar"] [role="radio"][aria-checked="true"] {
-    background: rgba(250, 204, 21, 0.10);
-    border-color: rgba(250, 204, 21, 0.45);
-    border-left: 3px solid #FACC15;
-    box-shadow: 0 4px 14px rgba(250, 204, 21, 0.10);
-}
-
-/* Hide native radio circle dot */
-[data-testid="stSidebar"] [role="radio"] svg {
-    display: none !important;
-}
-
-/* Remove gap left by hidden svg container */
-[data-testid="stSidebar"] [role="radio"] > div:first-child {
-    display: none !important;
-}
-
-/* Nav label text — inactive */
-[data-testid="stSidebar"] [role="radio"] p,
-[data-testid="stSidebar"] [role="radio"] label,
-[data-testid="stSidebar"] [role="radio"] span {
-    font-size: 0.92rem !important;
     font-weight: 500 !important;
-    color: #B8C7DE !important;
-    letter-spacing: 0.01em;
-    transition: color 0.15s ease;
 }
 
-/* Nav label text — active */
-[data-testid="stSidebar"] [role="radio"][aria-checked="true"] p,
-[data-testid="stSidebar"] [role="radio"][aria-checked="true"] label,
-[data-testid="stSidebar"] [role="radio"][aria-checked="true"] span {
-    color: #FACC15 !important;
-    font-weight: 600 !important;
+@keyframes aeSlideLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-16px) translateY(3px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) translateY(0);
+    }
 }
 
-[data-testid="stDataFrame"] {
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 12px 22px rgba(2, 6, 23, 0.28);
+@keyframes aeSlideRight {
+    from {
+        opacity: 0;
+        transform: translateX(16px) translateY(3px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) translateY(0);
+    }
 }
 
-[data-testid="stAlert"] {
-    border-radius: 12px !important;
+/* ===== STREAMLIT NATIVE OVERRIDES ===== */
+.stTextInput, .stTextArea {
+    color: var(--text-main) !important;
+}
+
+div[data-testid="stMarkdownContainer"] p {
+    color: var(--text-main);
+}
+
+/* ===== VEGA CHARTS ===== */
+.vega-embed {
     border: 1px solid var(--border) !important;
+    border-radius: 12px !important;
+    background: var(--bg-card) !important;
+    padding: 8px !important;
 }
 
+.vega-embed text {
+    fill: var(--text-muted) !important;
+    font-weight: 500 !important;
+}
+
+/* ===== EXPANDER ===== */
+.streamlit-expanderHeader {
+    font-weight: 600 !important;
+    color: var(--text-main) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 10px !important;
+    background: var(--bg-card) !important;
+}
+
+.streamlit-expanderContent {
+    border: 1px solid var(--border) !important;
+    border-top: none !important;
+    border-radius: 0 0 10px 10px !important;
+    background: var(--bg-card) !important;
+}
+
+/* ===== TABLES ===== */
+table {
+    border-collapse: collapse !important;
+}
+
+table th {
+    background: var(--bg-surface) !important;
+    color: var(--yellow) !important;
+    font-weight: 600 !important;
+    border: 1px solid var(--border) !important;
+    padding: 10px 12px !important;
+}
+
+table td {
+    background: var(--bg-card) !important;
+    color: var(--text-main) !important;
+    font-weight: 400 !important;
+    border: 1px solid var(--border) !important;
+    padding: 8px 12px !important;
+}
+
+/* ===== RESPONSIVE ===== */
 @media (max-width: 900px) {
     .block-container {
-        padding-top: 0.8rem !important;
-        padding-left: 0.85rem !important;
-        padding-right: 0.85rem !important;
+        padding-top: 0.6rem !important;
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
     }
 
     .chat-header-avatar {
-        width: 64px;
-        height: 64px;
+        width: 60px;
+        height: 60px;
+        font-size: 1.8rem;
     }
 
     .chat-header-title {
-        font-size: 1.1rem;
+        font-size: 1.2rem;
     }
+}
+
+/* ===== USER PROFILE (Sidebar) ===== */
+.user-profile {
+    background: var(--gradient-accent-soft);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin: 0 12px 14px 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-profile-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--gradient-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    border: 2px solid rgba(139, 92, 246, 0.5);
+}
+
+.user-profile-name {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text-main) !important;
+}
+
+.user-profile-role {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--purple-light) !important;
+    margin-top: 2px;
+}
+
+/* ===== SAAS GREETING HEADER ===== */
+.saas-greeting {
+    padding: 4px 0 16px 0;
+}
+
+.saas-greeting-hi {
+    font-size: 1.65rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: var(--text-main);
+}
+
+.saas-greeting-name {
+    background: var(--gradient-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.saas-greeting-sub {
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+/* ===== SAAS BANNER ===== */
+.saas-banner {
+    background: var(--gradient-accent-soft);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 16px;
+    padding: 18px 22px;
+    margin-bottom: 20px;
+}
+
+.saas-banner-tag {
+    display: inline-block;
+    background: rgba(139, 92, 246, 0.2);
+    border: 1px solid var(--purple-light);
+    border-radius: 6px;
+    padding: 2px 10px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--purple-light) !important;
+    margin-bottom: 8px;
+}
+
+.saas-banner-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-main) !important;
+    margin-bottom: 4px;
+}
+
+.saas-banner-desc {
+    font-size: 0.82rem;
+    font-weight: 400;
+    color: var(--text-muted) !important;
+}
+
+/* ===== FILTER TABS (visual) ===== */
+.saas-filter-bar {
+    display: flex;
+    gap: 8px;
+    padding: 4px 0 16px 0;
+    flex-wrap: wrap;
+}
+
+.saas-filter-tab {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 5px 16px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-muted) !important;
+    cursor: default;
+    user-select: none;
+    display: inline-block;
+}
+
+.saas-filter-tab-active {
+    background: var(--gradient-accent-soft);
+    border-color: var(--purple-light);
+    color: var(--purple-light) !important;
+}
+
+/* ===== SETTINGS PAGE ===== */
+.settings-section-header {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-dim) !important;
+    padding-bottom: 10px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+}
+
+.danger-zone-header {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #F87171 !important;
+    padding-bottom: 10px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* ===== AI COLLABORATION SECTION ===== */
+.collab-section-title {
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: var(--text-main) !important;
+    margin-bottom: 3px;
+}
+
+.collab-section-sub {
+    font-size: 0.78rem;
+    color: var(--text-muted) !important;
+    margin-bottom: 14px;
+}
+
+.collab-chat-area {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.collab-bubble {
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 0.87rem;
+    line-height: 1.55;
+    max-width: 90%;
+}
+
+.collab-bubble-user {
+    background: rgba(37, 99, 235, 0.14);
+    border: 1px solid rgba(37, 99, 235, 0.28);
+    border-radius: 12px 3px 12px 12px;
+    margin-left: auto;
+}
+
+.collab-bubble-ai {
+    background: var(--gradient-accent-soft);
+    border: 1px solid rgba(139, 92, 246, 0.28);
+    border-radius: 3px 12px 12px 12px;
+}
+
+.collab-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 4px;
+}
+
+.collab-label-user { color: #60A5FA !important; }
+.collab-label-ai   { color: var(--purple-light) !important; }
+
+.collab-suggestions {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-top: 8px;
+}
+
+.collab-suggestion {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--purple-light);
+    border-radius: 0 10px 10px 0;
+    padding: 9px 14px;
+    font-size: 0.83rem;
+    font-weight: 500;
+    color: var(--text-main) !important;
+}
+
+/* ===== FOOTER ===== */
+.ae-footer {
+    position: fixed;
+    bottom: 6px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 0.62rem;
+    font-weight: 500;
+    color: var(--text-dim);
+    pointer-events: none;
+    z-index: 9999;
+}
+
+/* ===== BADGE ===== */
+.ae-badge {
+    display: inline-block;
+    background: rgba(20, 184, 166, 0.15);
+    border: 1px solid var(--teal);
+    border-radius: 8px;
+    padding: 3px 12px;
+    font-weight: 700;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--teal);
+}
+
+/* ===== SPINNER ===== */
+.stSpinner {
+    border-color: var(--yellow) !important;
+    border-top-color: transparent !important;
+}
+
+div[data-testid="stStatusWidget"] {
+    border: 1px solid var(--border) !important;
+    border-radius: 10px !important;
+    background: var(--bg-card) !important;
+    font-weight: 500 !important;
+    color: var(--text-main) !important;
+}
+
+/* ===== STREAMLIT NATIVE OVERRIDES ===== */
+.stTextInput, .stTextArea {
+    color: var(--text-main) !important;
+}
+
+div[data-testid="stMarkdownContainer"] p {
+    color: var(--text-main);
+}
+
+/* Checkbox / Toggle */
+div[data-baseweb="checkbox"] span,
+div[data-baseweb="checkbox"] label {
+    color: var(--text-main) !important;
+}
+
+/* Slider */
+div[data-baseweb="slider"] div {
+    color: var(--text-main) !important;
+}
+
+/* Tab bar */
+button[data-baseweb="tab"] {
+    color: var(--text-muted) !important;
+    border-bottom: 2px solid transparent !important;
+}
+
+button[data-baseweb="tab"][aria-selected="true"] {
+    color: var(--yellow) !important;
+    border-bottom-color: var(--yellow) !important;
 }
 
 </style>
@@ -725,60 +1163,101 @@ fraud_agent, sentiment_agent, compliance_agent, l0_agent, l1_agent = init_agents
 orchestrator = Orchestrator()
 
 
+# ================= SESSION STATE =================
+if "page" not in st.session_state:
+    st.session_state.page = "💬 Assistant"
+if "dashboard_page" not in st.session_state:
+    st.session_state.dashboard_page = "📊 Vue globale"
+if "collab_chat" not in st.session_state:
+    st.session_state.collab_chat = {}
+
+
+def set_page(p: str):
+    st.session_state.page = p
+
+def set_dashboard_page(p: str):
+    st.session_state.dashboard_page = p
+
+
 # ================= SIDEBAR =================
 with st.sidebar:
     st.markdown(
         """
         <div class="sidebar-brand">
-            <img class="sidebar-avatar" src="https://cdn-icons-png.flaticon.com/512/4712/4712100.png" alt="AELON Avatar" />
+            <img class="sidebar-avatar" src="ui/aelon_avatar.png" alt="AELON" />
             <div class="sidebar-title">AELON</div>
-            <div class="sidebar-subtitle">Banking Assistant</div>
+            <div class="sidebar-subtitle">Banking Intelligence</div>
         </div>
         <hr class="sidebar-sep" />
         """,
         unsafe_allow_html=True,
     )
 
-
-with st.sidebar:
-
-    st.markdown("###  Navigation")
-
-    page = st.selectbox(
-        "",
-        ["💬 Chat Assistant", " Dashboard Admin"]
+    # ── User profile ──────────────────────────────────────────────────
+    _is_admin = st.session_state.page == "📊 Dashboard"
+    st.markdown(
+        f"""
+        <div class="user-profile">
+            <div class="user-profile-avatar">{'🛡️' if _is_admin else '👤'}</div>
+            <div>
+                <div class="user-profile-name">{'Admin' if _is_admin else 'Utilisateur'}</div>
+                <div class="user-profile-role">admin@aelon.ai</div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
 
-    mode = "Utilisateur" if page == "💬 Chat Assistant" else "Admin"
+    st.markdown('<div class="sidebar-nav-label">▼ Navigation</div>', unsafe_allow_html=True)
+
+    # Main navigation
+    chat_active = st.session_state.page == "💬 Assistant"
+    dash_active = st.session_state.page == "📊 Dashboard"
+
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("💬 Assistant", use_container_width=True,
+                     type="primary" if chat_active else "secondary"):
+            set_page("💬 Assistant")
+    with col2:
+        if st.button("📊 Dashboard", use_container_width=True,
+                     type="primary" if dash_active else "secondary"):
+            set_page("📊 Dashboard")
+
+    mode = "Utilisateur" if st.session_state.page == "💬 Assistant" else "Admin"
 
     if mode == "Admin":
         st.markdown('<hr class="sidebar-sep" />', unsafe_allow_html=True)
-        st.markdown('<div class="sidebar-section">Dashboard</div>', unsafe_allow_html=True)
-        page = st.radio(
-            "Page dashboard",
-            [
-                "📊 Vue globale",
-                "📈 Analyse des sentiments",
-                "🔁 Analyse des escalades (L0 / L1)",
-                "🚨 Analyse des fraudes",
-                "📂 Analyse des requêtes / catégories",
-            ],
-            label_visibility="collapsed",
-        )
-    else:
-        page = None
+        st.markdown('<div class="sidebar-nav-label">▼ Modules</div>', unsafe_allow_html=True)
+
+        dash_pages = [
+            "📊 Vue globale",
+            "📈 Analyse des sentiments",
+            "🔁 Analyse des escalades (L0 / L1)",
+            "🚨 Analyse des fraudes",
+            "📂 Analyse des requêtes / catégories",
+            "⚙️ Paramètres",
+        ]
+
+        current_dash = st.session_state.dashboard_page
+
+        for dp in dash_pages:
+            is_active = dp == current_dash
+            if st.button(dp, use_container_width=True,
+                         type="primary" if is_active else "secondary",
+                         key=f"dash_{dp}"):
+                set_dashboard_page(dp)
 
     st.markdown('<hr class="sidebar-sep" />', unsafe_allow_html=True)
     if mode == "Utilisateur":
-        st.markdown('<div class="sidebar-section">Informations</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="sidebar-info">Mode actif : <b>{mode}</b></div>', unsafe_allow_html=True)
-        st.markdown('<div class="sidebar-info">Ne partagez jamais vos identifiants</div>', unsafe_allow_html=True)
-        st.markdown('<div class="sidebar-info">Paiements et fraude : priorité élevée</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="sidebar-info">Dernière mise à jour : {datetime.now().strftime("%H:%M")}</div>', unsafe_allow_html=True)
+        st.markdown('<div class="sidebar-nav-label">▼ Informations</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="sidebar-info">🔸 Mode actif : <b>{mode}</b></div>', unsafe_allow_html=True)
+        st.markdown('<div class="sidebar-info">🔒 Ne partagez jamais vos identifiants</div>', unsafe_allow_html=True)
+        st.markdown('<div class="sidebar-info">⚡ Paiements et fraude : priorité élevée</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="sidebar-info">🕐 Session : {datetime.now().strftime("%H:%M")}</div>', unsafe_allow_html=True)
         st.markdown('<hr class="sidebar-sep" />', unsafe_allow_html=True)
 
-    st.markdown('<div class="sidebar-section"></div>', unsafe_allow_html=True)
-    st.markdown('<div class="sidebar-footer">© AELON - 2026</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sidebar-footer">AELON — 2026</div>', unsafe_allow_html=True)
 
 # ================= STORAGE =================
 INTERACTIONS_FILE = "interactions.json"
@@ -793,30 +1272,124 @@ def save_data(data):
 
 
 def render_chat_bubble(role: str, content: str) -> None:
-    """Render chat content with stable custom bubbles independent of Streamlit internals."""
-    bubble_class = "aelon-bubble-user" if role == "user" else "aelon-bubble-assistant"
-    wrap_class = "aelon-bubble-wrap-user" if role == "user" else "aelon-bubble-wrap-assistant"
+    """Render chat content with custom bubbles matching the project style."""
+    bubble_class = "ae-bubble-user" if role == "user" else "ae-bubble-assistant"
+    wrap_class = "ae-bubble-wrap-user" if role == "user" else "ae-bubble-wrap-assistant"
     safe_content = html.escape(str(content)).replace("\n", "<br>")
     st.markdown(
         (
-            f'<div class="aelon-bubble-wrap {wrap_class}">'
-            f'<div class="aelon-bubble {bubble_class}">{safe_content}</div>'
+            f'<div class="ae-bubble-wrap {wrap_class}">'
+            f'<div class="ae-bubble {bubble_class}">{safe_content}</div>'
             f'</div>'
         ),
         unsafe_allow_html=True,
     )
 
+
+# ================= DASHBOARD COLLAB =================
+@st.cache_resource
+def get_dashboard_llm() -> AzureChatLLM:
+    return AzureChatLLM()
+
+
+def _collab_ask(llm: AzureChatLLM, system_prompt: str, history: list, question: str) -> str:
+    msgs = [{"role": "system", "content": system_prompt}]
+    for m in history[-6:]:
+        msgs.append(m)
+    msgs.append({"role": "user", "content": question})
+    resp = llm.client.chat.completions.create(
+        model=llm.deployment,
+        messages=msgs,
+        temperature=0.35,
+        max_tokens=400,
+    )
+    return resp.choices[0].message.content.strip()
+
+
+def render_collab_section(page_key: str, context: str, suggestions: list) -> None:
+    """Inline AI collaboration chat + suggestions for a dashboard page."""
+    st.markdown("---")
+    st.markdown(
+        '<div class="collab-section-title">💬 Analyse avec l\'assistant IA</div>'
+        '<div class="collab-section-sub">Posez vos questions sur les données pour obtenir des recommandations ciblées.</div>',
+        unsafe_allow_html=True,
+    )
+
+    chat_key = f"collab_{page_key}"
+    if chat_key not in st.session_state.collab_chat:
+        st.session_state.collab_chat[chat_key] = []
+    history = st.session_state.collab_chat[chat_key]
+
+    if history:
+        bubbles = '<div class="collab-chat-area">'
+        for msg in history:
+            safe = html.escape(msg["content"]).replace("\n", "<br>")
+            if msg["role"] == "user":
+                bubbles += (
+                    f'<div class="collab-bubble collab-bubble-user">'
+                    f'<div class="collab-label collab-label-user">👤 Admin</div>{safe}</div>'
+                )
+            else:
+                bubbles += (
+                    f'<div class="collab-bubble collab-bubble-ai">'
+                    f'<div class="collab-label collab-label-ai">🤖 IA</div>{safe}</div>'
+                )
+        bubbles += '</div>'
+        st.markdown(bubbles, unsafe_allow_html=True)
+
+    with st.form(key=f"collab_form_{page_key}", clear_on_submit=True):
+        user_q = st.text_input(
+            "Question",
+            placeholder="Ex : Quelles sont les causes d\'escalade ? Que devrions-nous améliorer ?",
+            label_visibility="collapsed",
+        )
+        submitted = st.form_submit_button("💬 Envoyer", use_container_width=True)
+
+    if submitted and user_q.strip():
+        system_prompt = (
+            "Tu es un assistant IA expert en analyse de données bancaires pour le système AELON. "
+            f"Contexte du tableau de bord : {context} "
+            "Analyse les données, explique les insights, identifie les causes racines et propose des actions. "
+            "Réponds en français en 3-4 phrases max. Pose une question de suivi si pertinent."
+        )
+        try:
+            _llm = get_dashboard_llm()
+            with st.spinner("L'IA analyse..."):
+                ai_response = _collab_ask(_llm, system_prompt, history, user_q.strip())
+        except Exception as exc:
+            ai_response = f"⚠️ Erreur lors de l'analyse : {exc}"
+
+        st.session_state.collab_chat[chat_key].append({"role": "user", "content": user_q.strip()})
+        st.session_state.collab_chat[chat_key].append({"role": "assistant", "content": ai_response})
+        st.rerun()
+
+    sug_html = "".join(
+        f'<div class="collab-suggestion">&rarr;&nbsp;{html.escape(s)}</div>'
+        for s in suggestions
+    )
+    st.markdown(
+        f'<div style="font-size:0.8rem;font-weight:700;margin:14px 0 8px 0;color:var(--text-dim)">'
+        f'💡 Actions suggérées</div>'
+        f'<div class="collab-suggestions">{sug_html}</div>',
+        unsafe_allow_html=True,
+    )
+
+
 # ================= ADMIN =================
-if mode == "Admin":
+if st.session_state.page == "📊 Dashboard":
     import pandas as pd
     import altair as alt
 
-    st.title("📊 Dashboard Administrateur — AELON")
     st.markdown(
         """
-        <div class="admin-hero">
-            <h4>Centre de Décision Métier</h4>
-            <p>Analysez les tendances, comprenez les causes et appliquez des recommandations concrètes.</p>
+        <div class="saas-greeting">
+            <div class="saas-greeting-hi">Bonjour, <span class="saas-greeting-name">Admin</span> &#x1F44B;</div>
+            <div class="saas-greeting-sub">Bienvenue sur votre tableau de bord AELON</div>
+        </div>
+        <div class="saas-banner">
+            <div class="saas-banner-tag">&#x26A1; Live</div>
+            <div class="saas-banner-title">Centre de D&#233;cision M&#233;tier</div>
+            <div class="saas-banner-desc">Analysez les tendances, comprenez les causes et appliquez des recommandations concr&#232;tes.</div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -824,7 +1397,7 @@ if mode == "Admin":
 
     data = load_data()
     if not data:
-        st.warning("⚠️ Pas de données disponibles. Lancez quelques conversations en mode Utilisateur d'abord.")
+        st.warning("⚠️ Pas de données disponibles. Lancez quelques conversations en mode Assistant d'abord.")
         st.stop()
 
     df = pd.DataFrame(data)
@@ -866,7 +1439,7 @@ if mode == "Admin":
 
     # Filters
     st.sidebar.markdown("---")
-    st.sidebar.markdown("### 🔍 Filtres Dashboard")
+    st.sidebar.markdown('<div class="sidebar-nav-label">▼ Filtres</div>', unsafe_allow_html=True)
 
     categories_opts = ["Toutes"] + sorted(df["category"].dropna().unique().tolist())
     sel_category = st.sidebar.selectbox("Catégorie", categories_opts)
@@ -915,7 +1488,9 @@ if mode == "Admin":
 
     st.markdown("---")
 
-    if page == "📊 Vue globale":
+    dp = st.session_state.dashboard_page
+
+    if dp == "📊 Vue globale":
         st.subheader("📊 Vue globale")
 
         n_escalated = int(filtered["escalated"].sum())
@@ -941,7 +1516,7 @@ if mode == "Admin":
                 y=alt.Y("count:Q", title="Volume"),
                 color=alt.Color(
                     "agent:N",
-                    scale=alt.Scale(domain=["L0", "L1", "blocked"], range=["#2563EB", "#14B8A6", "#EF4444"]),
+                    scale=alt.Scale(domain=["L0", "L1", "blocked"], range=["#2563EB", "#14B8A6", "#F87171"]),
                     legend=alt.Legend(title="Agent"),
                 ),
                 tooltip=["day:T", "agent:N", "count:Q"],
@@ -963,8 +1538,17 @@ if mode == "Admin":
             "Suivre hebdomadairement les KPI risque/satisfaction pour ajuster les actions.",
         ]
         render_decision_cards(analysis, recs)
+        render_collab_section(
+            "vue_globale",
+            f"Vue globale — {total} interactions, escalade {escalation_rate:.1f}%, fraude moyenne {avg_fraud:.1f}, sentiment négatif {neg_rate:.1f}%, catégorie principale : {top_cat}. Analyse : {analysis}",
+            [
+                "Automatiser les réponses sur la catégorie dominante",
+                "Analyser les pics d'escalade par plage horaire",
+                "Renforcer la surveillance proactive des risques fraude",
+            ],
+        )
 
-    elif page == "📈 Analyse des sentiments":
+    elif dp == "📈 Analyse des sentiments":
         st.subheader("📈 Analyse des sentiments")
 
         sent_counts = filtered["sentiment"].value_counts().reset_index()
@@ -984,7 +1568,7 @@ if mode == "Admin":
 
         neg_rate = float(filtered["sentiment"].isin(["frustrated", "angry", "negative"]).mean() * 100)
         if neg_rate >= 35:
-            analysis = "Un nombre important d’interactions est associé à un sentiment négatif, ce qui peut indiquer des problèmes dans l’expérience client."
+            analysis = "Un nombre important d'interactions est associé à un sentiment négatif, ce qui peut indiquer des problèmes dans l'expérience client."
         elif neg_rate >= 20:
             analysis = "Le sentiment client devient sensible sur une part notable des échanges. Une action préventive est recommandée pour éviter une dégradation."
         else:
@@ -996,8 +1580,17 @@ if mode == "Admin":
             "Créer des réponses courtes et rassurantes pour les situations à forte frustration.",
         ]
         render_decision_cards(analysis, recs)
+        render_collab_section(
+            "sentiments",
+            f"Analyse des sentiments — taux négatif {neg_rate:.1f}%. Analyse : {analysis}",
+            [
+                "Améliorer les réponses sur les cas de frustration fréquents",
+                "Créer des scripts de réponse pour les sujets sensibles",
+                "Mettre en place un suivi des sentiments en temps réel",
+            ],
+        )
 
-    elif page == "🔁 Analyse des escalades (L0 / L1)":
+    elif dp == "🔁 Analyse des escalades (L0 / L1)":
         st.subheader("🔁 Analyse des escalades (L0 / L1)")
 
         agent_counts = filtered["agent"].value_counts().reset_index()
@@ -1010,7 +1603,7 @@ if mode == "Admin":
                 y=alt.Y("count:Q", title="Nombre de cas"),
                 color=alt.Color(
                     "agent:N",
-                    scale=alt.Scale(domain=["L0", "L1", "blocked"], range=["#2563EB", "#14B8A6", "#EF4444"]),
+                    scale=alt.Scale(domain=["L0", "L1", "blocked"], range=["#2563EB", "#14B8A6", "#F87171"]),
                     legend=None,
                 ),
                 tooltip=["agent:N", "count:Q"],
@@ -1021,7 +1614,7 @@ if mode == "Admin":
 
         l1_rate = float((filtered["agent"] == "L1").mean() * 100)
         if l1_rate >= 30:
-            analysis = "Le taux d’escalade est élevé, ce qui suggère que les requêtes ne sont pas suffisamment traitées au niveau L0."
+            analysis = "Le taux d'escalade est élevé, ce qui suggère que les requêtes ne sont pas suffisamment traitées au niveau L0."
         elif l1_rate >= 18:
             analysis = "Le volume d'escalade reste significatif. Certains motifs pourraient être absorbés par une meilleure couverture L0."
         else:
@@ -1033,8 +1626,17 @@ if mode == "Admin":
             "Mettre en place une revue hebdomadaire des raisons d'escalade.",
         ]
         render_decision_cards(analysis, recs)
+        render_collab_section(
+            "escalades",
+            f"Analyse des escalades — taux L1 {l1_rate:.1f}%. Analyse : {analysis}",
+            [
+                "Enrichir la base de connaissances L0 sur les motifs d'escalade",
+                "Revoir le routage automatique des requêtes complexes",
+                "Mettre en place des seuils d'alerte pour le taux d'escalade",
+            ],
+        )
 
-    elif page == "🚨 Analyse des fraudes":
+    elif dp == "🚨 Analyse des fraudes":
         st.subheader("🚨 Analyse des fraudes")
 
         fraud_counts = filtered.groupby("risk_level").size().reset_index(name="count")
@@ -1070,8 +1672,17 @@ if mode == "Admin":
             "Analyser les motifs textuels des cas suspects pour affiner les règles.",
         ]
         render_decision_cards(analysis, recs)
+        render_collab_section(
+            "fraudes",
+            f"Analyse des fraudes — taux fraude {fraud_rate:.1f}%, score moyen {filtered['fraud_score'].mean():.1f}. Analyse : {analysis}",
+            [
+                "Affiner les règles de détection sur les patterns récurrents",
+                "Mettre en place des alertes temps réel pour les scores élevés",
+                "Analyser les faux positifs pour réduire les blocages inutiles",
+            ],
+        )
 
-    else:
+    elif dp == "📂 Analyse des requêtes / catégories":
         st.subheader("📂 Analyse des requêtes / catégories")
 
         cat_counts = filtered["category"].value_counts().reset_index()
@@ -1114,18 +1725,64 @@ if mode == "Admin":
             "Mesurer l'impact des actions via un suivi hebdomadaire des volumes par catégorie.",
         ]
         render_decision_cards(analysis, recs)
+        render_collab_section(
+            "categories",
+            f"Analyse des catégories — top catégorie {top_ratio:.1f}% du volume. Analyse : {analysis}",
+            [
+                "Automatiser les réponses sur les 3 catégories les plus fréquentes",
+                "Créer des workflows dédiés par catégorie prioritaire",
+                "Optimiser les temps de réponse sur les catégories à fort volume",
+            ],
+        )
 
-    st.markdown("---")
-    export_data = filtered.copy()
-    export_data["timestamp"] = export_data["timestamp"].astype(str)
-    csv_content = to_csv_string(export_data.to_dict(orient="records"))
-    st.download_button(
-        label="📥 Exporter les interactions (CSV)",
-        data=csv_content,
-        file_name=f"aelon_interactions_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
-        mime="text/csv",
-        use_container_width=True,
-    )
+    elif dp == "⚙️ Paramètres":
+        st.subheader("⚙️ Paramètres")
+
+        # ── Profil ──────────────────────────────────────
+        st.markdown('<div class="settings-section-header">👤 Profil</div>', unsafe_allow_html=True)
+        col_p1, col_p2 = st.columns(2)
+        with col_p1:
+            st.text_input("Nom d'affichage", value="Admin", key="settings_name")
+        with col_p2:
+            st.text_input("Email", value="admin@aelon.ai", key="settings_email")
+        st.button("💾 Sauvegarder le profil", key="settings_save")
+
+        st.markdown("---")
+
+        # ── Abonnement ──────────────────────────────────
+        st.markdown('<div class="settings-section-header">💳 Abonnement</div>', unsafe_allow_html=True)
+        col_s1, col_s2 = st.columns([3, 1])
+        with col_s1:
+            st.markdown('<div class="ae-badge">✅ Plan Pro — Actif</div>', unsafe_allow_html=True)
+            st.markdown(
+                '<p style="margin-top:8px;font-size:0.85rem">Renouvellement : 25 juillet 2026 &nbsp;·&nbsp; Facturation mensuelle</p>',
+                unsafe_allow_html=True,
+            )
+        with col_s2:
+            st.button("🔄 Gérer", key="settings_plan")
+
+        st.markdown("---")
+
+        # ── Zone de danger ───────────────────────────────
+        st.markdown('<div class="danger-zone-header">⚠️ Zone de danger</div>', unsafe_allow_html=True)
+        col_d1, col_d2 = st.columns(2)
+        with col_d1:
+            st.button("🗑️ Supprimer toutes les données", key="settings_delete", use_container_width=True)
+        with col_d2:
+            st.button("📞 Contacter le support", key="settings_support", use_container_width=True)
+
+    if dp != "⚙️ Paramètres":
+        st.markdown("---")
+        export_data = filtered.copy()
+        export_data["timestamp"] = export_data["timestamp"].astype(str)
+        csv_content = to_csv_string(export_data.to_dict(orient="records"))
+        st.download_button(
+            label="📥 Exporter les interactions (CSV)",
+            data=csv_content,
+            file_name=f"aelon_interactions_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+            mime="text/csv",
+            use_container_width=True,
+        )
 
 # ================= USER =================
 else:
@@ -1137,21 +1794,22 @@ else:
         #  message de bienvenue
         st.session_state.messages.append({
             "role": "assistant",
-            "content": "👋 Bonjour, je suis AELON, votre assistant bancaire.\n\nComment puis-je vous aider aujourd’hui ?"
+            "content": "👋 Bonjour, je suis **AELON**, votre assistant bancaire intelligent.\n\nComment puis-je vous aider aujourd'hui ?"
         })
 
         #  message sécurité
         st.session_state.messages.append({
             "role": "assistant",
-            "content": "🔐 **Important :** Ne partagez jamais vos informations sensibles (mot de passe, code OTP, numéro de carte)."
+            "content": "🔒 **Important :** Ne partagez jamais vos informations sensibles (mot de passe, code OTP, numéro de carte)."
         })
 
     # ===== HEADER =====
     st.markdown(
         """
         <div class="chat-header">
-            <img class="chat-header-avatar" src="https://cdn-icons-png.flaticon.com/512/4712/4712100.png" alt="AELON - Banking Assistant" />
-            <div class="chat-header-title">Assistant AELON</div>
+            <img class="chat-header-avatar" src="ui/aelon_avatar.png" alt="AELON" />
+            <div class="chat-header-title">AELON</div>
+            <div class="chat-header-sub">Banking Intelligence</div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -1163,7 +1821,7 @@ else:
     # ===== CHAT HISTORY =====
     for msg in st.session_state.messages:
         if msg["role"] == "assistant":
-            with st.chat_message("assistant", avatar="🤖"):
+            with st.chat_message("assistant", avatar=AELON_AVATAR_BYTES):
                 render_chat_bubble(msg["role"], msg["content"])
         else:
             with st.chat_message(msg["role"]):
@@ -1172,8 +1830,7 @@ else:
     # ===== INPUT =====
     user_input = st.chat_input("Écrivez votre message...")
     st.markdown(
-        '<div style="position:fixed;bottom:6px;left:0;right:0;text-align:center;'
-        'font-size:0.68rem;color:#9CA3AF;pointer-events:none;z-index:9999;">'
+        '<div class="ae-footer">'
         'En continuant cette conversation, vous acceptez que vos informations soient collectées '
         'et traitées conformément à notre politique de confidentialité.'
         '</div>',
@@ -1224,7 +1881,7 @@ else:
                 escalation_msg = (
                     "🔄 Je transmets votre demande à un conseiller."
                 )
-                with st.chat_message("assistant", avatar="🤖"):
+                with st.chat_message("assistant", avatar=AELON_AVATAR_BYTES):
                     render_chat_bubble("assistant", escalation_msg)
                 st.session_state.messages.append({
                     "role": "assistant",
@@ -1232,7 +1889,7 @@ else:
                 })
 
         # ===== AFFICHAGE =====
-        with st.chat_message("assistant", avatar="🤖"):
+        with st.chat_message("assistant", avatar=AELON_AVATAR_BYTES):
             render_chat_bubble("assistant", response)
 
         st.session_state.messages.append({
