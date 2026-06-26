@@ -1310,6 +1310,66 @@ button[data-baseweb="tab"][aria-selected="true"] {
     color: var(--yellow) !important;
     border-bottom-color: var(--yellow) !important;
 }
+             /* ===== FIX DATE INPUT STREAMLIT ===== */
+
+/* Input global */
+[data-testid="stDateInput"] input {
+    color: #ffffff !important;   /* texte visible */
+}
+
+/* Popup calendrier */
+div[role="dialog"],
+div[data-baseweb="popover"],
+div[data-baseweb="datepicker"],
+div[data-baseweb="calendar"] {
+    background: #ffffff !important;
+    color: #111827 !important;
+}
+
+/* S'assurer que les libelles des jours (L M M J V S D) sont visibles */
+div[data-baseweb="calendar"] [role="columnheader"],
+div[data-baseweb="calendar"] [role="columnheader"] *,
+div[role="dialog"] [role="columnheader"],
+div[role="dialog"] [role="columnheader"] * {
+    color: #111827 !important;
+    opacity: 1 !important;
+    font-weight: 700 !important;
+}
+
+/* Chiffres des jours */
+div[data-baseweb="calendar"] [role="gridcell"],
+div[data-baseweb="calendar"] [role="gridcell"] *,
+div[data-baseweb="calendar"] button,
+div[role="dialog"] [role="gridcell"],
+div[role="dialog"] [role="gridcell"] *,
+div[role="dialog"] button {
+    color: #111827 !important;
+    fill: #111827 !important;
+    opacity: 1 !important;
+    font-weight: 600 !important;
+}
+
+/* Jour selectionne */
+div[data-baseweb="calendar"] button[aria-selected="true"],
+div[role="dialog"] button[aria-selected="true"] {
+    background: #2563EB !important;
+    color: #ffffff !important;
+    border-radius: 8px !important;
+}
+
+/* Jours hors mois en gris mais lisibles */
+div[data-baseweb="calendar"] button[disabled],
+div[role="dialog"] button[disabled] {
+    color: #6B7280 !important;
+    opacity: 1 !important;
+}
+
+/* Header (mois / année) */
+div[role="heading"],
+div[data-baseweb="calendar"] [role="heading"] {
+    color: #111827 !important;
+    font-weight: 700 !important;
+}
 
 </style>
 """, unsafe_allow_html=True)
@@ -1418,36 +1478,34 @@ with st.sidebar:
         st.markdown('<div class="sidebar-nav-label">▼ Modules</div>', unsafe_allow_html=True)
 
         dash_pages = [
-            ("Vue globale", "Vue globale"),
-            ("Analytics", "Analyse des fraudes"),
-            ("Monitoring IA", "Analyse des sentiments"),
-            ("Catégories", "Catégories"),
-            ("AELON", "Assistant IA"),
-            ("Paramètres", "Paramètres"),
+            ("Vue globale", "Vue globale", None),
+            ("Analytics", "Analyse des fraudes", None),
+            ("Monitoring IA", "Analyse des sentiments", None),
+            ("Catégories", "Catégories", None),
+            ("connexion", "DETAIL_CATEGORY", "connexion"),
+            ("paiement", "DETAIL_CATEGORY", "paiement"),
+            ("fraude", "DETAIL_CATEGORY", "fraude"),
+            ("carte", "DETAIL_CATEGORY", "carte"),
+            ("autre", "DETAIL_CATEGORY", "autre"),
+            ("Paramètres", "Paramètres", None),
         ]
 
         current_dash = st.session_state.dashboard_page
 
-        for label, internal_dp in dash_pages:
-            is_active = internal_dp == current_dash or (internal_dp == "Catégories" and current_dash == "DETAIL_CATEGORY")
+        for label, internal_dp, category_key in dash_pages:
+            is_active = internal_dp == current_dash
+            if internal_dp == "DETAIL_CATEGORY":
+                is_active = current_dash == "DETAIL_CATEGORY" and st.session_state.selected_category == category_key
             if st.button(label, use_container_width=True,
                          type="primary" if is_active else "secondary",
                          key=f"dash_{label}"):
-                set_dashboard_page(internal_dp)
+                if internal_dp == "DETAIL_CATEGORY" and category_key:
+                    open_category_detail(category_key)
+                else:
+                    set_dashboard_page(internal_dp)
 
         st.markdown('<hr class="sidebar-sep" />', unsafe_allow_html=True)
-        st.markdown('<div class="sidebar-nav-label">▼ Catégories</div>', unsafe_allow_html=True)
-        category_options = ["Vue globale"] + list(CATEGORY_ICONS.keys())
-        if st.session_state.sidebar_category_nav not in category_options:
-            st.session_state.sidebar_category_nav = st.session_state.selected_category or "Vue globale"
-        st.radio(
-            label="Catégories",
-            options=category_options,
-            index=category_options.index(st.session_state.sidebar_category_nav) if st.session_state.sidebar_category_nav in category_options else 0,
-            key="sidebar_category_nav",
-            label_visibility="collapsed",
-            on_change=open_sidebar_category,
-        )
+        
 
     st.markdown('<hr class="sidebar-sep" />', unsafe_allow_html=True)
     if mode == "Utilisateur":
@@ -1796,14 +1854,8 @@ if st.session_state.page == "📊 Dashboard":
 
     # Filters
     st.sidebar.markdown("---")
-    st.sidebar.markdown('<div class="sidebar-nav-label">▼ Filtres</div>', unsafe_allow_html=True)
 
-    categories_opts = ["Toutes"] + sorted(df["category"].dropna().unique().tolist())
-    sel_category = st.sidebar.selectbox("Catégorie", categories_opts)
-
-    agents_opts = ["Tous"] + sorted(df["agent"].dropna().unique().tolist())
-    sel_agent = st.sidebar.selectbox("Agent", agents_opts)
-
+ 
     valid_dates = df["timestamp"].dropna()
     if len(valid_dates) > 0:
         min_date = valid_dates.min().date()
@@ -1815,10 +1867,7 @@ if st.session_state.page == "📊 Dashboard":
         date_range = None
 
     filtered = df.copy()
-    if sel_category != "Toutes":
-        filtered = filtered[filtered["category"] == sel_category]
-    if sel_agent != "Tous":
-        filtered = filtered[filtered["agent"] == sel_agent]
+    
     if date_range and len(date_range) == 2:
         filtered = filtered[
             (filtered["timestamp"].dt.date >= date_range[0])
@@ -1881,6 +1930,9 @@ if st.session_state.page == "📊 Dashboard":
     st.markdown("---")
 
     dp = st.session_state.dashboard_page
+    if dp == "Assistant IA":
+        dp = "Vue globale"
+        st.session_state.dashboard_page = "Vue globale"
 
     if dp == "Vue globale":
         open_section_card()
@@ -1991,10 +2043,36 @@ if st.session_state.page == "📊 Dashboard":
 
         with col_right:
             st.markdown("### 📊 Performance")
-            st.write("Top agents :")
-            st.write(analytics.get("top_services", {}))
-            st.write("Sévérité :")
-            st.write(analytics.get("severity_dist", {}))
+            top_services = analytics.get("top_services", {}) or {}
+            severity_dist = analytics.get("severity_dist", {}) or {}
+
+            top_agents_rows = "".join(
+                f'<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.08);">'
+                f'<span style="color:#E2E8F0;font-weight:600;">{html.escape(str(k))}</span>'
+                f'<span style="color:#FFFFFF;font-weight:700;">{html.escape(str(v))}</span>'
+                f'</div>'
+                for k, v in top_services.items()
+            ) or '<div style="color:#94A3B8;">Aucune donnée</div>'
+
+            severity_rows = "".join(
+                f'<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.08);">'
+                f'<span style="color:#E2E8F0;font-weight:600;">{html.escape(str(k))}</span>'
+                f'<span style="color:#FFFFFF;font-weight:700;">{html.escape(str(v))}</span>'
+                f'</div>'
+                for k, v in severity_dist.items()
+            ) or '<div style="color:#94A3B8;">Aucune donnée</div>'
+
+            st.markdown(
+                (
+                    '<div class="section-card" style="padding:14px;">'
+                    '<div style="font-size:0.85rem;color:#94A3B8;font-weight:700;margin-bottom:8px;">Top agents</div>'
+                    f'{top_agents_rows}'
+                    '<div style="font-size:0.85rem;color:#94A3B8;font-weight:700;margin:14px 0 8px 0;">Sévérité</div>'
+                    f'{severity_rows}'
+                    '</div>'
+                ),
+                unsafe_allow_html=True,
+            )
             st.markdown(
                 '<div class="section-card">Identification des services les plus sollicités.</div>',
                 unsafe_allow_html=True,
@@ -2042,7 +2120,15 @@ if st.session_state.page == "📊 Dashboard":
         else:
             st.success("Aucune anomalie critique détectée ✅")
 
-        st.caption("Assistant IA disponible dans la page dédiée 'Assistant IA'.")
+        render_collab_section(
+            "vue_globale",
+            f"Vue globale — {total} interactions, escalade {escalation_rate:.1f}%, fraude moyenne {avg_fraud:.1f}, sentiment négatif {neg_rate:.1f}%. Analyse : {analysis}",
+            [
+                "Automatiser les réponses sur la catégorie dominante",
+                "Analyser les pics d'escalade par plage horaire",
+                "Renforcer la surveillance proactive des risques fraude",
+            ],
+        )
 
         close_section_card()
 
@@ -2101,6 +2187,15 @@ if st.session_state.page == "📊 Dashboard":
             "Créer des réponses courtes et rassurantes pour les situations à forte frustration.",
         ]
         render_decision_cards(analysis, recs)
+        render_collab_section(
+            "sentiments",
+            f"Analyse des sentiments — taux négatif {neg_rate:.1f}%. Analyse : {analysis}",
+            [
+                "Améliorer les réponses sur les cas de frustration fréquents",
+                "Créer des scripts de réponse pour les sujets sensibles",
+                "Mettre en place un suivi des sentiments en temps réel",
+            ],
+        )
         close_section_card()
 
         # ✅ ALERTES QUALITÉ IA (à la fin de Vue globale)
@@ -2166,6 +2261,15 @@ if st.session_state.page == "📊 Dashboard":
             "Mettre en place une revue hebdomadaire des raisons d'escalade.",
         ]
         render_decision_cards(analysis, recs)
+        render_collab_section(
+            "escalades",
+            f"Analyse des escalades — taux L1 {l1_rate:.1f}%. Analyse : {analysis}",
+            [
+                "Enrichir la base de connaissances L0 sur les motifs d'escalade",
+                "Revoir le routage automatique des requêtes complexes",
+                "Mettre en place des seuils d'alerte pour le taux d'escalade",
+            ],
+        )
         close_section_card()
 
     elif dp in ("Analytics", "Analyse des fraudes"):
@@ -2204,6 +2308,15 @@ if st.session_state.page == "📊 Dashboard":
             "Analyser les motifs textuels des cas suspects pour affiner les règles.",
         ]
         render_decision_cards(analysis, recs)
+        render_collab_section(
+            "fraudes",
+            f"Analyse des fraudes — taux fraude {fraud_rate:.1f}%, score moyen {avg_fraud_score:.1f}. Analyse : {analysis}",
+            [
+                "Affiner les règles de détection sur les patterns récurrents",
+                "Mettre en place des alertes temps réel pour les scores élevés",
+                "Analyser les faux positifs pour réduire les blocages inutiles",
+            ],
+        )
         close_section_card()
 
     elif dp in ("Catégories", "Analyse des requêtes / catégories"):
@@ -2292,6 +2405,15 @@ if st.session_state.page == "📊 Dashboard":
             "Mesurer l'impact des actions via un suivi hebdomadaire des volumes par catégorie.",
         ]
         render_decision_cards(analysis, recs)
+        render_collab_section(
+            "categories",
+            f"Analyse des catégories — top catégorie {top_ratio:.1f}% du volume. Analyse : {analysis}",
+            [
+                "Automatiser les réponses sur les 3 catégories les plus fréquentes",
+                "Créer des workflows dédiés par catégorie prioritaire",
+                "Optimiser les temps de réponse sur les catégories à fort volume",
+            ],
+        )
         close_section_card()
 
     elif dp == "DETAIL_CATEGORY":
@@ -2378,34 +2500,18 @@ if st.session_state.page == "📊 Dashboard":
         close_section_card()
 
         open_section_card()
-        st.markdown('<div class="kpi-inline-note">Analyse détaillée disponible. Utilisez la page Assistant IA pour explorer ces résultats.</div>', unsafe_allow_html=True)
-        close_section_card()
-
-    elif dp == "Assistant IA":
-        open_section_card()
-        render_module_banner(
-            "🤖 Assistant IA",
-            "Assistant analytique dédié aux KPI, catégories, anomalies et recommandations.",
-            tag="ASSISTANT",
+        render_collab_section(
+            f"category_{selected_category}",
+            (
+                f"Catégorie {selected_category} — {category_total} interactions, fraude moyenne {category_avg_fraud:.1f}, "
+                f"escalade {category_escalation:.1f}%, sentiment dominant {dominant_sentiment}. Analyse : {category_analysis}"
+            ),
+            [
+                f"Identifier les causes racines sur la catégorie {selected_category}",
+                "Prioriser les améliorations à fort impact métier",
+                "Définir des actions rapides pour réduire escalades et frictions",
+            ],
         )
-
-        top_category = filtered["category"].mode()[0] if len(filtered) and not filtered["category"].mode().empty else "N/A"
-        escalated_rate = float(filtered["escalated"].mean() * 100) if "escalated" in filtered.columns and len(filtered) else 0.0
-        context = (
-            f"Vue dashboard active: {st.session_state.dashboard_page}. "
-            f"Interactions: {len(filtered)}. "
-            f"Catégorie dominante: {top_category}. "
-            f"Taux erreur: {float(analytics.get('error_rate', 0)):.1f}%. "
-            f"Taux escalade: {escalated_rate:.1f}%."
-        )
-
-        suggestions = [
-            "Explique les KPI les plus critiques actuellement.",
-            "Donne 3 actions prioritaires à lancer cette semaine.",
-            "Analyse les anomalies et causes probables.",
-        ]
-
-        render_collab_section("admin_dashboard_assistant", context, suggestions)
         close_section_card()
 
     elif dp in ("Paramètres", "⚙️ Paramètres"):
