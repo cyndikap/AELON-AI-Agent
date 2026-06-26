@@ -693,5 +693,235 @@
     "query": "\n    User: \n\n    Query: il sagit de la BNP\n\n    Knowledge Base:\n    simulated result from Azure Search\n\n    Data:\n    client cannot login\npayment failed for order #1234\nhow to reset my password?\nfraud detected on account\n\n    Memory:\n    [{\"query\": \"je n'arrive pas \u00e0 acceder a mon compte\\n\", \"decision\": \"answer\", \"response\": \"{\\n  \\\"decision\\\": \\\"answer\\\",\\n  \\\"answer\\\": \\\"Pour acc\u00e9der \u00e0 votre compte, veuillez v\u00e9rifier que vous entrez correctement votre mot de passe, en faisant attention \u00e0 la touche Majuscule (Caps Lock) et \u00e0 la langue de votre clavier. Si vous avez fait plusieurs tentatives infructueuses, votre compte pourrait \u00eatre temporairement bloqu\u00e9. Dans ce cas, veuillez attendre 15 minutes avant de r\u00e9essayer. Si vous ne parvenez toujours pas \u00e0 vous connecter, je vous recommande de r\u00e9initialiser votre mot de passe.\\\"\\n}\"}, {\"query\": \"No puedo acceder a mi cuenta.\\n\", \"decision\": \"answer\", \"response\": \"{\\n  \\\"decision\\\": \\\"answer\\\",\\n  \\\"answer\\\": \\\"Para acceder a su cuenta, por favor verifique que est\u00e1 ingresando la contrase\u00f1a correctamente, asegur\u00e1ndose de que la tecla de may\u00fasculas (Caps Lock) no est\u00e9 activada y que el idioma del teclado sea el correcto. Si ha intentado varias veces sin \u00e9xito, su cuenta podr\u00eda estar temporalmente bloqueada; en ese caso, espere 15 minutos antes de intentar nuevamente. Si contin\u00faa sin poder acceder, le recomiendo restablecer su contrase\u00f1a.\\\"\\n}\"}, {\"query\": \"donne moi mon numero de code bancaire\\n\\n\", \"decision\": \"escalate\", \"response\": \"Je ne sais pas.\"}]\n    ",
     "decision": "answer",
     "response": "J'ai besoin de plus d'informations pour pouvoir vous aider concernant BNP. Pouvez-vous pr\u00e9ciser votre demande ?"
+  },
+  {
+    "query": "\n    User: \n\n    Query: je n'arrive pas a me connecter a mon compte bancaire\n\n    Knowledge Base:\n    simulated result from Azure Search\n\n    Data:\n    client cannot login\npayment failed for order #1234\nhow to reset my password?\nfraud detected on account\n\n    Memory:\n    [{\"query\": \"je n'arrive pas \u00e0 acceder a mon compte\\n\", \"decision\": \"answer\", \"response\": \"{\\n  \\\"decision\\\": \\\"answer\\\",\\n  \\\"answer\\\": \\\"Pour acc\u00e9der \u00e0 votre compte, veuillez v\u00e9rifier que vous entrez correctement votre mot de passe, en faisant attention \u00e0 la touche Majuscule (Caps Lock) et \u00e0 la langue de votre clavier. Si vous avez fait plusieurs tentatives infructueuses, votre compte pourrait \u00eatre temporairement bloqu\u00e9. Dans ce cas, veuillez attendre 15 minutes avant de r\u00e9essayer. Si vous ne parvenez toujours pas \u00e0 vous connecter, je vous recommande de r\u00e9initialiser votre mot de passe.\\\"\\n}\"}, {\"query\": \"I can\u2019t access my account.\", \"decision\": \"answer\", \"response\": \"{\\n  \\\"decision\\\": \\\"answer\\\",\\n  \\\"answer\\\": \\\"To help you access your account, please try the following steps: 1) Reset your password in case it was entered incorrectly or expired. 2) Check that your keyboard language is correct and Caps Lock is off. 3) If you have tried multiple times and your account is locked, please wait 15 minutes before trying again. If you continue to have trouble logging in after these steps, please let us know.\\\"\\n}\"}, {\"query\": \"No puedo acceder a mi cuenta.\\n\", \"decision\": \"answer\", \"response\": \"{\\n  \\\"decision\\\": \\\"answer\\\",\\n  \\\"answer\\\": \\\"Para acceder a su cuenta, por favor verifique que est\u00e1 ingresando la contrase\u00f1a correctamente, asegur\u00e1ndose de que la tecla de may\u00fasculas (Caps Lock) no est\u00e9 activada y que el idioma del teclado sea el correcto. Si ha intentado varias veces sin \u00e9xito, su cuenta podr\u00eda estar temporalmente bloqueada; en ese caso, espere 15 minutos antes de intentar nuevamente. Si contin\u00faa sin poder acceder, le recomiendo restablecer su contrase\u00f1a.\\\"\\n}\"}]\n    ",
+    "decision": "answer",
+    "response": "Je comprends que c\u2019est frustrant de ne pas pouvoir acc\u00e9der \u00e0 votre compte. Pour vous aider, je vous conseille de v\u00e9rifier que vous saisissez bien votre mot de passe, en faisant attention \u00e0 la touche Majuscule (Caps Lock) et \u00e0 la langue de votre clavier. Si vous avez essay\u00e9 plusieurs fois sans succ\u00e8s, il est possible que votre compte soit temporairement bloqu\u00e9 ; dans ce cas, veuillez patienter 15 minutes avant de r\u00e9essayer. Si le probl\u00e8me persiste, je vous recommande de r\u00e9initialiser votre mot de passe. N\u2019h\u00e9sitez pas \u00e0 me tenir inform\u00e9 si vous avez besoin d\u2019aide suppl\u00e9mentaire."
+  },
+  {
+    "query": "\n    User: \n\n    Query: donne moi un numero de compte bancaire\n\n    Knowledge Base:\n    simulated result from Azure Search\n\n    Data:\n    client cannot login\npayment failed for order #1234\nhow to reset my password?\nfraud detected on account\n\n    Memory:\n    [{\"query\": \"je n'arrive pas \u00e0 acceder a mon compte\\n\", \"decision\": \"answer\", \"response\": \"{\\n  \\\"decision\\\": \\\"answer\\\",\\n  \\\"answer\\\": \\\"Pour acc\u00e9der \u00e0 votre compte, veuillez v\u00e9rifier que vous entrez correctement votre mot de passe, en faisant attention \u00e0 la touche Majuscule (Caps Lock) et \u00e0 la langue de votre clavier. Si vous avez fait plusieurs tentatives infructueuses, votre compte pourrait \u00eatre temporairement bloqu\u00e9. Dans ce cas, veuillez attendre 15 minutes avant de r\u00e9essayer. Si vous ne parvenez toujours pas \u00e0 vous connecter, je vous recommande de r\u00e9initialiser votre mot de passe.\\\"\\n}\"}, {\"query\": \"I can\u2019t access my account.\", \"decision\": \"answer\", \"response\": \"{\\n  \\\"decision\\\": \\\"answer\\\",\\n  \\\"answer\\\": \\\"To help you access your account, please try the following steps: 1) Reset your password in case it was entered incorrectly or expired. 2) Check that your keyboard language is correct and Caps Lock is off. 3) If you have tried multiple times and your account is locked, please wait 15 minutes before trying again. If you continue to have trouble logging in after these steps, please let us know.\\\"\\n}\"}, {\"query\": \"No puedo acceder a mi cuenta.\\n\", \"decision\": \"answer\", \"response\": \"{\\n  \\\"decision\\\": \\\"answer\\\",\\n  \\\"answer\\\": \\\"Para acceder a su cuenta, por favor verifique que est\u00e1 ingresando la contrase\u00f1a correctamente, asegur\u00e1ndose de que la tecla de may\u00fasculas (Caps Lock) no est\u00e9 activada y que el idioma del teclado sea el correcto. Si ha intentado varias veces sin \u00e9xito, su cuenta podr\u00eda estar temporalmente bloqueada; en ese caso, espere 15 minutos antes de intentar nuevamente. Si contin\u00faa sin poder acceder, le recomiendo restablecer su contrase\u00f1a.\\\"\\n}\"}]\n    ",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations. Pour des raisons de s\u00e9curit\u00e9, je ne peux pas fournir un num\u00e9ro de compte bancaire sans v\u00e9rification pr\u00e9alable. Pouvez-vous pr\u00e9ciser votre demande ou indiquer si vous rencontrez un probl\u00e8me particulier avec votre compte ?"
+  },
+  {
+    "query": "\n    User: \n\n    Query: Je n'arrive pas a me connecter \u00e0 mon compte bancaire\n\n    Knowledge Base:\n    simulated result from Azure Search\n\n    Data:\n    client cannot login\npayment failed for order #1234\nhow to reset my password?\nfraud detected on account\n\n    Memory:\n    [{\"query\": \"je n'arrive pas \u00e0 acceder a mon compte\\n\", \"decision\": \"answer\", \"response\": \"{\\n  \\\"decision\\\": \\\"answer\\\",\\n  \\\"answer\\\": \\\"Pour acc\u00e9der \u00e0 votre compte, veuillez v\u00e9rifier que vous entrez correctement votre mot de passe, en faisant attention \u00e0 la touche Majuscule (Caps Lock) et \u00e0 la langue de votre clavier. Si vous avez fait plusieurs tentatives infructueuses, votre compte pourrait \u00eatre temporairement bloqu\u00e9. Dans ce cas, veuillez attendre 15 minutes avant de r\u00e9essayer. Si vous ne parvenez toujours pas \u00e0 vous connecter, je vous recommande de r\u00e9initialiser votre mot de passe.\\\"\\n}\"}, {\"query\": \"I can\u2019t access my account.\", \"decision\": \"answer\", \"response\": \"{\\n  \\\"decision\\\": \\\"answer\\\",\\n  \\\"answer\\\": \\\"To help you access your account, please try the following steps: 1) Reset your password in case it was entered incorrectly or expired. 2) Check that your keyboard language is correct and Caps Lock is off. 3) If you have tried multiple times and your account is locked, please wait 15 minutes before trying again. If you continue to have trouble logging in after these steps, please let us know.\\\"\\n}\"}, {\"query\": \"No puedo acceder a mi cuenta.\\n\", \"decision\": \"answer\", \"response\": \"{\\n  \\\"decision\\\": \\\"answer\\\",\\n  \\\"answer\\\": \\\"Para acceder a su cuenta, por favor verifique que est\u00e1 ingresando la contrase\u00f1a correctamente, asegur\u00e1ndose de que la tecla de may\u00fasculas (Caps Lock) no est\u00e9 activada y que el idioma del teclado sea el correcto. Si ha intentado varias veces sin \u00e9xito, su cuenta podr\u00eda estar temporalmente bloqueada; en ese caso, espere 15 minutos antes de intentar nuevamente. Si contin\u00faa sin poder acceder, le recomiendo restablecer su contrase\u00f1a.\\\"\\n}\"}]\n    ",
+    "decision": "answer",
+    "response": "Je comprends que ne pas pouvoir acc\u00e9der \u00e0 votre compte peut \u00eatre frustrant. Pour vous aider, je vous conseille de v\u00e9rifier que vous saisissez bien votre mot de passe, en faisant attention \u00e0 la touche Majuscule (Caps Lock) et \u00e0 la langue de votre clavier. Si vous avez essay\u00e9 plusieurs fois sans succ\u00e8s, il est possible que votre compte soit temporairement bloqu\u00e9 ; dans ce cas, veuillez patienter 15 minutes avant de r\u00e9essayer. Si le probl\u00e8me persiste, je vous recommande de r\u00e9initialiser votre mot de passe. N'h\u00e9sitez pas \u00e0 me tenir inform\u00e9 si vous avez besoin d'aide suppl\u00e9mentaire."
+  },
+  {
+    "query": "\n    User: \n\n    Query: Je n'arrive pas \u00e0 me connecter \u00e0 mon compte bancaire\n\n    Knowledge Base:\n    simulated result from Azure Search\n\n    Data:\n    client cannot login\npayment failed for order #1234\nhow to reset my password?\nfraud detected on account\n\n    Memory:\n    [{\"query\": \"je n'arrive pas \u00e0 acceder a mon compte\\n\", \"decision\": \"answer\", \"response\": \"{\\n  \\\"decision\\\": \\\"answer\\\",\\n  \\\"answer\\\": \\\"Pour acc\u00e9der \u00e0 votre compte, veuillez v\u00e9rifier que vous entrez correctement votre mot de passe, en faisant attention \u00e0 la touche Majuscule (Caps Lock) et \u00e0 la langue de votre clavier. Si vous avez fait plusieurs tentatives infructueuses, votre compte pourrait \u00eatre temporairement bloqu\u00e9. Dans ce cas, veuillez attendre 15 minutes avant de r\u00e9essayer. Si vous ne parvenez toujours pas \u00e0 vous connecter, je vous recommande de r\u00e9initialiser votre mot de passe.\\\"\\n}\"}, {\"query\": \"Je n'arrive pas a me connecter\", \"decision\": \"escalate\", \"response\": \"Je ne sais pas.\"}, {\"query\": \"je n'arrive pas a me connecter\", \"decision\": \"escalate\", \"response\": \"Je ne sais pas.\"}]\n    ",
+    "decision": "answer",
+    "response": "Je comprends que ne pas pouvoir acc\u00e9der \u00e0 votre compte peut \u00eatre frustrant. Pour vous aider, je vous conseille de v\u00e9rifier que votre mot de passe est bien saisi, en faisant attention \u00e0 la touche Majuscule (Caps Lock) et \u00e0 la langue de votre clavier. Si vous avez essay\u00e9 plusieurs fois sans succ\u00e8s, il est possible que votre compte soit temporairement bloqu\u00e9 ; dans ce cas, veuillez patienter 15 minutes avant de r\u00e9essayer. Si le probl\u00e8me persiste, je vous recommande de r\u00e9initialiser votre mot de passe. N'h\u00e9sitez pas \u00e0 me demander si vous avez besoin d'aide pour cette d\u00e9marche."
+  },
+  {
+    "query": "\n    User: \n\n    Query: i cannot log into my online  banking account\n\n    Knowledge Base:\n    simulated result from Azure Search\n\n    Data:\n    client cannot login\npayment failed for order #1234\nhow to reset my password?\nfraud detected on account\n\n    Memory:\n    [{\"query\": \"je n'arrive pas \u00e0 acceder a mon compte\\n\", \"decision\": \"answer\", \"response\": \"{\\n  \\\"decision\\\": \\\"answer\\\",\\n  \\\"answer\\\": \\\"Pour acc\u00e9der \u00e0 votre compte, veuillez v\u00e9rifier que vous entrez correctement votre mot de passe, en faisant attention \u00e0 la touche Majuscule (Caps Lock) et \u00e0 la langue de votre clavier. Si vous avez fait plusieurs tentatives infructueuses, votre compte pourrait \u00eatre temporairement bloqu\u00e9. Dans ce cas, veuillez attendre 15 minutes avant de r\u00e9essayer. Si vous ne parvenez toujours pas \u00e0 vous connecter, je vous recommande de r\u00e9initialiser votre mot de passe.\\\"\\n}\"}, {\"query\": \"I can\u2019t access my account.\", \"decision\": \"answer\", \"response\": \"{\\n  \\\"decision\\\": \\\"answer\\\",\\n  \\\"answer\\\": \\\"To help you access your account, please try the following steps: 1) Reset your password in case it was entered incorrectly or expired. 2) Check that your keyboard language is correct and Caps Lock is off. 3) If you have tried multiple times and your account is locked, please wait 15 minutes before trying again. If you continue to have trouble logging in after these steps, please let us know.\\\"\\n}\"}, {\"query\": \"No puedo acceder a mi cuenta.\\n\", \"decision\": \"answer\", \"response\": \"{\\n  \\\"decision\\\": \\\"answer\\\",\\n  \\\"answer\\\": \\\"Para acceder a su cuenta, por favor verifique que est\u00e1 ingresando la contrase\u00f1a correctamente, asegur\u00e1ndose de que la tecla de may\u00fasculas (Caps Lock) no est\u00e9 activada y que el idioma del teclado sea el correcto. Si ha intentado varias veces sin \u00e9xito, su cuenta podr\u00eda estar temporalmente bloqueada; en ese caso, espere 15 minutos antes de intentar nuevamente. Si contin\u00faa sin poder acceder, le recomiendo restablecer su contrase\u00f1a.\\\"\\n}\"}]\n    ",
+    "decision": "answer",
+    "response": "Je comprends que ne pas pouvoir acc\u00e9der \u00e0 votre compte en ligne peut \u00eatre frustrant. Pour vous aider, je vous conseille de v\u00e9rifier que vous saisissez bien votre mot de passe, en faisant attention \u00e0 ce que la touche Majuscule (Caps Lock) ne soit pas activ\u00e9e et que la langue de votre clavier soit correcte. Si vous avez fait plusieurs tentatives sans succ\u00e8s, il est possible que votre compte soit temporairement bloqu\u00e9 ; dans ce cas, veuillez patienter 15 minutes avant de r\u00e9essayer. Si le probl\u00e8me persiste, je vous recommande de r\u00e9initialiser votre mot de passe. N'h\u00e9sitez pas \u00e0 me tenir inform\u00e9 si vous avez besoin d'aide suppl\u00e9mentaire."
+  },
+  {
+    "query": "\n    User: \n\n    Query: i cannot log into my online  banking account\n\n    Knowledge Base:\n    simulated result from Azure Search\n\n    Data:\n    client cannot login\npayment failed for order #1234\nhow to reset my password?\nfraud detected on account\n\n    Memory:\n    [{\"query\": \"je n'arrive pas \u00e0 acceder a mon compte\\n\", \"decision\": \"answer\", \"response\": \"{\\n  \\\"decision\\\": \\\"answer\\\",\\n  \\\"answer\\\": \\\"Pour acc\u00e9der \u00e0 votre compte, veuillez v\u00e9rifier que vous entrez correctement votre mot de passe, en faisant attention \u00e0 la touche Majuscule (Caps Lock) et \u00e0 la langue de votre clavier. Si vous avez fait plusieurs tentatives infructueuses, votre compte pourrait \u00eatre temporairement bloqu\u00e9. Dans ce cas, veuillez attendre 15 minutes avant de r\u00e9essayer. Si vous ne parvenez toujours pas \u00e0 vous connecter, je vous recommande de r\u00e9initialiser votre mot de passe.\\\"\\n}\"}, {\"query\": \"I can\u2019t access my account.\", \"decision\": \"answer\", \"response\": \"{\\n  \\\"decision\\\": \\\"answer\\\",\\n  \\\"answer\\\": \\\"To help you access your account, please try the following steps: 1) Reset your password in case it was entered incorrectly or expired. 2) Check that your keyboard language is correct and Caps Lock is off. 3) If you have tried multiple times and your account is locked, please wait 15 minutes before trying again. If you continue to have trouble logging in after these steps, please let us know.\\\"\\n}\"}, {\"query\": \"No puedo acceder a mi cuenta.\\n\", \"decision\": \"answer\", \"response\": \"{\\n  \\\"decision\\\": \\\"answer\\\",\\n  \\\"answer\\\": \\\"Para acceder a su cuenta, por favor verifique que est\u00e1 ingresando la contrase\u00f1a correctamente, asegur\u00e1ndose de que la tecla de may\u00fasculas (Caps Lock) no est\u00e9 activada y que el idioma del teclado sea el correcto. Si ha intentado varias veces sin \u00e9xito, su cuenta podr\u00eda estar temporalmente bloqueada; en ese caso, espere 15 minutos antes de intentar nuevamente. Si contin\u00faa sin poder acceder, le recomiendo restablecer su contrase\u00f1a.\\\"\\n}\"}]\n    ",
+    "decision": "answer",
+    "response": "Je comprends que ne pas pouvoir acc\u00e9der \u00e0 votre compte en ligne peut \u00eatre frustrant. Pour vous aider, je vous conseille de v\u00e9rifier que vous saisissez bien votre mot de passe, en faisant attention \u00e0 la touche Majuscule (Caps Lock) et \u00e0 la langue de votre clavier. Si vous avez essay\u00e9 plusieurs fois sans succ\u00e8s, il est possible que votre compte soit temporairement bloqu\u00e9 ; dans ce cas, veuillez patienter 15 minutes avant de r\u00e9essayer. Si le probl\u00e8me persiste, je vous recommande de r\u00e9initialiser votre mot de passe. N'h\u00e9sitez pas \u00e0 me tenir inform\u00e9 si vous avez besoin d'aide suppl\u00e9mentaire."
+  },
+  {
+    "query": "i cannot log into my online  banking account",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous ne pouvez pas vous connecter \u00e0 votre compte bancaire en ligne. Pour vous aider au mieux, pourriez-vous me pr\u00e9ciser si vous rencontrez un message d'erreur particulier ou si vous avez oubli\u00e9 votre mot de passe ? N'h\u00e9sitez pas \u00e0 me donner plus de d\u00e9tails afin que je puisse vous guider efficacement."
+  },
+  {
+    "query": "Ich kann mich nicht in mein Online\u2011Bankkonto einloggen.",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous ne pouvez pas vous connecter \u00e0 votre compte bancaire en ligne. Pour pouvoir vous aider au mieux, j'ai besoin de plus d'informations sur le probl\u00e8me que vous rencontrez, comme un message d'erreur ou si vous avez oubli\u00e9 votre mot de passe. N'h\u00e9sitez pas \u00e0 me donner ces d\u00e9tails afin que je puisse vous guider."
+  },
+  {
+    "query": "Ich kann mich nicht in mein Online\u2011Bankkonto einloggen.",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous ne pouvez pas vous connecter \u00e0 votre compte bancaire en ligne. J'ai besoin de plus d'informations pour pouvoir vous aider au mieux. Pouvez-vous me pr\u00e9ciser si vous rencontrez un message d'erreur particulier ou si vous avez oubli\u00e9 votre mot de passe ? N'h\u00e9sitez pas \u00e0 me donner plus de d\u00e9tails."
+  },
+  {
+    "query": "No puedo iniciar sesi\u00f3n en mi cuenta bancaria en l\u00ednea",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous ne pouvez pas acc\u00e9der \u00e0 votre compte bancaire en ligne. Pour pouvoir vous aider au mieux, j'ai besoin de plus d'informations sur le probl\u00e8me que vous rencontrez : par exemple, recevez-vous un message d'erreur sp\u00e9cifique, avez-vous oubli\u00e9 votre mot de passe, ou rencontrez-vous un autre type de difficult\u00e9 ? N'h\u00e9sitez pas \u00e0 me donner plus de d\u00e9tails afin que je puisse vous guider efficacement."
+  },
+  {
+    "query": "Ich kann mich nicht in mein Online\u2011Bankkonto einloggen.\n",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous ne pouvez pas vous connecter \u00e0 votre compte bancaire en ligne. Pour pouvoir vous aider au mieux, j'ai besoin de plus d'informations sur le probl\u00e8me que vous rencontrez, comme un message d'erreur ou si vous avez oubli\u00e9 votre mot de passe. N'h\u00e9sitez pas \u00e0 me donner ces d\u00e9tails afin que je puisse vous guider."
+  },
+  {
+    "query": "i can't have access to my bank account",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous ne pouvez pas acc\u00e9der \u00e0 votre compte bancaire. Pour pouvoir vous aider au mieux, pourriez-vous me pr\u00e9ciser si vous rencontrez un probl\u00e8me avec votre identifiant, votre mot de passe, ou un autre type de difficult\u00e9 ? Cela me permettra de vous guider plus efficacement."
+  },
+  {
+    "query": "No puedo iniciar sesi\u00f3n en mi cuenta bancaria en l\u00ednea",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous ne pouvez pas acc\u00e9der \u00e0 votre compte bancaire en ligne. Pour pouvoir vous aider au mieux, j'ai besoin de plus d'informations sur le probl\u00e8me que vous rencontrez. Par exemple, recevez-vous un message d'erreur sp\u00e9cifique ? Avez-vous essay\u00e9 de r\u00e9initialiser votre mot de passe ? N'h\u00e9sitez pas \u00e0 me donner plus de d\u00e9tails afin que je puisse vous guider efficacement."
+  },
+  {
+    "query": "Non riesco ad accedere al mio conto bancario online.\n",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous rencontrez des difficult\u00e9s pour acc\u00e9der \u00e0 votre compte bancaire en ligne. J'ai besoin de plus d'informations pour pouvoir vous aider au mieux. Pouvez-vous me pr\u00e9ciser si vous avez un message d'erreur, si vous avez oubli\u00e9 votre mot de passe, ou si le probl\u00e8me survient \u00e0 une \u00e9tape particuli\u00e8re ? N'h\u00e9sitez pas \u00e0 me donner plus de d\u00e9tails."
+  },
+  {
+    "query": "\u042f \u043d\u0435 \u043c\u043e\u0433\u0443 \u0432\u043e\u0439\u0442\u0438 \u0432 \u0441\u0432\u043e\u0439 \u043e\u043d\u043b\u0430\u0439\u043d-\u0431\u0430\u043d\u043a\u043e\u0432\u0441\u043a\u0438\u0439 \u0430\u043a\u043a\u0430\u0443\u043d\u0442.",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous ne pouvez pas acc\u00e9der \u00e0 votre compte bancaire en ligne. Pour pouvoir vous aider au mieux, pourriez-vous me fournir plus de d\u00e9tails sur le probl\u00e8me que vous rencontrez ? Par exemple, recevez-vous un message d'erreur sp\u00e9cifique, ou avez-vous oubli\u00e9 votre mot de passe ? Cela nous permettra de vous guider plus efficacement."
+  },
+  {
+    "query": "\u6211\u65e0\u6cd5\u767b\u5f55\u6211\u7684\u7f51\u4e0a\u94f6\u884c\u8d26\u6237\u3002",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous ne pouvez pas acc\u00e9der \u00e0 votre compte bancaire en ligne. Pour pouvoir vous aider au mieux, j'ai besoin de plus d'informations concernant le probl\u00e8me que vous rencontrez, comme un message d'erreur sp\u00e9cifique ou si vous avez oubli\u00e9 votre mot de passe. N'h\u00e9sitez pas \u00e0 me fournir ces d\u00e9tails afin que je puisse vous guider efficacement."
+  },
+  {
+    "query": "Ik kan niet inloggen op mijn online bankrekening.",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous ne pouvez pas vous connecter \u00e0 votre compte bancaire en ligne. Pour pouvoir vous aider au mieux, pourriez-vous me fournir plus de d\u00e9tails sur le probl\u00e8me rencontr\u00e9 ? Par exemple, recevez-vous un message d'erreur sp\u00e9cifique, ou avez-vous oubli\u00e9 votre mot de passe ? Cela nous permettra de vous guider efficacement."
+  },
+  {
+    "query": "Non riesco ad accedere al mio conto bancario online.",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous ne parvenez pas \u00e0 acc\u00e9der \u00e0 votre compte bancaire en ligne. Pour pouvoir vous aider au mieux, j'ai besoin de plus d'informations sur le probl\u00e8me que vous rencontrez : par exemple, recevez-vous un message d'erreur sp\u00e9cifique, avez-vous oubli\u00e9 votre mot de passe, ou rencontrez-vous une autre difficult\u00e9 ? N'h\u00e9sitez pas \u00e0 me donner plus de d\u00e9tails afin que je puisse vous guider efficacement."
+  },
+  {
+    "query": "mon paiement a \u00e9t\u00e9 refus\u00e9",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que votre paiement a \u00e9t\u00e9 refus\u00e9. Pour mieux vous aider, pourriez-vous me fournir plus de d\u00e9tails sur la situation, comme le type de paiement ou le message d'erreur re\u00e7u ? Cela nous permettra de trouver une solution rapidement."
+  },
+  {
+    "query": "lors de mon achat j'ai \u00e9t\u00e9 pr\u00e9lev\u00e9 2 fois",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous avez \u00e9t\u00e9 pr\u00e9lev\u00e9 deux fois lors de votre achat. Pour pouvoir vous aider au mieux, pourriez-vous me fournir plus de d\u00e9tails, comme la date de la transaction, le montant ou le commer\u00e7ant concern\u00e9 ? Cela nous permettra de v\u00e9rifier votre situation plus pr\u00e9cis\u00e9ment."
+  },
+  {
+    "query": "je n'arrive pas a me connecter a mon comte",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous rencontrez des difficult\u00e9s pour vous connecter \u00e0 votre compte. Pourriez-vous v\u00e9rifier que vos identifiants (nom d'utilisateur et mot de passe) sont corrects ? Si vous avez oubli\u00e9 votre mot de passe, il est souvent possible de le r\u00e9initialiser via la page de connexion. Si le probl\u00e8me persiste, n'h\u00e9sitez pas \u00e0 me fournir plus de d\u00e9tails afin que je puisse mieux vous aider."
+  },
+  {
+    "query": "je veux changer de banque",
+    "decision": "answer",
+    "response": "Changer de banque est une d\u00e9marche importante. Pour vous accompagner au mieux, je vous recommande de contacter directement votre conseiller bancaire actuel ou de vous rendre en agence afin d'obtenir toutes les informations n\u00e9cessaires sur les d\u00e9marches \u00e0 suivre. Si vous souhaitez, je peux \u00e9galement vous fournir des informations sur les services propos\u00e9s par notre banque. N'h\u00e9sitez pas \u00e0 me pr\u00e9ciser vos besoins."
+  },
+  {
+    "query": "j'ai re\u00e7u un message frauduleux. que faire?",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous avez re\u00e7u un message frauduleux. Pour votre s\u00e9curit\u00e9, je vous recommande de ne pas r\u00e9pondre \u00e0 ce message, de ne pas cliquer sur les liens qu'il contient et de ne pas fournir d'informations personnelles. Vous pouvez \u00e9galement signaler ce message \u00e0 votre banque afin qu'elle puisse prendre les mesures n\u00e9cessaires. Si vous avez des doutes ou des inqui\u00e9tudes, n'h\u00e9sitez pas \u00e0 contacter directement votre service client bancaire pour obtenir de l'aide."
+  },
+  {
+    "query": "mon paiement a \u00e9t\u00e9 refus\u00e9 alors que j'ai de l'argent dans ma carte",
+    "decision": "answer",
+    "response": "Je comprends que cette situation puisse \u00eatre frustrante. Plusieurs raisons peuvent expliquer un refus de paiement malgr\u00e9 un solde suffisant, comme un probl\u00e8me temporaire avec le terminal de paiement, une limite de paiement d\u00e9pass\u00e9e, ou une suspicion de s\u00e9curit\u00e9 sur votre carte. Je vous recommande de v\u00e9rifier aupr\u00e8s de votre banque ou via votre application bancaire si des alertes ou restrictions ont \u00e9t\u00e9 appliqu\u00e9es \u00e0 votre carte. Si le probl\u00e8me persiste, n'h\u00e9sitez pas \u00e0 contacter directement votre service client pour obtenir une assistance personnalis\u00e9e."
+  },
+  {
+    "query": "chaque fois que j'essaie de me connecter, je suis d\u00e9connect\u00e9 la seconde d'apres",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous rencontrez ce probl\u00e8me de d\u00e9connexion imm\u00e9diate apr\u00e8s votre connexion. Cela peut \u00eatre frustrant, je comprends parfaitement. Pour pouvoir vous aider au mieux, j'ai besoin de plus d'informations sur votre situation, comme le type d'appareil que vous utilisez ou le message d'erreur \u00e9ventuel que vous recevez. N'h\u00e9sitez pas \u00e0 me les communiquer afin que je puisse vous guider efficacement."
+  },
+  {
+    "query": "j'ai re\u00e7u un message qui m'indique mon compte estr temporairement bloqu\u00e9. j'aimerais savoir pourquoi?",
+    "decision": "answer",
+    "response": "Je comprends que cette situation puisse \u00eatre inqui\u00e9tante. Cependant, je n'ai pas assez d'informations pour vous expliquer pourquoi votre compte est temporairement bloqu\u00e9. Je vous recommande de contacter directement votre service bancaire pour obtenir des d\u00e9tails pr\u00e9cis et s\u00e9curis\u00e9s concernant ce blocage. N'h\u00e9sitez pas \u00e0 leur fournir toutes les informations n\u00e9cessaires pour qu'ils puissent vous aider rapidement."
+  },
+  {
+    "query": "\ud83d\udcb3 Comment signaler une fraude ?",
+    "decision": "answer",
+    "response": "Je comprends votre inqui\u00e9tude face \u00e0 une possible fraude. Pour signaler une fraude, je vous recommande de contacter imm\u00e9diatement votre service bancaire via les num\u00e9ros officiels indiqu\u00e9s sur votre site ou vos documents bancaires. Ils pourront bloquer votre carte et s\u00e9curiser votre compte. Si vous avez besoin d'aide pour trouver ces coordonn\u00e9es, n'h\u00e9sitez pas \u00e0 me le demander."
+  },
+  {
+    "query": "\ud83d\udd12 J'ai perdu ma carte bancaire",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous avez perdu votre carte bancaire. Pour votre s\u00e9curit\u00e9, je vous recommande de contacter rapidement votre banque afin de faire opposition sur votre carte. Cela permettra de bloquer toute utilisation frauduleuse. Si vous le souhaitez, je peux vous guider pour trouver le num\u00e9ro de t\u00e9l\u00e9phone ou l'application de votre banque pour effectuer cette d\u00e9marche. N'h\u00e9sitez pas \u00e0 me demander !"
+  },
+  {
+    "query": "\ud83d\udcb3 Comment signaler une fraude ?",
+    "decision": "answer",
+    "response": "Je comprends que la situation puisse \u00eatre inqui\u00e9tante. Pour signaler une fraude sur votre carte bancaire, je vous recommande de contacter imm\u00e9diatement le service client de votre banque. Ils pourront bloquer votre carte pour \u00e9viter toute utilisation frauduleuse et vous guider dans les d\u00e9marches \u00e0 suivre. Si vous avez besoin, je peux vous aider \u00e0 trouver le num\u00e9ro de contact de votre banque. N'h\u00e9sitez pas \u00e0 me le demander."
+  },
+  {
+    "query": "\ud83d\udcb3 Comment signaler une fraude ?",
+    "decision": "answer",
+    "response": "Je comprends que la situation peut \u00eatre inqui\u00e9tante. Pour signaler une fraude sur votre carte bancaire, je vous recommande de contacter imm\u00e9diatement le service client de votre banque. Ils pourront bloquer votre carte pour \u00e9viter toute utilisation frauduleuse et vous guider dans les d\u00e9marches \u00e0 suivre. Si vous avez besoin, je peux vous aider \u00e0 trouver le num\u00e9ro de contact de votre banque. N'h\u00e9sitez pas \u00e0 me le demander."
+  },
+  {
+    "query": "Comment signaler une fraude ?",
+    "decision": "answer",
+    "response": "Je comprends votre inqui\u00e9tude concernant une possible fraude. Pour signaler une fraude, je vous recommande de contacter imm\u00e9diatement votre banque via les num\u00e9ros officiels indiqu\u00e9s sur votre site bancaire ou vos relev\u00e9s. Vous pouvez \u00e9galement vous rendre en agence pour expliquer la situation. Il est important d'agir rapidement pour s\u00e9curiser vos comptes. Si vous avez besoin d'aide pour trouver les coordonn\u00e9es de votre banque, n'h\u00e9sitez pas \u00e0 me le demander."
+  },
+  {
+    "query": "J'ai perdu ma carte bancaire",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous avez perdu votre carte bancaire. Pour votre s\u00e9curit\u00e9, je vous recommande de contacter rapidement votre banque afin de faire opposition sur votre carte. Cela \u00e9vitera toute utilisation frauduleuse. Si vous le souhaitez, je peux vous guider pour trouver le num\u00e9ro \u00e0 appeler ou les d\u00e9marches \u00e0 suivre. N'h\u00e9sitez pas \u00e0 me demander."
+  },
+  {
+    "query": "J'ai perdu ma carte bancaire",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous avez perdu votre carte bancaire. Pour votre s\u00e9curit\u00e9, je vous recommande de contacter imm\u00e9diatement votre banque afin de faire opposition sur votre carte. Cela \u00e9vitera toute utilisation frauduleuse. Si vous le souhaitez, je peux vous guider pour trouver le num\u00e9ro \u00e0 appeler ou les d\u00e9marches \u00e0 suivre. N'h\u00e9sitez pas \u00e0 me demander."
+  },
+  {
+    "query": "Comment contacter un conseiller ?",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "Comment signaler une fraude ?",
+    "decision": "answer",
+    "response": "Je comprends que la situation puisse \u00eatre inqui\u00e9tante. Pour signaler une fraude, je vous recommande de contacter imm\u00e9diatement votre banque via les num\u00e9ros officiels indiqu\u00e9s sur votre site ou vos relev\u00e9s bancaires. Vous pouvez \u00e9galement vous rendre en agence pour expliquer la situation. N'h\u00e9sitez pas \u00e0 bloquer vos cartes si n\u00e9cessaire pour \u00e9viter tout usage frauduleux. Si vous avez besoin d'aide pour trouver les coordonn\u00e9es ou les d\u00e9marches pr\u00e9cises, je suis l\u00e0 pour vous assister."
+  },
+  {
+    "query": "Comment signaler une fraude ?",
+    "decision": "answer",
+    "response": "Je comprends votre inqui\u00e9tude face \u00e0 une possible fraude. Pour signaler une fraude, je vous recommande de contacter imm\u00e9diatement votre service bancaire via les num\u00e9ros officiels ou votre espace client s\u00e9curis\u00e9. Ils pourront bloquer votre compte si n\u00e9cessaire et vous guider dans les d\u00e9marches \u00e0 suivre. Si vous avez besoin, je peux vous aider \u00e0 trouver les coordonn\u00e9es de votre banque. N'h\u00e9sitez pas \u00e0 me donner plus d'informations si vous le souhaitez."
+  },
+  {
+    "query": "Comment signaler une fraude ?",
+    "decision": "answer",
+    "response": "Je comprends votre inqui\u00e9tude face \u00e0 une possible fraude. Pour signaler une fraude, je vous recommande de contacter imm\u00e9diatement votre service bancaire via les num\u00e9ros officiels ou votre espace client s\u00e9curis\u00e9. Ils pourront bloquer votre compte si n\u00e9cessaire et vous guider dans les d\u00e9marches \u00e0 suivre. Si vous avez besoin d'aide pour trouver ces contacts, n'h\u00e9sitez pas \u00e0 me le demander."
+  },
+  {
+    "query": "J'ai perdu ma carte bancaire",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous avez perdu votre carte bancaire. Pour votre s\u00e9curit\u00e9, je vous recommande de contacter imm\u00e9diatement votre banque pour faire opposition sur votre carte afin d'\u00e9viter toute utilisation frauduleuse. Si vous avez besoin, je peux vous guider pour trouver le num\u00e9ro de contact de votre service client. N'h\u00e9sitez pas \u00e0 me le demander."
+  },
+  {
+    "query": "je n'arriva pas \u00e0 me connecter \u00e0 mon compte ",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous rencontrez des difficult\u00e9s pour vous connecter \u00e0 votre compte. Pourriez-vous v\u00e9rifier que vos identifiants (nom d'utilisateur et mot de passe) sont corrects ? Si vous avez oubli\u00e9 votre mot de passe, il est souvent possible de le r\u00e9initialiser via la page de connexion. Si le probl\u00e8me persiste, n'h\u00e9sitez pas \u00e0 me fournir plus de d\u00e9tails afin que je puisse mieux vous aider."
+  },
+  {
+    "query": "Comment contacter un conseiller ?",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "Comment effectuer un virement ?",
+    "decision": "answer",
+    "response": "Bonjour, pour effectuer un virement, je vous recommande de vous connecter \u00e0 votre espace bancaire en ligne ou \u00e0 votre application mobile. Ensuite, rendez-vous dans la section d\u00e9di\u00e9e aux virements, saisissez les coordonn\u00e9es du b\u00e9n\u00e9ficiaire ainsi que le montant \u00e0 transf\u00e9rer, puis validez l'op\u00e9ration. Si vous avez besoin d'aide plus pr\u00e9cise ou d'accompagnement, n'h\u00e9sitez pas \u00e0 me le dire. Je suis l\u00e0 pour vous aider !"
+  },
+  {
+    "query": "Comment contacter un conseiller ?",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "J'ai perdu ma carte bancaire",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous avez perdu votre carte bancaire. Pour votre s\u00e9curit\u00e9, je vous recommande de contacter rapidement votre banque afin de faire opposition sur votre carte. Cela permettra d'\u00e9viter toute utilisation frauduleuse. Si vous le souhaitez, je peux vous guider pour trouver le num\u00e9ro de t\u00e9l\u00e9phone de votre service client ou vous indiquer la d\u00e9marche \u00e0 suivre. N'h\u00e9sitez pas \u00e0 me demander."
+  },
+  {
+    "query": "J'ai perdu ma carte bancaire",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous avez perdu votre carte bancaire. Pour votre s\u00e9curit\u00e9, je vous recommande de contacter rapidement votre banque afin de faire opposition sur votre carte. Cela \u00e9vitera toute utilisation frauduleuse. Si vous le souhaitez, je peux vous guider pour trouver le num\u00e9ro \u00e0 appeler ou les d\u00e9marches \u00e0 suivre. N'h\u00e9sitez pas \u00e0 me demander !"
+  },
+  {
+    "query": "Merci pour ton aide",
+    "decision": "answer",
+    "response": "Je vous en prie, n'h\u00e9sitez pas si vous avez d'autres questions."
+  },
+  {
+    "query": "Comment effectuer un virement ?",
+    "decision": "answer",
+    "response": "Bonjour, pour effectuer un virement, je vous recommande de vous connecter \u00e0 votre espace bancaire en ligne ou \u00e0 votre application mobile. Ensuite, rendez-vous dans la section \"Virements\" ou \"Transferts\", saisissez les coordonn\u00e9es du b\u00e9n\u00e9ficiaire ainsi que le montant \u00e0 transf\u00e9rer, puis validez l'op\u00e9ration. Si vous avez besoin d'aide plus pr\u00e9cise, n'h\u00e9sitez pas \u00e0 me fournir plus d'informations sur votre banque ou le type de virement que vous souhaitez r\u00e9aliser. Je suis l\u00e0 pour vous accompagner !"
   }
 ]

@@ -24,6 +24,11 @@ from multi_agent.compliance.compliance_agent import ComplianceAgent
 from multi_agent.orchestrator import Orchestrator
 from utils.category_detector import detect_category, CATEGORY_COLORS, CATEGORY_ICONS
 from utils.export_handler import to_csv_string
+from multi_agent.observability.observability_agent import ObservabilityAgent
+from multi_agent.memory.memory_agent import MemoryAgent
+from multi_agent.analytics.analytics_agent import AnalyticsAgent
+from multi_agent.explainability.explainability_agent import ExplainabilityAgent
+
 
 # ================= AVATAR =================
 AELON_AVATAR = Path(__file__).resolve().parent / "aelon_avatar.png"
@@ -34,7 +39,7 @@ AELON_AVATAR_B64 = base64.b64encode(AELON_AVATAR_BYTES).decode()
 
 # ================= CONFIG =================
 st.set_page_config(page_title="AELON", page_icon=Image.open(AELON_AVATAR), layout="wide")
-st.markdown("""
+st.markdown ("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
@@ -79,10 +84,60 @@ html, body, .stApp {
     background: var(--bg-deep) !important;
 }
 
+section.main > div {
+    max-width: 1400px !important;
+    padding-left: 40px;
+    padding-right: 40px;
+}
+
 .block-container {
     padding-top: 0.8rem !important;
     padding-bottom: 5rem !important;
-    max-width: 1100px !important;
+    max-width: 1400px !important;
+}
+
+/* ===== DASHBOARD WRAPPER ===== */
+.dashboard-wrapper {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px 4px 30px 4px;
+}
+
+.section-card {
+    background: #0F2A44;
+    padding: 18px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    margin-bottom: 20px;
+}
+
+.category-card {
+    background: linear-gradient(180deg, rgba(37, 99, 235, 0.10) 0%, rgba(15, 39, 71, 0.96) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 14px;
+    padding: 16px;
+    min-height: 132px;
+    margin-bottom: 12px;
+}
+
+.category-card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-main) !important;
+    margin-bottom: 8px;
+}
+
+.category-card-meta {
+    font-size: 0.8rem;
+    color: var(--text-muted) !important;
+    margin-bottom: 6px;
+}
+
+.kpi-inline-note {
+    font-size: 0.82rem;
+    color: var(--text-muted) !important;
+    margin-top: 10px;
 }
 
 /* ===== CHAT MODE CARD (uniquement sur la page Assistant) ===== */
@@ -224,8 +279,8 @@ section[data-testid="stSidebar"] * {
 
 [data-testid="stSidebar"] [role="radio"] {
     background: rgba(255, 255, 255, 0.03);
-    border: 1px solid transparent;
-    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
     padding: 11px 14px;
     margin-bottom: 6px;
     cursor: pointer;
@@ -236,15 +291,15 @@ section[data-testid="stSidebar"] * {
 }
 
 [data-testid="stSidebar"] [role="radio"]:hover {
-    background: rgba(255, 255, 255, 0.07);
+    background: rgba(255, 255, 255, 0.05);
     border-color: var(--border);
 }
 
 [data-testid="stSidebar"] [role="radio"][aria-checked="true"] {
-    background: var(--gradient-accent-soft);
-    border-color: var(--purple-light);
-    border-left: 3px solid var(--purple-light);
-    box-shadow: 0 0 20px rgba(124, 58, 237, 0.12);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(250, 204, 21, 0.45);
+    box-shadow: 0 0 18px rgba(250, 204, 21, 0.12);
+    transform: scale(1.05);
 }
 
 [data-testid="stSidebar"] [role="radio"] svg {
@@ -260,14 +315,26 @@ section[data-testid="stSidebar"] * {
 [data-testid="stSidebar"] [role="radio"] span {
     font-size: 0.88rem !important;
     font-weight: 600 !important;
-    color: var(--text-muted) !important;
+    color: var(--text-main) !important;
 }
 
 [data-testid="stSidebar"] [role="radio"][aria-checked="true"] p,
 [data-testid="stSidebar"] [role="radio"][aria-checked="true"] label,
 [data-testid="stSidebar"] [role="radio"][aria-checked="true"] span {
-    color: var(--purple-light) !important;
-    font-weight: 700 !important;
+    color: var(--text-main) !important;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--yellow);
+    border-left: 3px solid var(--yellow);
+    box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.18), 0 0 18px rgba(250, 204, 21, 0.15);
+}
+
+.sidebar-category-nav {
+    padding: 0 12px;
+}
+
+.sidebar-category-nav .sidebar-nav-label {
+    padding-left: 0;
+    padding-right: 0;
 }
 
 /* ===== SELECT BOX ===== */
@@ -1195,15 +1262,28 @@ def init_agents():
 
 fraud_agent, sentiment_agent, compliance_agent, l0_agent, l1_agent = init_agents()
 orchestrator = Orchestrator()
-
+observability_agent = ObservabilityAgent()
+memory_agent = MemoryAgent()
+analytics_agent = AnalyticsAgent()
+explainability_agent = ExplainabilityAgent()
 
 # ================= SESSION STATE =================
 if "page" not in st.session_state:
     st.session_state.page = "💬 Assistant"
 if "dashboard_page" not in st.session_state:
-    st.session_state.dashboard_page = " Vue globale"
+    st.session_state.dashboard_page = "Vue globale"
 if "collab_chat" not in st.session_state:
     st.session_state.collab_chat = {}
+if "selected_category" not in st.session_state:
+    st.session_state.selected_category = None
+if "sidebar_category_nav" not in st.session_state:
+    st.session_state.sidebar_category_nav = None
+if "escalated_count" not in st.session_state:
+    st.session_state.escalated_count = 0
+if "dashboard_needs_refresh" not in st.session_state:
+    st.session_state.dashboard_needs_refresh = False
+if "show_explanations" not in st.session_state:
+    st.session_state.show_explanations = True
 
 
 def set_page(p: str):
@@ -1211,6 +1291,23 @@ def set_page(p: str):
 
 def set_dashboard_page(p: str):
     st.session_state.dashboard_page = p
+    if p != "DETAIL_CATEGORY":
+        st.session_state.selected_category = None
+
+
+def open_category_detail(category: str):
+    st.session_state.selected_category = category
+    st.session_state.dashboard_page = "DETAIL_CATEGORY"
+
+
+def open_sidebar_category():
+    choice = st.session_state.sidebar_category_nav
+    if choice:
+        if choice == "Vue globale":
+            set_dashboard_page("Vue globale")
+        else:
+            open_category_detail(choice)
+        st.rerun()
 
 
 # ================= SIDEBAR =================
@@ -1262,11 +1359,25 @@ with st.sidebar:
         current_dash = st.session_state.dashboard_page
 
         for dp in dash_pages:
-            is_active = dp == current_dash
+            is_active = dp == current_dash or (dp == "Analyse des requêtes / catégories" and current_dash == "DETAIL_CATEGORY")
             if st.button(dp, use_container_width=True,
                          type="primary" if is_active else "secondary",
                          key=f"dash_{dp}"):
                 set_dashboard_page(dp)
+
+        st.markdown('<hr class="sidebar-sep" />', unsafe_allow_html=True)
+        st.markdown('<div class="sidebar-nav-label">▼ Catégories</div>', unsafe_allow_html=True)
+        category_options = ["Vue globale"] + list(CATEGORY_ICONS.keys())
+        if st.session_state.sidebar_category_nav not in category_options:
+            st.session_state.sidebar_category_nav = st.session_state.selected_category or "Vue globale"
+        st.radio(
+            label="Catégories",
+            options=category_options,
+            index=category_options.index(st.session_state.sidebar_category_nav) if st.session_state.sidebar_category_nav in category_options else 0,
+            key="sidebar_category_nav",
+            label_visibility="collapsed",
+            on_change=open_sidebar_category,
+        )
 
     st.markdown('<hr class="sidebar-sep" />', unsafe_allow_html=True)
     if mode == "Utilisateur":
@@ -1281,6 +1392,13 @@ with st.sidebar:
             if st.button(_qm, use_container_width=True, key=f"quick_msg_{_i}"):
                 st.session_state.quick_message = _qm
         st.markdown('<hr class="sidebar-sep" />', unsafe_allow_html=True)
+        st.toggle(
+            "Afficher les explications IA",
+            value=st.session_state.show_explanations,
+            key="show_explanations",
+            help="Affiche ou masque le bloc d'explication sous les réponses assistant.",
+        )
+        st.markdown('<hr class="sidebar-sep" />', unsafe_allow_html=True)
 
     
 
@@ -1294,6 +1412,127 @@ def load_data():
 
 def save_data(data):
     json.dump(data, open(INTERACTIONS_FILE, "w"), indent=2)
+
+
+def build_donut_chart(data, category_field: str, value_field: str, color, center_value: str, center_label: str, inner_radius: int = 0):
+    base = alt.Chart(data).encode(
+        theta=alt.Theta(f"{value_field}:Q"),
+        color=color,
+        tooltip=[f"{category_field}:N", f"{value_field}:Q"],
+    )
+
+    donut = base.mark_arc(innerRadius=inner_radius, outerRadius=118, cornerRadius=8)
+
+    value_text = (
+        alt.Chart(alt.Data(values=[{"text": center_value}]))
+        .mark_text(align="center", baseline="middle", fontSize=28, fontWeight="bold", color="white")
+        .encode(text="text:N", x=alt.value(160), y=alt.value(145))
+    )
+
+    label_text = (
+        alt.Chart(alt.Data(values=[{"text": center_label}]))
+        .mark_text(align="center", baseline="middle", fontSize=12, color="#94A3B8")
+        .encode(text="text:N", x=alt.value(160), y=alt.value(175))
+    )
+
+    return style_altair_chart(
+        alt.layer(donut, value_text, label_text).properties(height=320, width=320)
+    )
+
+
+def build_fraud_line_chart(dataframe):
+    fraud_timeline = dataframe.copy()
+    fraud_timeline["day"] = fraud_timeline["timestamp"].dt.floor("D")
+    fraud_timeline = fraud_timeline.groupby("day", as_index=False).agg(
+        avg_fraud_score=("fraud_score", "mean"),
+    )
+
+    if fraud_timeline.empty:
+        fraud_timeline = pd.DataFrame({"day": [], "avg_fraud_score": []})
+
+    line = (
+        alt.Chart(fraud_timeline)
+        .mark_line(point=True, strokeWidth=3)
+        .encode(
+            x=alt.X("day:T", title="Date"),
+            y=alt.Y("avg_fraud_score:Q", title="Score fraude moyen"),
+            tooltip=["day:T", "avg_fraud_score:Q"],
+        )
+        .properties(height=340)
+    )
+
+    return style_altair_chart(
+        line.configure_view(fill="#071629", stroke=None)
+    )
+
+
+def normalize_sentiment_bucket(raw_value: str) -> str:
+    value = str(raw_value or "").strip().lower()
+    if value in {"negative", "angry", "frustrated", "triste", "colere", "colère", "bad"}:
+        return "negative"
+    if value in {"positive", "happy", "satisfied", "good", "content", "positif"}:
+        return "positive"
+    return "neutral"
+
+
+def format_sentiment_distribution(dataframe) -> str:
+    if dataframe.empty or "sentiment" not in dataframe.columns:
+        return "Aucune donnée"
+
+    distribution = dataframe["sentiment"].value_counts(normalize=True).mul(100)
+    top_items = list(distribution.items())[:3]
+    parts = [f"{label}: {value:.0f}%" for label, value in top_items]
+    return " · ".join(parts) if parts else "Aucune donnée"
+
+
+def get_retrieval_context_snippets(query: str, max_items: int = 3) -> list[str]:
+    snippets: list[str] = []
+
+    retriever = getattr(getattr(orchestrator, "l1", None), "retriever", None)
+    if retriever and hasattr(retriever, "search"):
+        try:
+            hits = retriever.search(query)
+        except Exception:
+            hits = []
+
+        for hit in hits or []:
+            if isinstance(hit, dict):
+                text = str(hit.get("text", "")).strip()
+            else:
+                text = str(hit).strip()
+            if text:
+                snippets.append(text)
+            if len(snippets) >= max_items:
+                return snippets
+
+    kb = getattr(getattr(orchestrator, "l0", None), "kb", None)
+    if kb and hasattr(kb, "search"):
+        try:
+            kb_hits = kb.search(query)
+        except Exception:
+            kb_hits = []
+
+        for hit in kb_hits or []:
+            if isinstance(hit, dict):
+                text = str(hit.get("text", "")).strip()
+            else:
+                text = str(hit).strip()
+            if text:
+                snippets.append(text)
+            if len(snippets) >= max_items:
+                return snippets
+
+    data_rows = getattr(orchestrator, "data", [])
+    if isinstance(data_rows, list):
+        q = str(query or "").lower()
+        for row in data_rows:
+            text = row.get("text", "") if isinstance(row, dict) else str(row)
+            if q and q in str(text).lower():
+                snippets.append(str(text).strip())
+            if len(snippets) >= max_items:
+                break
+
+    return snippets[:max_items]
 
 
 def render_chat_bubble(role: str, content: str) -> None:
@@ -1313,6 +1552,34 @@ def render_chat_bubble(role: str, content: str) -> None:
         ),
         unsafe_allow_html=True,
     )
+
+
+def open_section_card() -> None:
+    st.markdown('<div class="section-card">', unsafe_allow_html=True)
+
+
+def close_section_card() -> None:
+    st.markdown('</div>', unsafe_allow_html=True)
+
+
+def style_altair_chart(chart):
+    chart = (
+        chart
+        .configure_axis(
+            labelColor="white",
+            titleColor="white",
+            gridColor="rgba(255,255,255,0.1)"
+        )
+        .configure_view(
+            stroke=None,
+            fill="#071629"
+        )
+        .configure_legend(
+            labelColor="white",
+            titleColor="white"
+        )
+    )
+    return chart
 
 
 # ================= DASHBOARD COLLAB =================
@@ -1337,9 +1604,8 @@ def _collab_ask(llm: AzureChatLLM, system_prompt: str, history: list, question: 
 
 def render_collab_section(page_key: str, context: str, suggestions: list) -> None:
     """Inline AI collaboration chat + suggestions for a dashboard page."""
-    st.markdown("---")
+    st.markdown("### 💬 Assistant IA")
     st.markdown(
-        '<div class="collab-section-title">💬 Analyse avec l\'assistant IA</div>'
         '<div class="collab-section-sub">Posez vos questions sur les données pour obtenir des recommandations ciblées.</div>',
         unsafe_allow_html=True,
     )
@@ -1366,13 +1632,14 @@ def render_collab_section(page_key: str, context: str, suggestions: list) -> Non
         bubbles += '</div>'
         st.markdown(bubbles, unsafe_allow_html=True)
 
-    with st.form(key=f"collab_form_{page_key}", clear_on_submit=True):
-        user_q = st.text_input(
-            "Question",
-            placeholder="Ex : Quelles sont les causes d\'escalade ? Que devrions-nous améliorer ?",
-            label_visibility="collapsed",
-        )
-        submitted = st.form_submit_button("💬 Envoyer", use_container_width=True)
+    with st.container():
+        with st.form(key=f"chat_{page_key}", clear_on_submit=True):
+            user_q = st.text_input(
+                "",
+                placeholder="Posez votre question",
+                label_visibility="collapsed",
+            )
+            submitted = st.form_submit_button("Envoyer", use_container_width=True)
 
     if submitted and user_q.strip():
         system_prompt = (
@@ -1405,24 +1672,15 @@ def render_collab_section(page_key: str, context: str, suggestions: list) -> Non
 
 
 # ================= ADMIN =================
+
 if st.session_state.page == "📊 Dashboard":
     import pandas as pd
     import altair as alt
 
-    st.markdown(
-        """
-        <div class="saas-greeting">
-            <div class="saas-greeting-hi">Bonjour, <span class="saas-greeting-name">Admin</span> &#x1F44B;</div>
-            <div class="saas-greeting-sub">Bienvenue sur votre tableau de bord AELON</div>
-        </div>
-        <div class="saas-banner">
-            <div class="saas-banner-tag">&#x26A1; Live</div>
-            <div class="saas-banner-title">Centre de D&#233;cision M&#233;tier</div>
-            <div class="saas-banner-desc">Analysez les tendances, comprenez les causes et appliquez des recommandations concr&#232;tes.</div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    if st.session_state.get("dashboard_needs_refresh"):
+        st.session_state.dashboard_needs_refresh = False
+        st.rerun()
+
 
     data = load_data()
     if not data:
@@ -1502,37 +1760,164 @@ if st.session_state.page == "📊 Dashboard":
         st.info("Aucune interaction pour les filtres sélectionnés.")
         st.stop()
 
+    analytics = analytics_agent.compute_metrics(filtered)
+
+    st.markdown('<div class="dashboard-wrapper">', unsafe_allow_html=True)
+
     def render_decision_cards(analysis_text: str, recommendations: list[str]) -> None:
-        st.markdown("### 🔎 Analyse")
-        st.markdown(
-            f'<div class="decision-card"><p>{analysis_text}</p></div>',
-            unsafe_allow_html=True,
-        )
         rec_html = "".join([f"<li>{r}</li>" for r in recommendations])
-        st.markdown("### 💡 Recommandations")
-        st.markdown(
-            f'<div class="decision-card"><ul>{rec_html}</ul></div>',
-            unsafe_allow_html=True,
-        )
+        col1, col2 = st.columns([2, 1])
+        with col1:
+            st.markdown("### 🔎 Analyse")
+            st.markdown(
+                (
+                    '<div style="width:100%;background:#0f2a44;padding:18px;border-radius:12px;'
+                    'border: 1px solid rgba(255,255,255,0.05);">'
+                    f'{analysis_text}'
+                    '</div>'
+                ),
+                unsafe_allow_html=True,
+            )
+        with col2:
+            st.markdown("### 💡 Recommandations")
+            st.markdown(
+                (
+                    '<div style="width:100%;background:#0f2a44;padding:18px;border-radius:12px;'
+                    'border: 1px solid rgba(255,255,255,0.05);">'
+                    f'<ul style="margin:0; padding-left: 18px;">{rec_html}</ul>'
+                    '</div>'
+                ),
+                unsafe_allow_html=True,
+            )
 
     st.markdown("---")
 
     dp = st.session_state.dashboard_page
 
     if dp == "Vue globale":
-        st.subheader("Vue globale")
+        st.markdown(
+            """
+            <div class="saas-greeting">
+                <div class="saas-greeting-hi">Bonjour <span class="saas-greeting-name">Admin</span> 👋</div>
+                <div class="saas-greeting-sub">Bienvenue sur votre tableau de bord AELON</div>
+            </div>
+
+            <div class="saas-banner">
+                <div class="saas-banner-tag">⚡ LIVE</div>
+                <div class="saas-banner-title">Centre de Décision Métier</div>
+                <div class="saas-banner-desc">
+                    Analysez les tendances, comprenez les causes et pilotez vos actions avec une lecture immédiate des risques, du sentiment client et des volumes.
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        open_section_card()
+        st.subheader("📊 Vue globale")
 
         n_escalated = int(filtered["escalated"].sum())
         escalation_rate = (n_escalated / total * 100) if total else 0
         avg_fraud = float(filtered["fraud_score"].mean()) if total else 0
         neg_rate = float(filtered["sentiment"].isin(["frustrated", "angry", "negative"]).mean() * 100)
         top_cat = filtered["category"].mode()[0] if total else "N/A"
+        avg_quality = filtered["quality_score"].mean() if "quality_score" in filtered else 0
 
-        k1, k2, k3, k4 = st.columns(4)
+        # ✅ Couleur selon score
+        if avg_quality >= 70:
+            quality_color = "#22c55e"   # vert
+            label = "✅ Stable"
+        elif avg_quality >= 40:
+            quality_color = "#f59e0b"   # orange
+            label = "⚠️ Moyen"
+        else:
+            quality_color = "#ef4444"   # rouge
+            label = "🚨 À améliorer"
+
+        # ✅ KPI custom stylé
+        st.markdown(f"""
+        <div style="
+            background:#0f2a44;
+            padding:16px;
+            border-radius:12px;
+            text-align:center;
+            border-top:4px solid {quality_color};
+        ">
+            <div style="font-size:12px; color:#9ca3af;">
+                QUALITÉ IA
+            </div>
+
+            <div style="
+                font-size:28px;
+                font-weight:bold;
+                color:{quality_color};
+            ">
+                {avg_quality:.1f}
+            </div>
+
+            <div style="font-size:12px; color:#9ca3af;">
+                {label}
+            </div>
+
+        </div>
+        """, unsafe_allow_html=True)
+
+
+        k1, k2, k3, k4, k5 = st.columns(5)
         k1.metric("Interactions", total)
         k2.metric("Taux d'escalade", f"{escalation_rate:.1f}%")
         k3.metric("Score fraude moyen", f"{avg_fraud:.1f}")
         k4.metric("Catégorie principale", f"{CATEGORY_ICONS.get(top_cat, '❓')} {str(top_cat).capitalize()}")
+        k5.metric("Qualité IA", f"{avg_quality:.1f}")
+
+        st.markdown("### 🔹 KPI erreur")
+        error_rate = analytics.get("error_rate", 0)
+        st.metric("Taux erreurs", f"{error_rate:.1f}%")
+
+        st.markdown("### 🔥 Services problématiques")
+        st.write(analytics.get("top_services", {}))
+
+        st.markdown("### 📊 Distribution par catégorie")
+        cat_df = pd.DataFrame(
+            list(analytics.get("category_dist", {}).items()),
+            columns=["category", "count"],
+        )
+        if not cat_df.empty:
+            st.bar_chart(cat_df.set_index("category"))
+        else:
+            st.info("Aucune donnée de distribution disponible.")
+
+        st.markdown("### 📌 Insights & Performance")
+        top_services = analytics.get("top_services", {})
+        sev_dist = analytics.get("severity_dist", {})
+        if sev_dist:
+            st.write("Distribution sévérité:", sev_dist)
+        if top_services:
+            st.write("Top agents/services:", top_services)
+
+        issue_items = []
+        if "issues" in filtered.columns:
+            for val in filtered["issues"].dropna().tolist():
+                if isinstance(val, list):
+                    issue_items.extend([str(x) for x in val if str(x).strip()])
+                elif isinstance(val, str) and val.strip():
+                    issue_items.append(val.strip())
+
+        if issue_items:
+            top_issues = pd.Series(issue_items).value_counts().head(5)
+            st.markdown("#### Top issues / anomalies")
+            st.dataframe(top_issues.rename("count"), use_container_width=True)
+
+        low_quality_mask = (filtered["quality_score"] < 40) if "quality_score" in filtered.columns else False
+        anomaly_mask = filtered["escalated"] | (filtered["fraud_score"] >= 70) | low_quality_mask
+        anomaly_count = int(anomaly_mask.sum()) if hasattr(anomaly_mask, "sum") else 0
+        st.metric("Anomalies détectées", anomaly_count)
+
+        if "explanation" in filtered.columns:
+            latest_explanations = filtered["explanation"].dropna().tail(3).tolist()
+            if latest_explanations:
+                st.markdown("#### Dernières explications")
+                for idx, exp in enumerate(reversed(latest_explanations), start=1):
+                    st.caption(f"{idx}. {str(exp)}")
 
         timeline = filtered.copy()
         timeline["day"] = timeline["timestamp"].dt.floor("D")
@@ -1552,6 +1937,8 @@ if st.session_state.page == "📊 Dashboard":
             )
             .properties(height=320)
         )
+        main_chart = main_chart.configure_view(fill="#071629", stroke=None)
+        main_chart = style_altair_chart(main_chart)
         st.altair_chart(main_chart, use_container_width=True)
 
         if escalation_rate > 35 or neg_rate > 40:
@@ -1577,25 +1964,91 @@ if st.session_state.page == "📊 Dashboard":
             ],
         )
 
-    elif dp == "Analyse des sentiments":
-        st.subheader("Analyse des sentiments")
+        global_sentiment = filtered["sentiment"].fillna("neutral").apply(normalize_sentiment_bucket)
+        global_sentiment_counts = global_sentiment.value_counts().reindex(["positive", "neutral", "negative"], fill_value=0).reset_index()
+        global_sentiment_counts.columns = ["sentiment", "count"]
+        global_sentiment_counts["percent"] = global_sentiment_counts["count"].div(max(global_sentiment_counts["count"].sum(), 1)).mul(100).round(1)
+        global_sentiment_row = global_sentiment_counts.sort_values("count", ascending=False).iloc[0]
+        st.markdown("### Sentiment Distribution")
+        st.altair_chart(
+            build_donut_chart(
+                global_sentiment_counts,
+                category_field="sentiment",
+                value_field="percent",
+                color=alt.Color(
+                    "sentiment:N",
+                    scale=alt.Scale(
+                        domain=["positive", "neutral", "negative"],
+                        range=["#22C55E", "#2563EB", "#EF4444"],
+                    ),
+                    legend=alt.Legend(title="Sentiment"),
+                ),
+                center_value=f"{global_sentiment_row['percent']:.0f}%",
+                center_label=f"{str(global_sentiment_row['sentiment']).capitalize()}",
+                inner_radius=0,
+            ),
+            use_container_width=True,
+        )
 
-        sent_counts = filtered["sentiment"].value_counts().reset_index()
+        st.markdown("### 🗂️ Explorer par catégorie")
+        global_categories = filtered["category"].value_counts().reset_index()
+        global_categories.columns = ["category", "count"]
+        global_categories = global_categories.head(8)
+        for row_start in range(0, len(global_categories), 4):
+            cols = st.columns(4)
+            for col, cat_row in zip(cols, global_categories.iloc[row_start:row_start + 4].to_dict(orient="records")):
+                category_name = cat_row["category"]
+                category_count = int(cat_row["count"])
+                icon = CATEGORY_ICONS.get(category_name, "📁")
+                with col:
+                    st.markdown(
+                        (
+                            '<div class="category-card">'
+                            f'<div class="category-card-title">{icon} {html.escape(str(category_name).capitalize())}</div>'
+                            f'<div class="category-card-meta">{category_count} interactions</div>'
+                            f'<div class="category-card-meta">Cliquez pour le détail</div>'
+                            '</div>'
+                        ),
+                        unsafe_allow_html=True,
+                    )
+                    if st.button(
+                        f"Ouvrir {category_name}",
+                        key=f"global_open_category_{category_name}",
+                        use_container_width=True,
+                    ):
+                        open_category_detail(category_name)
+                        st.rerun()
+        close_section_card()
+
+    elif dp == "Analyse des sentiments":
+        open_section_card()
+        st.subheader("📈 Analyse des sentiments")
+        st.markdown("#### Sentiment Distribution")
+
+        sentiment_series = filtered["sentiment"].fillna("neutral").apply(normalize_sentiment_bucket)
+        sent_counts = sentiment_series.value_counts().reindex(["positive", "neutral", "negative"], fill_value=0).reset_index()
         sent_counts.columns = ["sentiment", "count"]
-        sentiment_chart = (
-            alt.Chart(sent_counts)
-            .mark_bar(cornerRadiusTopLeft=6, cornerRadiusTopRight=6)
-            .encode(
-                x=alt.X("sentiment:N", title="Sentiment"),
-                y=alt.Y("count:Q", title="Nombre d'interactions"),
-                color=alt.Color("sentiment:N", scale=alt.Scale(scheme="tableau10"), legend=None),
-                tooltip=["sentiment:N", "count:Q"],
-            )
-            .properties(height=320)
+        neg_rate = float(filtered["sentiment"].isin(["frustrated", "angry", "negative"]).mean() * 100)
+        sent_counts["percent"] = sent_counts["count"].div(max(sent_counts["count"].sum(), 1)).mul(100).round(1)
+        top_sentiment_row = sent_counts.sort_values("count", ascending=False).iloc[0]
+        sentiment_chart = build_donut_chart(
+            sent_counts,
+            category_field="sentiment",
+            value_field="percent",
+            color=alt.Color(
+                "sentiment:N",
+                scale=alt.Scale(
+                    domain=["positive", "neutral", "negative"],
+                    range=["#22C55E", "#2563EB", "#EF4444"],
+                ),
+                legend=alt.Legend(title="Sentiment"),
+            ),
+            center_value=f"{top_sentiment_row['percent']:.0f}%",
+            center_label=f"{str(top_sentiment_row['sentiment']).capitalize()}",
+            inner_radius=0,
         )
         st.altair_chart(sentiment_chart, use_container_width=True)
 
-        neg_rate = float(filtered["sentiment"].isin(["frustrated", "angry", "negative"]).mean() * 100)
         if neg_rate >= 35:
             analysis = "Un nombre important d'interactions est associé à un sentiment négatif, ce qui peut indiquer des problèmes dans l'expérience client."
         elif neg_rate >= 20:
@@ -1618,9 +2071,22 @@ if st.session_state.page == "📊 Dashboard":
                 "Mettre en place un suivi des sentiments en temps réel",
             ],
         )
+        close_section_card()
+
+        # ✅ ALERTES QUALITÉ IA (à la fin de Vue globale)
+
+        if "issues" in filtered.columns:
+
+            issues_list = filtered["issues"].explode().dropna()
+
+            if len(issues_list) > 0:
+                st.warning(
+                    f"⚠️ Problèmes détectés : {issues_list.unique().tolist()}"
+                )
 
     elif dp == "Analyse des escalades (L0 / L1)":
-        st.subheader("Analyse des escalades (L0 / L1)")
+        open_section_card()
+        st.subheader("🧭 Analyse des escalades (L0 / L1)")
 
         agent_counts = filtered["agent"].value_counts().reset_index()
         agent_counts.columns = ["agent", "count"]
@@ -1639,6 +2105,7 @@ if st.session_state.page == "📊 Dashboard":
             )
             .properties(height=320)
         )
+        escalation_chart = style_altair_chart(escalation_chart)
         st.altair_chart(escalation_chart, use_container_width=True)
 
         l1_rate = float((filtered["agent"] == "L1").mean() * 100)
@@ -1664,30 +2131,19 @@ if st.session_state.page == "📊 Dashboard":
                 "Mettre en place des seuils d'alerte pour le taux d'escalade",
             ],
         )
+        close_section_card()
 
     elif dp == "Analyse des fraudes":
-        st.subheader("Analyse des fraudes")
-
-        fraud_counts = filtered.groupby("risk_level").size().reset_index(name="count")
-        fraud_chart = (
-            alt.Chart(fraud_counts)
-            .mark_bar(cornerRadiusTopLeft=6, cornerRadiusTopRight=6)
-            .encode(
-                x=alt.X("risk_level:N", title="Niveau de risque"),
-                y=alt.Y("count:Q", title="Nombre de cas"),
-                color=alt.Color(
-                    "risk_level:N",
-                    scale=alt.Scale(domain=["LOW", "MEDIUM", "HIGH", "low", "medium", "high"],
-                                    range=["#22C55E", "#F59E0B", "#EF4444", "#22C55E", "#F59E0B", "#EF4444"]),
-                    legend=None,
-                ),
-                tooltip=["risk_level:N", "count:Q"],
-            )
-            .properties(height=320)
-        )
-        st.altair_chart(fraud_chart, use_container_width=True)
+        open_section_card()
+        st.subheader("🛡️ Analyse des fraudes")
+        st.markdown("#### Fraud Risk Level")
 
         fraud_rate = float(filtered["is_fraud"].fillna(False).mean() * 100)
+        avg_fraud_score = float(filtered["fraud_score"].mean()) if len(filtered) else 0.0
+        fraud_line = build_fraud_line_chart(filtered)
+        st.altair_chart(fraud_line, use_container_width=True)
+        st.caption(f"Score moyen={avg_fraud_score:.1f} | Taux fraude={fraud_rate:.1f}%")
+
         if fraud_rate >= 12 or float(filtered["fraud_score"].mean()) >= 40:
             analysis = "Une augmentation des cas potentiellement frauduleux a été détectée, nécessitant une surveillance renforcée."
         elif fraud_rate >= 5:
@@ -1710,37 +2166,68 @@ if st.session_state.page == "📊 Dashboard":
                 "Analyser les faux positifs pour réduire les blocages inutiles",
             ],
         )
+        close_section_card()
 
     elif dp == "Analyse des requêtes / catégories":
-        st.subheader("Analyse des requêtes / catégories")
+        open_section_card()
+        st.subheader("🗂️ Analyse des requêtes / catégories")
 
         cat_counts = filtered["category"].value_counts().reset_index()
         cat_counts.columns = ["category", "count"]
-        category_chart = (
-            alt.Chart(cat_counts)
-            .mark_bar(cornerRadiusTopLeft=6, cornerRadiusTopRight=6)
-            .encode(
-                x=alt.X("count:Q", title="Volume"),
-                y=alt.Y("category:N", sort="-x", title="Catégorie"),
-                color=alt.Color(
-                    "category:N",
-                    scale=alt.Scale(
-                        domain=list(CATEGORY_COLORS.keys()),
-                        range=list(CATEGORY_COLORS.values()),
-                    ),
-                    legend=None,
+        top_ratio = float(cat_counts.iloc[0]["count"] / total * 100) if total else 0
+        category_chart = build_donut_chart(
+            cat_counts,
+            category_field="category",
+            value_field="count",
+            color=alt.Color(
+                "category:N",
+                scale=alt.Scale(
+                    domain=list(CATEGORY_COLORS.keys()),
+                    range=["#2563EB", "#FACC15", "#22C55E", "#EF4444"] * ((len(cat_counts) // 4) + 1),
                 ),
-                tooltip=["category:N", "count:Q"],
-            )
-            .properties(height=340)
+                legend=alt.Legend(title="Catégorie"),
+            ),
+            center_value=f"{top_ratio:.0f}%",
+            center_label="Top catégorie",
+            inner_radius=0,
         )
         st.altair_chart(category_chart, use_container_width=True)
+
+        st.markdown(
+            '<div class="kpi-inline-note">Cliquez sur une catégorie pour ouvrir un dashboard détaillé avec KPI, tendances, analyse et assistant IA.</div>',
+            unsafe_allow_html=True,
+        )
+
+        categories = cat_counts.to_dict(orient="records")
+        for row_start in range(0, len(categories), 3):
+            cols = st.columns(3)
+            for col, cat_row in zip(cols, categories[row_start:row_start + 3]):
+                category_name = cat_row["category"]
+                category_count = int(cat_row["count"])
+                icon = CATEGORY_ICONS.get(category_name, "📁")
+                with col:
+                    st.markdown(
+                        (
+                            '<div class="category-card">'
+                            f'<div class="category-card-title">{icon} {html.escape(str(category_name).capitalize())}</div>'
+                            f'<div class="category-card-meta">{category_count} interactions</div>'
+                            f'<div class="category-card-meta">Part du volume : {(category_count / total * 100):.1f}%</div>'
+                            '</div>'
+                        ),
+                        unsafe_allow_html=True,
+                    )
+                    if st.button(
+                        f"Ouvrir {category_name}",
+                        key=f"open_category_{category_name}",
+                        use_container_width=True,
+                    ):
+                        open_category_detail(category_name)
+                        st.rerun()
 
         top_queries = filtered["query"].value_counts().head(5).reset_index()
         top_queries.columns = ["requête", "fréquence"]
         st.dataframe(top_queries, use_container_width=True, hide_index=True)
 
-        top_ratio = float(cat_counts.iloc[0]["count"] / total * 100) if total else 0
         if top_ratio >= 35:
             analysis = "Une catégorie domine nettement le volume de requêtes. Cela indique un besoin métier prioritaire sur ce segment."
         elif top_ratio >= 20:
@@ -1763,8 +2250,102 @@ if st.session_state.page == "📊 Dashboard":
                 "Optimiser les temps de réponse sur les catégories à fort volume",
             ],
         )
+        close_section_card()
+
+    elif dp == "DETAIL_CATEGORY":
+        selected_category = st.session_state.selected_category
+        category_df = filtered[filtered["category"] == selected_category].copy() if selected_category else filtered.iloc[0:0].copy()
+
+        if not selected_category or category_df.empty:
+            st.warning("Sélectionnez une catégorie pour afficher son détail.")
+            set_dashboard_page("Analyse des requêtes / catégories")
+            st.rerun()
+
+        category_total = len(category_df)
+        category_avg_fraud = float(category_df["fraud_score"].mean()) if category_total else 0
+        category_escalation = float(category_df["escalated"].mean() * 100) if category_total else 0
+        category_sentiment = format_sentiment_distribution(category_df)
+        dominant_sentiment = category_df["sentiment"].mode()[0] if category_total and not category_df["sentiment"].mode().empty else "N/A"
+
+        open_section_card()
+        st.markdown(
+            f"### {CATEGORY_ICONS.get(selected_category, '📁')} Category: {selected_category.capitalize()}"
+        )
+        if st.button("← Retour aux catégories", key="back_to_categories"):
+            set_dashboard_page("Analyse des requêtes / catégories")
+            st.rerun()
+        close_section_card()
+
+        open_section_card()
+        st.markdown("### KPI")
+        k1, k2, k3, k4 = st.columns(4)
+        k1.metric("Interactions", category_total)
+        k2.metric("Fraude moyenne", f"{category_avg_fraud:.1f}")
+        k3.metric("Taux d'escalade", f"{category_escalation:.1f}%")
+        k4.metric("Sentiment dominant", str(dominant_sentiment).capitalize())
+        st.markdown(
+            f'<div class="kpi-inline-note">Distribution des sentiments : {html.escape(category_sentiment)}</div>',
+            unsafe_allow_html=True,
+        )
+        close_section_card()
+
+        open_section_card()
+        st.markdown("### Visualisation")
+        category_timeline = category_df.copy()
+        category_timeline["day"] = category_timeline["timestamp"].dt.floor("D")
+        category_volume = category_timeline.groupby(["day", "agent"]).size().reset_index(name="count")
+        detail_chart = (
+            alt.Chart(category_volume)
+            .mark_line(point=True, strokeWidth=3)
+            .encode(
+                x=alt.X("day:T", title="Date"),
+                y=alt.Y("count:Q", title="Interactions"),
+                color=alt.Color(
+                    "agent:N",
+                    scale=alt.Scale(domain=["L0", "L1", "blocked"], range=["#2563EB", "#14B8A6", "#F87171"]),
+                    legend=alt.Legend(title="Agent"),
+                ),
+                tooltip=["day:T", "agent:N", "count:Q"],
+            )
+            .properties(height=360)
+        )
+        st.altair_chart(style_altair_chart(detail_chart), use_container_width=True)
+        close_section_card()
+
+        if category_escalation >= 30:
+            category_analysis = "Cette catégorie génère un niveau d'escalade élevé. Elle mérite une revue prioritaire des parcours L0 et des contenus de réponse." 
+        elif category_avg_fraud >= 35:
+            category_analysis = "Le risque fraude moyen de cette catégorie est élevé. Une surveillance renforcée et des règles de détection plus strictes sont recommandées." 
+        else:
+            category_analysis = "Cette catégorie présente une activité exploitable avec un potentiel clair d'optimisation. Les actions doivent prioriser la qualité des réponses et la réduction des frictions." 
+
+        category_recs = [
+            f"Renforcer les réponses et procédures sur la catégorie {selected_category}.",
+            "Analyser les pics journaliers pour identifier les motifs opérationnels récurrents.",
+            "Utiliser l'assistant IA pour construire un plan d'action ciblé par catégorie.",
+        ]
+
+        open_section_card()
+        render_decision_cards(category_analysis, category_recs)
+        close_section_card()
+
+        open_section_card()
+        render_collab_section(
+            f"category_{selected_category}",
+            (
+                f"Catégorie {selected_category} — {category_total} interactions, fraude moyenne {category_avg_fraud:.1f}, "
+                f"escalade {category_escalation:.1f}%, sentiment dominant {dominant_sentiment}. Analyse : {category_analysis}"
+            ),
+            [
+                f"Identifier les causes racines sur la catégorie {selected_category}",
+                "Prioriser les améliorations à fort impact métier",
+                "Définir des actions rapides pour réduire escalades et frictions",
+            ],
+        )
+        close_section_card()
 
     elif dp == "⚙️ Paramètres":
+        open_section_card()
         st.subheader("⚙️ Paramètres")
 
         # ── Profil ──────────────────────────────────────
@@ -1799,6 +2380,7 @@ if st.session_state.page == "📊 Dashboard":
             st.button("🗑️ Supprimer toutes les données", key="settings_delete", use_container_width=True)
         with col_d2:
             st.button("📞 Contacter le support", key="settings_support", use_container_width=True)
+        close_section_card()
 
     if dp != "⚙️ Paramètres":
         st.markdown("---")
@@ -1812,6 +2394,8 @@ if st.session_state.page == "📊 Dashboard":
             mime="text/csv",
             use_container_width=True,
         )
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # ================= USER =================
 else:
@@ -1884,6 +2468,13 @@ else:
 
         user_query = st.session_state.messages[-1]["content"]
 
+        
+        #  MEMORY (ajout ici)
+        session_id = "default_user"
+        memory_context = memory_agent.get_context(session_id)
+        retrieval_context = []
+
+
         # ===== FRAUD =====
         fraud_result = fraud_agent.analyze(user_query)
 
@@ -1898,7 +2489,8 @@ else:
             # ===== ORCHESTRATOR =====
             with st.spinner("AELON réfléchit..."):
                 orch_result = orchestrator.handle_user_query(user_query)
-
+        
+            
             if isinstance(orch_result, dict):
                 response      = orch_result.get("response", "")
                 escalated     = orch_result.get("escalated", False)
@@ -1912,6 +2504,12 @@ else:
                 agent_used        = "L0"
                 sentiment_value   = "neutre"
 
+            if agent_used == "L1" or escalated:
+                retrieval_context = get_retrieval_context_snippets(user_query)
+                if retrieval_context:
+                    context_lines = "\n".join([f"- {s[:240]}" for s in retrieval_context])
+                    response = f"{response}\n\n📚 Contexte utile:\n{context_lines}"
+
             # ── Intermediate escalation message ──────────────────────────
             if escalated:
                 escalation_msg = (
@@ -1924,14 +2522,46 @@ else:
                     "content": escalation_msg
                 })
 
+                #  OBSERVABILITY (qualité réponse)
+        if escalated:
+            st.session_state.escalated_count += 1
+        obs_result = observability_agent.analyze(
+            response,
+            {
+                "escalated": escalated,
+                "escalated_count": st.session_state.escalated_count
+            }
+        )
+
+        explanation = explainability_agent.explain(
+            user_query=user_query,
+            response=response,
+            agent_used=agent_used,
+            escalated=escalated,
+            escalation_reason=escalation_reason,
+            retrieved_context=retrieval_context,
+            quality_score=obs_result.get("quality_score"),
+        )
+
+        response_for_display = response
+        if explanation and st.session_state.get("show_explanations", True):
+            response_for_display = f"{response}\n\n🧠 Explication:\n{explanation}"
+
         # ===== AFFICHAGE =====
         with st.chat_message("assistant", avatar=AELON_AVATAR_BYTES):
-            render_chat_bubble("assistant", response)
+            render_chat_bubble("assistant", response_for_display)
 
         st.session_state.messages.append({
             "role": "assistant",
-            "content": response
+            "content": response_for_display
         })
+
+        # ✅ UPDATE MEMORY
+        memory_agent.update_memory(
+            session_id,
+            user_query,
+            response
+        )
 
         # ===== LOG DATA =====
         record = {
@@ -1945,11 +2575,16 @@ else:
             "agent":             agent_used,
             "escalated":         escalated,
             "escalation_reason": escalation_reason,
+            "response":          response,
             "response_preview":  response[:100],
             "sentiment":         sentiment_value,
             "resolution_status": "fraud_blocked" if fraud_result["is_fraud"] else "resolved",
+            "quality_score": obs_result["quality_score"],
+            "issues": obs_result["issues"],
+            "explanation": explanation,
         }
 
         data = load_data()
         data.append(record)
         save_data(data)
+        st.session_state.dashboard_needs_refresh = True
