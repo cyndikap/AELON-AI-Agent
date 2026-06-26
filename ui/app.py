@@ -12,6 +12,7 @@ sys.path.append(str(ROOT_DIR))
 
 from datetime import datetime
 import streamlit as st
+from PIL import Image
 
 
 from azure_chat_llm import AzureChatLLM
@@ -28,8 +29,11 @@ from utils.export_handler import to_csv_string
 AELON_AVATAR = Path(__file__).resolve().parent / "aelon_avatar.png"
 AELON_AVATAR_BYTES = AELON_AVATAR.read_bytes()
 
+import base64
+AELON_AVATAR_B64 = base64.b64encode(AELON_AVATAR_BYTES).decode()
+
 # ================= CONFIG =================
-st.set_page_config(page_title="AELON", page_icon="⚡", layout="wide")
+st.set_page_config(page_title="AELON", page_icon=Image.open(AELON_AVATAR), layout="wide")
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
@@ -79,6 +83,22 @@ html, body, .stApp {
     padding-top: 0.8rem !important;
     padding-bottom: 5rem !important;
     max-width: 1100px !important;
+}
+
+/* ===== CHAT MODE CARD (uniquement sur la page Assistant) ===== */
+.block-container:has(.chat-header) {
+    max-width: 850px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    margin-top: 24px !important;
+    padding: 1.5rem 1.8rem 5rem 1.8rem !important;
+    background: linear-gradient(180deg, #0b1f33 0%, #071629 100%) !important;
+    border-radius: 18px !important;
+    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+    box-shadow:
+        0 0 0 1px rgba(30, 68, 110, 0.4),
+        0 24px 60px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
 }
 
 h1, h2, h3 {
@@ -319,14 +339,14 @@ button:hover {
 button[kind="primary"],
 [data-testid="baseButton-primary"] {
     background: linear-gradient(135deg, var(--yellow) 0%, var(--gold) 100%) !important;
-    color: #0F172A !important;
+    color: #111827 !important;
     border: 2px solid var(--yellow-border) !important;
-    font-weight: 700 !important;
+    font-weight: 300 !important;
 }
 
 button:not([kind="primary"]) {
     background: linear-gradient(135deg, var(--blue) 0%, #1E40AF 100%) !important;
-    color: white !important;
+    color: #111827 !important;
     border: 2px solid var(--blue-dark) !important;
 }
 
@@ -600,16 +620,10 @@ button[kind="secondary"] {
     [data-testid="stChatMessageContent"],
 [data-testid="stChatMessage"][aria-label*="assistant" i]
     [data-testid="stChatMessageContent"] {
-    background: var(--yellow-bg) !important;
-    border: 1px solid var(--yellow-border) !important;
-    border-radius: 4px 18px 18px 18px !important;
-    color: #0F172A !important;
-    display: inline-block;
-    width: fit-content;
-    max-width: min(78%, 760px);
-    box-shadow: 0 4px 12px rgba(250, 204, 21, 0.15);
-    padding: 0.7rem 0.9rem !important;
-    font-weight: 400;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
 }
 [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"])
     [data-testid="stChatMessageContent"] *,
@@ -731,15 +745,18 @@ button[kind="secondary"] {
     border-bottom: 7px solid transparent;
 }
 
+/* ===== BOT BUBBLE — single source of truth for assistant messages ===== */
+.bot-bubble,
 .ae-bubble-assistant {
-    background: var(--yellow-bg);
-    border: 1px solid var(--yellow-border);
+    background: var(--yellow);
+    border: 2px solid var(--yellow-border);
     border-radius: 4px 18px 18px 18px;
-    color: #0F172A;
-    box-shadow: 0 4px 12px rgba(250, 204, 21, 0.12);
+    color: #111827;
+    box-shadow: 0 4px 16px rgba(250, 204, 21, 0.30);
     animation: aeSlideLeft 0.3s ease both;
 }
 
+.bot-bubble::before,
 .ae-bubble-assistant::before {
     content: "";
     position: absolute;
@@ -747,7 +764,7 @@ button[kind="secondary"] {
     bottom: 12px;
     width: 0;
     height: 0;
-    border-right: 9px solid var(--yellow-bg);
+    border-right: 9px solid var(--yellow);
     border-top: 7px solid transparent;
     border-bottom: 7px solid transparent;
 }
@@ -1199,9 +1216,9 @@ def set_dashboard_page(p: str):
 # ================= SIDEBAR =================
 with st.sidebar:
     st.markdown(
-        """
+        f"""
         <div class="sidebar-brand">
-            <img class="sidebar-avatar" src="ui/aelon_avatar.png" alt="AELON" />
+            <img class="sidebar-avatar" src="data:image/png;base64,{AELON_AVATAR_B64}" alt="AELON" />
             <div class="sidebar-title">AELON</div>
             <div class="sidebar-subtitle">Banking Assistant</div>
         </div>
@@ -1265,7 +1282,7 @@ with st.sidebar:
                 st.session_state.quick_message = _qm
         st.markdown('<hr class="sidebar-sep" />', unsafe_allow_html=True)
 
-    st.markdown('<div class="sidebar-footer">AELON — 2026</div>', unsafe_allow_html=True)
+    
 
 # ================= STORAGE =================
 INTERACTIONS_FILE = "interactions.json"
@@ -1281,8 +1298,12 @@ def save_data(data):
 
 def render_chat_bubble(role: str, content: str) -> None:
     """Render chat content with custom bubbles matching the project style."""
-    bubble_class = "ae-bubble-user" if role == "user" else "ae-bubble-assistant"
-    wrap_class = "ae-bubble-wrap-user" if role == "user" else "ae-bubble-wrap-assistant"
+    if role == "user":
+        bubble_class = "ae-bubble-user"
+        wrap_class = "ae-bubble-wrap-user"
+    else:
+        bubble_class = "ae-bubble-assistant bot-bubble"
+        wrap_class = "ae-bubble-wrap-assistant"
     safe_content = html.escape(str(content)).replace("\n", "<br>")
     st.markdown(
         (
@@ -1813,9 +1834,9 @@ else:
 
     # ===== HEADER =====
     st.markdown(
-        """
+        f"""
         <div class="chat-header">
-            <img class="chat-header-avatar" src="ui/aelon_avatar.png" alt="AELON" />
+            <img class="chat-header-avatar" src="data:image/png;base64,{AELON_AVATAR_B64}" alt="AELON" />
             <div class="chat-header-title">AELON</div>
             <div class="chat-header-sub">Banking Assistant</div>
         </div>
