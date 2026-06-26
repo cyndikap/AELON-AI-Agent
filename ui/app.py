@@ -551,35 +551,39 @@ button[kind="secondary"] {
 }
 
 /* ===== NATIVE CHAT BUBBLES ===== */
-/* User message */
+/* User message — message à gauche de l'avatar, avatar à l'extrémité droite */
 [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]),
-[data-testid="stChatMessage"][aria-label*="user" i] {
-    flex-direction: row-reverse !important;
+[data-testid="stChatMessage"][aria-label*="user" i],
+[data-testid="stChatMessage"]:has(.ae-bubble-user) {
+    display: flex !important;
+    flex-direction: row !important;
     justify-content: flex-end !important;
-    text-align: right !important;
+    align-items: flex-start !important;
     gap: 0.4rem !important;
     animation: aeSlideRight 0.3s ease both;
 }
 
+/* Content en order:1 → visuellement avant l'avatar (à sa gauche) */
 [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"])
     [data-testid="stChatMessageContent"],
 [data-testid="stChatMessage"][aria-label*="user" i]
+    [data-testid="stChatMessageContent"],
+[data-testid="stChatMessage"]:has(.ae-bubble-user)
     [data-testid="stChatMessageContent"] {
-    background: var(--blue) !important;
-    border: 1px solid var(--blue-dark) !important;
-    border-radius: 18px 4px 18px 18px !important;
-    color: #FFFFFF !important;
-    display: inline-block;
-    width: fit-content;
-    max-width: min(78%, 760px);
-    margin-left: auto;
-    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
-    padding: 0.7rem 0.9rem !important;
-    font-weight: 400;
+    order: 1 !important;
+    flex: 1 1 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    padding: 0 !important;
 }
 [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"])
     [data-testid="stChatMessageContent"] *,
 [data-testid="stChatMessage"][aria-label*="user" i]
+    [data-testid="stChatMessageContent"] *,
+[data-testid="stChatMessage"]:has(.ae-bubble-user)
     [data-testid="stChatMessageContent"] * {
     color: #FFFFFF !important;
 }
@@ -614,11 +618,14 @@ button[kind="secondary"] {
     color: #0F172A !important;
 }
 
-/* User avatar styling */
+/* User avatar styling — order:2 → après le message (extrémité droite) */
 [data-testid="stChatMessage"]:has(.ae-bubble-user) [data-testid="stChatMessageAvatar"],
 [data-testid="stChatMessage"]:has(.ae-bubble-user) [data-testid="stChatMessageAvatarUser"],
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) [data-testid="stChatMessageAvatar"],
 [data-testid="stChatMessage"][aria-label*="user" i] [data-testid="stChatMessageAvatar"],
 [data-testid="stChatMessage"][aria-label*="user" i] [data-testid="stChatMessageAvatarUser"] {
+    order: 2 !important;
+    flex-shrink: 0 !important;
     background: var(--blue) !important;
     border: 2px solid var(--blue-dark) !important;
     border-radius: 12px !important;
@@ -626,7 +633,8 @@ button[kind="secondary"] {
 }
 
 [data-testid="stChatMessage"]:has(.ae-bubble-user) [data-testid="stChatMessageAvatar"] svg,
-[data-testid="stChatMessage"]:has(.ae-bubble-user) [data-testid="stChatMessageAvatarUser"] svg {
+[data-testid="stChatMessage"]:has(.ae-bubble-user) [data-testid="stChatMessageAvatarUser"] svg,
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) [data-testid="stChatMessageAvatar"] svg {
     fill: #FFFFFF !important;
     color: #FFFFFF !important;
     stroke: #FFFFFF !important;
@@ -663,6 +671,14 @@ button[kind="secondary"] {
     box-shadow: none !important;
 }
 
+/* Force full width on intermediate containers inside user messages */
+[data-testid="stChatMessage"]:has(.ae-bubble-user) [data-testid="stMarkdownContainer"],
+[data-testid="stChatMessage"]:has(.ae-bubble-user) [data-testid="stElementContainer"],
+[data-testid="stChatMessage"]:has(.ae-bubble-user) [data-testid="stVerticalBlock"],
+[data-testid="stChatMessage"]:has(.ae-bubble-user) [data-testid="stHorizontalBlock"] {
+    width: 100% !important;
+}
+
 /* ===== CUSTOM BUBBLE WRAPPERS ===== */
 .ae-bubble {
     position: relative;
@@ -684,8 +700,9 @@ button[kind="secondary"] {
 }
 
 .ae-bubble-wrap-user {
+    width: 100% !important;
     justify-content: flex-end;
-    margin-left: auto;
+    margin-left: 0;
 }
 
 .ae-bubble-wrap-assistant {
@@ -1167,7 +1184,7 @@ orchestrator = Orchestrator()
 if "page" not in st.session_state:
     st.session_state.page = "💬 Assistant"
 if "dashboard_page" not in st.session_state:
-    st.session_state.dashboard_page = "📊 Vue globale"
+    st.session_state.dashboard_page = " Vue globale"
 if "collab_chat" not in st.session_state:
     st.session_state.collab_chat = {}
 
@@ -1186,27 +1203,13 @@ with st.sidebar:
         <div class="sidebar-brand">
             <img class="sidebar-avatar" src="ui/aelon_avatar.png" alt="AELON" />
             <div class="sidebar-title">AELON</div>
-            <div class="sidebar-subtitle">Banking Intelligence</div>
+            <div class="sidebar-subtitle">Banking Assistant</div>
         </div>
         <hr class="sidebar-sep" />
         """,
         unsafe_allow_html=True,
     )
 
-    # ── User profile ──────────────────────────────────────────────────
-    _is_admin = st.session_state.page == "📊 Dashboard"
-    st.markdown(
-        f"""
-        <div class="user-profile">
-            <div class="user-profile-avatar">{'🛡️' if _is_admin else '👤'}</div>
-            <div>
-                <div class="user-profile-name">{'Admin' if _is_admin else 'Utilisateur'}</div>
-                <div class="user-profile-role">admin@aelon.ai</div>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
 
     st.markdown('<div class="sidebar-nav-label">▼ Navigation</div>', unsafe_allow_html=True)
 
@@ -1231,12 +1234,12 @@ with st.sidebar:
         st.markdown('<div class="sidebar-nav-label">▼ Modules</div>', unsafe_allow_html=True)
 
         dash_pages = [
-            "📊 Vue globale",
-            "📈 Analyse des sentiments",
-            "🔁 Analyse des escalades (L0 / L1)",
-            "🚨 Analyse des fraudes",
-            "📂 Analyse des requêtes / catégories",
-            "⚙️ Paramètres",
+            "Vue globale",
+            "Analyse des sentiments",
+            "Analyse des escalades (L0 / L1)",
+            "Analyse des fraudes",
+            "Analyse des requêtes / catégories",
+            "Paramètres",
         ]
 
         current_dash = st.session_state.dashboard_page
@@ -1250,11 +1253,16 @@ with st.sidebar:
 
     st.markdown('<hr class="sidebar-sep" />', unsafe_allow_html=True)
     if mode == "Utilisateur":
-        st.markdown('<div class="sidebar-nav-label">▼ Informations</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="sidebar-info">🔸 Mode actif : <b>{mode}</b></div>', unsafe_allow_html=True)
-        st.markdown('<div class="sidebar-info">🔒 Ne partagez jamais vos identifiants</div>', unsafe_allow_html=True)
-        st.markdown('<div class="sidebar-info">⚡ Paiements et fraude : priorité élevée</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="sidebar-info">🕐 Session : {datetime.now().strftime("%H:%M")}</div>', unsafe_allow_html=True)
+        st.markdown('<div class="sidebar-nav-label">▼ Messages rapides</div>', unsafe_allow_html=True)
+        _quick_messages = [
+            "Comment signaler une fraude ?",
+            "J'ai perdu ma carte bancaire",
+            "Comment effectuer un virement ?",
+            "Comment contacter un conseiller ?",
+        ]
+        for _i, _qm in enumerate(_quick_messages):
+            if st.button(_qm, use_container_width=True, key=f"quick_msg_{_i}"):
+                st.session_state.quick_message = _qm
         st.markdown('<hr class="sidebar-sep" />', unsafe_allow_html=True)
 
     st.markdown('<div class="sidebar-footer">AELON — 2026</div>', unsafe_allow_html=True)
@@ -1490,8 +1498,8 @@ if st.session_state.page == "📊 Dashboard":
 
     dp = st.session_state.dashboard_page
 
-    if dp == "📊 Vue globale":
-        st.subheader("📊 Vue globale")
+    if dp == "Vue globale":
+        st.subheader("Vue globale")
 
         n_escalated = int(filtered["escalated"].sum())
         escalation_rate = (n_escalated / total * 100) if total else 0
@@ -1548,8 +1556,8 @@ if st.session_state.page == "📊 Dashboard":
             ],
         )
 
-    elif dp == "📈 Analyse des sentiments":
-        st.subheader("📈 Analyse des sentiments")
+    elif dp == "Analyse des sentiments":
+        st.subheader("Analyse des sentiments")
 
         sent_counts = filtered["sentiment"].value_counts().reset_index()
         sent_counts.columns = ["sentiment", "count"]
@@ -1590,8 +1598,8 @@ if st.session_state.page == "📊 Dashboard":
             ],
         )
 
-    elif dp == "🔁 Analyse des escalades (L0 / L1)":
-        st.subheader("🔁 Analyse des escalades (L0 / L1)")
+    elif dp == "Analyse des escalades (L0 / L1)":
+        st.subheader("Analyse des escalades (L0 / L1)")
 
         agent_counts = filtered["agent"].value_counts().reset_index()
         agent_counts.columns = ["agent", "count"]
@@ -1636,8 +1644,8 @@ if st.session_state.page == "📊 Dashboard":
             ],
         )
 
-    elif dp == "🚨 Analyse des fraudes":
-        st.subheader("🚨 Analyse des fraudes")
+    elif dp == "Analyse des fraudes":
+        st.subheader("Analyse des fraudes")
 
         fraud_counts = filtered.groupby("risk_level").size().reset_index(name="count")
         fraud_chart = (
@@ -1682,8 +1690,8 @@ if st.session_state.page == "📊 Dashboard":
             ],
         )
 
-    elif dp == "📂 Analyse des requêtes / catégories":
-        st.subheader("📂 Analyse des requêtes / catégories")
+    elif dp == "Analyse des requêtes / catégories":
+        st.subheader("Analyse des requêtes / catégories")
 
         cat_counts = filtered["category"].value_counts().reset_index()
         cat_counts.columns = ["category", "count"]
@@ -1809,7 +1817,7 @@ else:
         <div class="chat-header">
             <img class="chat-header-avatar" src="ui/aelon_avatar.png" alt="AELON" />
             <div class="chat-header-title">AELON</div>
-            <div class="chat-header-sub">Banking Intelligence</div>
+            <div class="chat-header-sub">Banking Assistant</div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -1829,6 +1837,13 @@ else:
 
     # ===== INPUT =====
     user_input = st.chat_input("Écrivez votre message...")
+
+    # Messages rapides depuis la sidebar
+    _quick = st.session_state.get("quick_message")
+    if _quick and not user_input:
+        user_input = _quick
+        del st.session_state["quick_message"]
+
     st.markdown(
         '<div class="ae-footer">'
         'En continuant cette conversation, vous acceptez que vos informations soient collectées '
