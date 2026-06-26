@@ -85,23 +85,25 @@ html, body, .stApp {
 }
 
 section.main > div {
-    max-width: 1400px !important;
-    padding-left: 40px;
-    padding-right: 40px;
+    max-width: none !important;
+    width: 100% !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
 }
 
 .block-container {
     padding-top: 0.8rem !important;
     padding-bottom: 5rem !important;
-    max-width: 1400px !important;
+    max-width: none !important;
+    width: 100% !important;
 }
 
 /* ===== DASHBOARD WRAPPER ===== */
 .dashboard-wrapper {
     width: 100%;
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 20px 4px 30px 4px;
+    max-width: none;
+    margin: 0;
+    padding: 12px 0 24px 0;
 }
 
 .section-card {
@@ -1035,15 +1037,17 @@ table td {
 }
 
 .saas-banner-title {
-    font-size: 1.05rem;
-    font-weight: 700;
+    font-size: 1.08rem;
+    font-weight: 750;
+    letter-spacing: 0.01em;
     color: var(--text-main) !important;
     margin-bottom: 4px;
 }
 
 .saas-banner-desc {
-    font-size: 0.82rem;
+    font-size: 0.86rem;
     font-weight: 400;
+    line-height: 1.45;
     color: var(--text-muted) !important;
 }
 
@@ -1166,6 +1170,72 @@ table td {
     font-size: 0.83rem;
     font-weight: 500;
     color: var(--text-main) !important;
+}
+
+.analysis-card,
+.reco-card {
+    width: 100%;
+    background: #0f2a44;
+    padding: 18px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    min-height: 168px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    line-height: 1.55;
+    font-size: 0.92rem;
+}
+
+.kpi-card {
+    background: #0f2a44;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 12px 14px;
+    min-height: 94px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.kpi-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: #a8b8cc !important;
+    margin-bottom: 8px;
+}
+
+.kpi-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-main) !important;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+}
+
+h2, h3 {
+    letter-spacing: -0.015em;
+}
+
+[data-testid="stMarkdownContainer"] p {
+    line-height: 1.52;
+}
+
+.reco-card ul {
+    margin: 0;
+    padding-left: 18px;
+}
+
+@media (max-width: 980px) {
+    .analysis-card,
+    .reco-card,
+    .kpi-card {
+        min-height: auto;
+        height: auto;
+    }
 }
 
 /* ===== FOOTER ===== */
@@ -1333,7 +1403,7 @@ with st.sidebar:
 
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("💬 Assistant", use_container_width=True,
+        if st.button("💬 Assistant Client", use_container_width=True,
                      type="primary" if chat_active else "secondary"):
             set_page("💬 Assistant")
     with col2:
@@ -1348,22 +1418,22 @@ with st.sidebar:
         st.markdown('<div class="sidebar-nav-label">▼ Modules</div>', unsafe_allow_html=True)
 
         dash_pages = [
-            "Vue globale",
-            "Analyse des sentiments",
-            "Analyse des escalades (L0 / L1)",
-            "Analyse des fraudes",
-            "Analyse des requêtes / catégories",
-            "Paramètres",
+            ("Vue globale", "Vue globale"),
+            ("Analytics", "Analyse des fraudes"),
+            ("Monitoring IA", "Analyse des sentiments"),
+            ("Catégories", "Catégories"),
+            ("AELON", "Assistant IA"),
+            ("Paramètres", "Paramètres"),
         ]
 
         current_dash = st.session_state.dashboard_page
 
-        for dp in dash_pages:
-            is_active = dp == current_dash or (dp == "Analyse des requêtes / catégories" and current_dash == "DETAIL_CATEGORY")
-            if st.button(dp, use_container_width=True,
+        for label, internal_dp in dash_pages:
+            is_active = internal_dp == current_dash or (internal_dp == "Catégories" and current_dash == "DETAIL_CATEGORY")
+            if st.button(label, use_container_width=True,
                          type="primary" if is_active else "secondary",
-                         key=f"dash_{dp}"):
-                set_dashboard_page(dp)
+                         key=f"dash_{label}"):
+                set_dashboard_page(internal_dp)
 
         st.markdown('<hr class="sidebar-sep" />', unsafe_allow_html=True)
         st.markdown('<div class="sidebar-nav-label">▼ Catégories</div>', unsafe_allow_html=True)
@@ -1770,161 +1840,64 @@ if st.session_state.page == "📊 Dashboard":
         with col1:
             st.markdown("### 🔎 Analyse")
             st.markdown(
-                (
-                    '<div style="width:100%;background:#0f2a44;padding:18px;border-radius:12px;'
-                    'border: 1px solid rgba(255,255,255,0.05);">'
-                    f'{analysis_text}'
-                    '</div>'
-                ),
+                f'<div class="analysis-card">{html.escape(analysis_text)}</div>',
                 unsafe_allow_html=True,
             )
         with col2:
             st.markdown("### 💡 Recommandations")
             st.markdown(
-                (
-                    '<div style="width:100%;background:#0f2a44;padding:18px;border-radius:12px;'
-                    'border: 1px solid rgba(255,255,255,0.05);">'
-                    f'<ul style="margin:0; padding-left: 18px;">{rec_html}</ul>'
-                    '</div>'
-                ),
+                f'<div class="reco-card"><ul>{rec_html}</ul></div>',
                 unsafe_allow_html=True,
             )
+
+    def render_module_banner(title: str, desc: str, tag: str = "LIVE") -> None:
+        st.markdown(f"## {title}")
+        st.markdown(
+            f'''<div class="saas-banner">
+                <div class="saas-banner-tag">{html.escape(tag)}</div>
+                <div class="saas-banner-title">Pilotage opérationnel</div>
+                <div class="saas-banner-desc">{html.escape(desc)}</div>
+            </div>''',
+            unsafe_allow_html=True,
+        )
+
+    def render_kpi_row(items: list[tuple[str, str]], columns: int | None = None) -> None:
+        if not items:
+            return
+        col_count = columns or len(items)
+        cols = st.columns(col_count)
+        for idx, (label, value) in enumerate(items):
+            with cols[idx % col_count]:
+                st.markdown(
+                    (
+                        '<div class="kpi-card">'
+                        f'<div class="kpi-label">{html.escape(str(label))}</div>'
+                        f'<div class="kpi-value">{html.escape(str(value))}</div>'
+                        '</div>'
+                    ),
+                    unsafe_allow_html=True,
+                )
 
     st.markdown("---")
 
     dp = st.session_state.dashboard_page
 
     if dp == "Vue globale":
-        st.markdown(
-            """
-            <div class="saas-greeting">
-                <div class="saas-greeting-hi">Bonjour <span class="saas-greeting-name">Admin</span> 👋</div>
-                <div class="saas-greeting-sub">Bienvenue sur votre tableau de bord AELON</div>
-            </div>
-
-            <div class="saas-banner">
-                <div class="saas-banner-tag">⚡ LIVE</div>
-                <div class="saas-banner-title">Centre de Décision Métier</div>
-                <div class="saas-banner-desc">
-                    Analysez les tendances, comprenez les causes et pilotez vos actions avec une lecture immédiate des risques, du sentiment client et des volumes.
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
         open_section_card()
-        st.subheader("📊 Vue globale")
 
         n_escalated = int(filtered["escalated"].sum())
         escalation_rate = (n_escalated / total * 100) if total else 0
         avg_fraud = float(filtered["fraud_score"].mean()) if total else 0
         neg_rate = float(filtered["sentiment"].isin(["frustrated", "angry", "negative"]).mean() * 100)
-        top_cat = filtered["category"].mode()[0] if total else "N/A"
-        avg_quality = filtered["quality_score"].mean() if "quality_score" in filtered else 0
-
-        # ✅ Couleur selon score
-        if avg_quality >= 70:
-            quality_color = "#22c55e"   # vert
-            label = "✅ Stable"
-        elif avg_quality >= 40:
-            quality_color = "#f59e0b"   # orange
-            label = "⚠️ Moyen"
-        else:
-            quality_color = "#ef4444"   # rouge
-            label = "🚨 À améliorer"
-
-        # ✅ KPI custom stylé
-        st.markdown(f"""
-        <div style="
-            background:#0f2a44;
-            padding:16px;
-            border-radius:12px;
-            text-align:center;
-            border-top:4px solid {quality_color};
-        ">
-            <div style="font-size:12px; color:#9ca3af;">
-                QUALITÉ IA
-            </div>
-
-            <div style="
-                font-size:28px;
-                font-weight:bold;
-                color:{quality_color};
-            ">
-                {avg_quality:.1f}
-            </div>
-
-            <div style="font-size:12px; color:#9ca3af;">
-                {label}
-            </div>
-
-        </div>
-        """, unsafe_allow_html=True)
-
-
-        k1, k2, k3, k4, k5 = st.columns(5)
-        k1.metric("Interactions", total)
-        k2.metric("Taux d'escalade", f"{escalation_rate:.1f}%")
-        k3.metric("Score fraude moyen", f"{avg_fraud:.1f}")
-        k4.metric("Catégorie principale", f"{CATEGORY_ICONS.get(top_cat, '❓')} {str(top_cat).capitalize()}")
-        k5.metric("Qualité IA", f"{avg_quality:.1f}")
-
-        st.markdown("### 🔹 KPI erreur")
-        error_rate = analytics.get("error_rate", 0)
-        st.metric("Taux erreurs", f"{error_rate:.1f}%")
-
-        st.markdown("### 🔥 Services problématiques")
-        st.write(analytics.get("top_services", {}))
-
-        st.markdown("### 📊 Distribution par catégorie")
-        cat_df = pd.DataFrame(
-            list(analytics.get("category_dist", {}).items()),
-            columns=["category", "count"],
-        )
-        if not cat_df.empty:
-            st.bar_chart(cat_df.set_index("category"))
-        else:
-            st.info("Aucune donnée de distribution disponible.")
-
-        st.markdown("### 📌 Insights & Performance")
-        top_services = analytics.get("top_services", {})
-        sev_dist = analytics.get("severity_dist", {})
-        if sev_dist:
-            st.write("Distribution sévérité:", sev_dist)
-        if top_services:
-            st.write("Top agents/services:", top_services)
-
-        issue_items = []
-        if "issues" in filtered.columns:
-            for val in filtered["issues"].dropna().tolist():
-                if isinstance(val, list):
-                    issue_items.extend([str(x) for x in val if str(x).strip()])
-                elif isinstance(val, str) and val.strip():
-                    issue_items.append(val.strip())
-
-        if issue_items:
-            top_issues = pd.Series(issue_items).value_counts().head(5)
-            st.markdown("#### Top issues / anomalies")
-            st.dataframe(top_issues.rename("count"), use_container_width=True)
-
-        low_quality_mask = (filtered["quality_score"] < 40) if "quality_score" in filtered.columns else False
-        anomaly_mask = filtered["escalated"] | (filtered["fraud_score"] >= 70) | low_quality_mask
-        anomaly_count = int(anomaly_mask.sum()) if hasattr(anomaly_mask, "sum") else 0
-        st.metric("Anomalies détectées", anomaly_count)
-
-        if "explanation" in filtered.columns:
-            latest_explanations = filtered["explanation"].dropna().tail(3).tolist()
-            if latest_explanations:
-                st.markdown("#### Dernières explications")
-                for idx, exp in enumerate(reversed(latest_explanations), start=1):
-                    st.caption(f"{idx}. {str(exp)}")
+        avg_quality = float(filtered["quality_score"].mean()) if "quality_score" in filtered else 0
+        error_rate = float(analytics.get("error_rate", 0))
 
         timeline = filtered.copy()
         timeline["day"] = timeline["timestamp"].dt.floor("D")
         vol = timeline.groupby(["day", "agent"]).size().reset_index(name="count")
         main_chart = (
             alt.Chart(vol)
-            .mark_area(opacity=0.7)
+            .mark_area(opacity=0.68)
             .encode(
                 x=alt.X("day:T", title="Date"),
                 y=alt.Y("count:Q", title="Volume"),
@@ -1937,9 +1910,7 @@ if st.session_state.page == "📊 Dashboard":
             )
             .properties(height=320)
         )
-        main_chart = main_chart.configure_view(fill="#071629", stroke=None)
-        main_chart = style_altair_chart(main_chart)
-        st.altair_chart(main_chart, use_container_width=True)
+        main_chart = style_altair_chart(main_chart.configure_view(fill="#071629", stroke=None))
 
         if escalation_rate > 35 or neg_rate > 40:
             analysis = "Le tableau global montre une pression opérationnelle élevée. Les signaux combinés (escalades + sentiments négatifs) indiquent un risque de dégradation de l'expérience client."
@@ -1953,76 +1924,135 @@ if st.session_state.page == "📊 Dashboard":
             "Renforcer les réponses L0 sur les motifs d'escalade les plus courants.",
             "Suivre hebdomadairement les KPI risque/satisfaction pour ajuster les actions.",
         ]
-        render_decision_cards(analysis, recs)
-        render_collab_section(
-            "vue_globale",
-            f"Vue globale — {total} interactions, escalade {escalation_rate:.1f}%, fraude moyenne {avg_fraud:.1f}, sentiment négatif {neg_rate:.1f}%, catégorie principale : {top_cat}. Analyse : {analysis}",
-            [
-                "Automatiser les réponses sur la catégorie dominante",
-                "Analyser les pics d'escalade par plage horaire",
-                "Renforcer la surveillance proactive des risques fraude",
-            ],
+        rec_html = "".join([f"<li>{html.escape(r)}</li>" for r in recs])
+
+        st.markdown("## 📊 AELON - Vue globale")
+        st.markdown(
+            """
+            <div class="saas-banner">
+                <div class="saas-banner-tag">LIVE</div>
+                <div class="saas-banner-title">Centre de pilotage</div>
+                <div class="saas-banner-desc">Vue consolidée des performances, risques et qualité IA.</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
         )
 
-        global_sentiment = filtered["sentiment"].fillna("neutral").apply(normalize_sentiment_bucket)
-        global_sentiment_counts = global_sentiment.value_counts().reindex(["positive", "neutral", "negative"], fill_value=0).reset_index()
-        global_sentiment_counts.columns = ["sentiment", "count"]
-        global_sentiment_counts["percent"] = global_sentiment_counts["count"].div(max(global_sentiment_counts["count"].sum(), 1)).mul(100).round(1)
-        global_sentiment_row = global_sentiment_counts.sort_values("count", ascending=False).iloc[0]
-        st.markdown("### Sentiment Distribution")
-        st.altair_chart(
-            build_donut_chart(
-                global_sentiment_counts,
-                category_field="sentiment",
-                value_field="percent",
-                color=alt.Color(
-                    "sentiment:N",
-                    scale=alt.Scale(
-                        domain=["positive", "neutral", "negative"],
-                        range=["#22C55E", "#2563EB", "#EF4444"],
-                    ),
-                    legend=alt.Legend(title="Sentiment"),
-                ),
-                center_value=f"{global_sentiment_row['percent']:.0f}%",
-                center_label=f"{str(global_sentiment_row['sentiment']).capitalize()}",
-                inner_radius=0,
-            ),
-            use_container_width=True,
-        )
+        st.markdown("### 📊 Indicateurs clés")
+        col1, col2, col3, col4, col5 = st.columns([1, 1, 1, 1, 1.15])
+        with col1:
+            render_kpi_row([("Interactions", f"{total}")], columns=1)
+        with col2:
+            render_kpi_row([("Escalade", f"{escalation_rate:.1f}%")], columns=1)
+        with col3:
+            render_kpi_row([("Fraude", f"{avg_fraud:.1f}%")], columns=1)
+        with col4:
+            render_kpi_row([("Sentiment negatif", f"{neg_rate:.1f}%")], columns=1)
+        with col5:
+            if avg_quality >= 70:
+                quality_color = "#22c55e"
+                quality_label = "Stable"
+            elif avg_quality >= 40:
+                quality_color = "#f59e0b"
+                quality_label = "Moyen"
+            else:
+                quality_color = "#ef4444"
+                quality_label = "Critique"
 
-        st.markdown("### 🗂️ Explorer par catégorie")
-        global_categories = filtered["category"].value_counts().reset_index()
-        global_categories.columns = ["category", "count"]
-        global_categories = global_categories.head(8)
-        for row_start in range(0, len(global_categories), 4):
-            cols = st.columns(4)
-            for col, cat_row in zip(cols, global_categories.iloc[row_start:row_start + 4].to_dict(orient="records")):
-                category_name = cat_row["category"]
-                category_count = int(cat_row["count"])
-                icon = CATEGORY_ICONS.get(category_name, "📁")
-                with col:
-                    st.markdown(
-                        (
-                            '<div class="category-card">'
-                            f'<div class="category-card-title">{icon} {html.escape(str(category_name).capitalize())}</div>'
-                            f'<div class="category-card-meta">{category_count} interactions</div>'
-                            f'<div class="category-card-meta">Cliquez pour le détail</div>'
-                            '</div>'
-                        ),
-                        unsafe_allow_html=True,
-                    )
-                    if st.button(
-                        f"Ouvrir {category_name}",
-                        key=f"global_open_category_{category_name}",
-                        use_container_width=True,
-                    ):
-                        open_category_detail(category_name)
-                        st.rerun()
+            st.markdown(
+                f"""
+                <div style="background:#0f2a44;padding:16px;border-radius:12px;text-align:center;border-top:4px solid {quality_color};">
+                    <div style="font-size:12px; color:#9ca3af;">QUALITE IA</div>
+                    <div style="font-size:28px; font-weight:bold; color:{quality_color};">{avg_quality:.1f}</div>
+                    <div style="font-size:12px; color:#9ca3af;">{quality_label}</div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
+        st.markdown("### 📈 Activité globale")
+        st.altair_chart(main_chart, use_container_width=True)
+
+        st.markdown("### 📌 Insights & Performance")
+        col_left, col_right = st.columns(2)
+        with col_left:
+            st.markdown("### 🚨 Risques & erreurs")
+            render_kpi_row(
+                [
+                    ("Taux fraude", f"{avg_fraud:.1f}%"),
+                    ("Taux erreurs", f"{error_rate:.1f}%"),
+                ],
+                columns=2,
+            )
+            st.markdown(
+                '<div class="section-card">Analyse des anomalies et détection des comportements critiques.</div>',
+                unsafe_allow_html=True,
+            )
+
+        with col_right:
+            st.markdown("### 📊 Performance")
+            st.write("Top agents :")
+            st.write(analytics.get("top_services", {}))
+            st.write("Sévérité :")
+            st.write(analytics.get("severity_dist", {}))
+            st.markdown(
+                '<div class="section-card">Identification des services les plus sollicités.</div>',
+                unsafe_allow_html=True,
+            )
+
+        st.markdown("### 📂 Répartition des catégories")
+        cat_df = pd.DataFrame(
+            list(analytics.get("category_dist", {}).items()),
+            columns=["category", "count"],
+        )
+        if not cat_df.empty:
+            st.bar_chart(cat_df.set_index("category"))
+        else:
+            st.info("Aucune donnée de catégorie disponible.")
+
+        st.markdown("### 🔎 Analyse & 💡 Recommandations")
+        analysis_col, reco_col = st.columns([2, 1])
+        with analysis_col:
+            st.markdown("### 🔎 Analyse")
+            st.markdown(
+                f'<div class="analysis-card">{html.escape(analysis)}</div>',
+                unsafe_allow_html=True,
+            )
+        with reco_col:
+            st.markdown("### 💡 Recommandations")
+            st.markdown(
+                f'<div class="reco-card"><ul>{rec_html}</ul></div>',
+                unsafe_allow_html=True,
+            )
+
+        st.markdown("### ⚠️ Alertes système")
+        issue_items = []
+        if "issues" in filtered.columns:
+            for val in filtered["issues"].dropna().tolist():
+                if isinstance(val, list):
+                    issue_items.extend([str(x).strip() for x in val if str(x).strip()])
+                else:
+                    text_val = str(val).strip()
+                    if text_val:
+                        issue_items.append(text_val)
+
+        if issue_items:
+            unique_issues = sorted(set(issue_items))
+            st.warning(f"Problèmes détectés : {unique_issues}")
+        else:
+            st.success("Aucune anomalie critique détectée ✅")
+
+        st.caption("Assistant IA disponible dans la page dédiée 'Assistant IA'.")
+
         close_section_card()
 
-    elif dp == "Analyse des sentiments":
+    elif dp in ("Monitoring IA", "Analyse des sentiments"):
         open_section_card()
-        st.subheader("📈 Analyse des sentiments")
+        render_module_banner(
+            "🤖 Monitoring IA",
+            "Suivi de la qualité des réponses IA, perception client et alertes de dérive.",
+            tag="MONITORING",
+        )
         st.markdown("#### Sentiment Distribution")
 
         sentiment_series = filtered["sentiment"].fillna("neutral").apply(normalize_sentiment_bucket)
@@ -2047,6 +2077,15 @@ if st.session_state.page == "📊 Dashboard":
             center_label=f"{str(top_sentiment_row['sentiment']).capitalize()}",
             inner_radius=0,
         )
+
+        render_kpi_row(
+            [
+                ("Taux negatif", f"{neg_rate:.1f}%"),
+                ("Interactions", f"{len(filtered)}"),
+                ("Sentiment dominant", str(top_sentiment_row["sentiment"]).capitalize()),
+            ],
+            columns=3,
+        )
         st.altair_chart(sentiment_chart, use_container_width=True)
 
         if neg_rate >= 35:
@@ -2062,15 +2101,6 @@ if st.session_state.page == "📊 Dashboard":
             "Créer des réponses courtes et rassurantes pour les situations à forte frustration.",
         ]
         render_decision_cards(analysis, recs)
-        render_collab_section(
-            "sentiments",
-            f"Analyse des sentiments — taux négatif {neg_rate:.1f}%. Analyse : {analysis}",
-            [
-                "Améliorer les réponses sur les cas de frustration fréquents",
-                "Créer des scripts de réponse pour les sujets sensibles",
-                "Mettre en place un suivi des sentiments en temps réel",
-            ],
-        )
         close_section_card()
 
         # ✅ ALERTES QUALITÉ IA (à la fin de Vue globale)
@@ -2086,7 +2116,11 @@ if st.session_state.page == "📊 Dashboard":
 
     elif dp == "Analyse des escalades (L0 / L1)":
         open_section_card()
-        st.subheader("🧭 Analyse des escalades (L0 / L1)")
+        render_module_banner(
+            "🧭 Analyse des escalades (L0 / L1)",
+            "Mesure de la charge transférée vers L1 et optimisation du routage L0.",
+            tag="ESCALATION",
+        )
 
         agent_counts = filtered["agent"].value_counts().reset_index()
         agent_counts.columns = ["agent", "count"]
@@ -2106,9 +2140,19 @@ if st.session_state.page == "📊 Dashboard":
             .properties(height=320)
         )
         escalation_chart = style_altair_chart(escalation_chart)
-        st.altair_chart(escalation_chart, use_container_width=True)
 
         l1_rate = float((filtered["agent"] == "L1").mean() * 100)
+        blocked_rate = float((filtered["agent"] == "blocked").mean() * 100)
+        render_kpi_row(
+            [
+                ("Taux L1", f"{l1_rate:.1f}%"),
+                ("Cas bloques", f"{blocked_rate:.1f}%"),
+                ("Volume", f"{len(filtered)}"),
+            ],
+            columns=3,
+        )
+        st.altair_chart(escalation_chart, use_container_width=True)
+
         if l1_rate >= 30:
             analysis = "Le taux d'escalade est élevé, ce qui suggère que les requêtes ne sont pas suffisamment traitées au niveau L0."
         elif l1_rate >= 18:
@@ -2122,25 +2166,28 @@ if st.session_state.page == "📊 Dashboard":
             "Mettre en place une revue hebdomadaire des raisons d'escalade.",
         ]
         render_decision_cards(analysis, recs)
-        render_collab_section(
-            "escalades",
-            f"Analyse des escalades — taux L1 {l1_rate:.1f}%. Analyse : {analysis}",
-            [
-                "Enrichir la base de connaissances L0 sur les motifs d'escalade",
-                "Revoir le routage automatique des requêtes complexes",
-                "Mettre en place des seuils d'alerte pour le taux d'escalade",
-            ],
-        )
         close_section_card()
 
-    elif dp == "Analyse des fraudes":
+    elif dp in ("Analytics", "Analyse des fraudes"):
         open_section_card()
-        st.subheader("🛡️ Analyse des fraudes")
+        render_module_banner(
+            "📊 Analytics",
+            "Vue métriques et performance opérationnelle basée sur les signaux de risque.",
+            tag="ANALYTICS",
+        )
         st.markdown("#### Fraud Risk Level")
 
         fraud_rate = float(filtered["is_fraud"].fillna(False).mean() * 100)
         avg_fraud_score = float(filtered["fraud_score"].mean()) if len(filtered) else 0.0
         fraud_line = build_fraud_line_chart(filtered)
+        render_kpi_row(
+            [
+                ("Taux fraude", f"{fraud_rate:.1f}%"),
+                ("Score moyen", f"{avg_fraud_score:.1f}"),
+                ("Volume", f"{len(filtered)}"),
+            ],
+            columns=3,
+        )
         st.altair_chart(fraud_line, use_container_width=True)
         st.caption(f"Score moyen={avg_fraud_score:.1f} | Taux fraude={fraud_rate:.1f}%")
 
@@ -2157,20 +2204,15 @@ if st.session_state.page == "📊 Dashboard":
             "Analyser les motifs textuels des cas suspects pour affiner les règles.",
         ]
         render_decision_cards(analysis, recs)
-        render_collab_section(
-            "fraudes",
-            f"Analyse des fraudes — taux fraude {fraud_rate:.1f}%, score moyen {filtered['fraud_score'].mean():.1f}. Analyse : {analysis}",
-            [
-                "Affiner les règles de détection sur les patterns récurrents",
-                "Mettre en place des alertes temps réel pour les scores élevés",
-                "Analyser les faux positifs pour réduire les blocages inutiles",
-            ],
-        )
         close_section_card()
 
-    elif dp == "Analyse des requêtes / catégories":
+    elif dp in ("Catégories", "Analyse des requêtes / catégories"):
         open_section_card()
-        st.subheader("🗂️ Analyse des requêtes / catégories")
+        render_module_banner(
+            "🗂️ Catégories",
+            "Distribution des demandes et priorisation des axes d'automatisation.",
+            tag="CATEGORIES",
+        )
 
         cat_counts = filtered["category"].value_counts().reset_index()
         cat_counts.columns = ["category", "count"]
@@ -2190,6 +2232,15 @@ if st.session_state.page == "📊 Dashboard":
             center_value=f"{top_ratio:.0f}%",
             center_label="Top catégorie",
             inner_radius=0,
+        )
+
+        render_kpi_row(
+            [
+                ("Top categorie", f"{top_ratio:.1f}%"),
+                ("Categories", f"{int(cat_counts['category'].nunique())}"),
+                ("Volume", f"{total}"),
+            ],
+            columns=3,
         )
         st.altair_chart(category_chart, use_container_width=True)
 
@@ -2241,15 +2292,6 @@ if st.session_state.page == "📊 Dashboard":
             "Mesurer l'impact des actions via un suivi hebdomadaire des volumes par catégorie.",
         ]
         render_decision_cards(analysis, recs)
-        render_collab_section(
-            "categories",
-            f"Analyse des catégories — top catégorie {top_ratio:.1f}% du volume. Analyse : {analysis}",
-            [
-                "Automatiser les réponses sur les 3 catégories les plus fréquentes",
-                "Créer des workflows dédiés par catégorie prioritaire",
-                "Optimiser les temps de réponse sur les catégories à fort volume",
-            ],
-        )
         close_section_card()
 
     elif dp == "DETAIL_CATEGORY":
@@ -2258,7 +2300,7 @@ if st.session_state.page == "📊 Dashboard":
 
         if not selected_category or category_df.empty:
             st.warning("Sélectionnez une catégorie pour afficher son détail.")
-            set_dashboard_page("Analyse des requêtes / catégories")
+            set_dashboard_page("Catégories")
             st.rerun()
 
         category_total = len(category_df)
@@ -2268,21 +2310,27 @@ if st.session_state.page == "📊 Dashboard":
         dominant_sentiment = category_df["sentiment"].mode()[0] if category_total and not category_df["sentiment"].mode().empty else "N/A"
 
         open_section_card()
-        st.markdown(
-            f"### {CATEGORY_ICONS.get(selected_category, '📁')} Category: {selected_category.capitalize()}"
+        render_module_banner(
+            f"{CATEGORY_ICONS.get(selected_category, '📁')} Catégorie: {selected_category.capitalize()}",
+            "Vue approfondie avec KPI, tendances et recommandations ciblées.",
+            tag="DETAIL",
         )
         if st.button("← Retour aux catégories", key="back_to_categories"):
-            set_dashboard_page("Analyse des requêtes / catégories")
+            set_dashboard_page("Catégories")
             st.rerun()
         close_section_card()
 
         open_section_card()
         st.markdown("### KPI")
-        k1, k2, k3, k4 = st.columns(4)
-        k1.metric("Interactions", category_total)
-        k2.metric("Fraude moyenne", f"{category_avg_fraud:.1f}")
-        k3.metric("Taux d'escalade", f"{category_escalation:.1f}%")
-        k4.metric("Sentiment dominant", str(dominant_sentiment).capitalize())
+        render_kpi_row(
+            [
+                ("Interactions", f"{category_total}"),
+                ("Fraude moyenne", f"{category_avg_fraud:.1f}"),
+                ("Taux d'escalade", f"{category_escalation:.1f}%"),
+                ("Sentiment dominant", str(dominant_sentiment).capitalize()),
+            ],
+            columns=4,
+        )
         st.markdown(
             f'<div class="kpi-inline-note">Distribution des sentiments : {html.escape(category_sentiment)}</div>',
             unsafe_allow_html=True,
@@ -2330,23 +2378,43 @@ if st.session_state.page == "📊 Dashboard":
         close_section_card()
 
         open_section_card()
-        render_collab_section(
-            f"category_{selected_category}",
-            (
-                f"Catégorie {selected_category} — {category_total} interactions, fraude moyenne {category_avg_fraud:.1f}, "
-                f"escalade {category_escalation:.1f}%, sentiment dominant {dominant_sentiment}. Analyse : {category_analysis}"
-            ),
-            [
-                f"Identifier les causes racines sur la catégorie {selected_category}",
-                "Prioriser les améliorations à fort impact métier",
-                "Définir des actions rapides pour réduire escalades et frictions",
-            ],
-        )
+        st.markdown('<div class="kpi-inline-note">Analyse détaillée disponible. Utilisez la page Assistant IA pour explorer ces résultats.</div>', unsafe_allow_html=True)
         close_section_card()
 
-    elif dp == "⚙️ Paramètres":
+    elif dp == "Assistant IA":
         open_section_card()
-        st.subheader("⚙️ Paramètres")
+        render_module_banner(
+            "🤖 Assistant IA",
+            "Assistant analytique dédié aux KPI, catégories, anomalies et recommandations.",
+            tag="ASSISTANT",
+        )
+
+        top_category = filtered["category"].mode()[0] if len(filtered) and not filtered["category"].mode().empty else "N/A"
+        escalated_rate = float(filtered["escalated"].mean() * 100) if "escalated" in filtered.columns and len(filtered) else 0.0
+        context = (
+            f"Vue dashboard active: {st.session_state.dashboard_page}. "
+            f"Interactions: {len(filtered)}. "
+            f"Catégorie dominante: {top_category}. "
+            f"Taux erreur: {float(analytics.get('error_rate', 0)):.1f}%. "
+            f"Taux escalade: {escalated_rate:.1f}%."
+        )
+
+        suggestions = [
+            "Explique les KPI les plus critiques actuellement.",
+            "Donne 3 actions prioritaires à lancer cette semaine.",
+            "Analyse les anomalies et causes probables.",
+        ]
+
+        render_collab_section("admin_dashboard_assistant", context, suggestions)
+        close_section_card()
+
+    elif dp in ("Paramètres", "⚙️ Paramètres"):
+        open_section_card()
+        render_module_banner(
+            "⚙️ Paramètres",
+            "Configuration de l'espace admin et gestion des préférences de pilotage.",
+            tag="SETTINGS",
+        )
 
         # ── Profil ──────────────────────────────────────
         st.markdown('<div class="settings-section-header">👤 Profil</div>', unsafe_allow_html=True)
@@ -2382,7 +2450,7 @@ if st.session_state.page == "📊 Dashboard":
             st.button("📞 Contacter le support", key="settings_support", use_container_width=True)
         close_section_card()
 
-    if dp != "⚙️ Paramètres":
+    if dp not in ("⚙️ Paramètres", "Paramètres"):
         st.markdown("---")
         export_data = filtered.copy()
         export_data["timestamp"] = export_data["timestamp"].astype(str)

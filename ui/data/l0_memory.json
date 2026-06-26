@@ -923,5 +923,30 @@
     "query": "Comment effectuer un virement ?",
     "decision": "answer",
     "response": "Bonjour, pour effectuer un virement, je vous recommande de vous connecter \u00e0 votre espace bancaire en ligne ou \u00e0 votre application mobile. Ensuite, rendez-vous dans la section \"Virements\" ou \"Transferts\", saisissez les coordonn\u00e9es du b\u00e9n\u00e9ficiaire ainsi que le montant \u00e0 transf\u00e9rer, puis validez l'op\u00e9ration. Si vous avez besoin d'aide plus pr\u00e9cise, n'h\u00e9sitez pas \u00e0 me fournir plus d'informations sur votre banque ou le type de virement que vous souhaitez r\u00e9aliser. Je suis l\u00e0 pour vous accompagner !"
+  },
+  {
+    "query": "Comment contacter un conseiller ?",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "Comment contacter un conseiller ?",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations."
+  },
+  {
+    "query": "J'ai perdu ma carte bancaire",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous avez perdu votre carte bancaire. Pour votre s\u00e9curit\u00e9, je vous recommande de contacter imm\u00e9diatement votre banque afin de faire opposition sur votre carte. Cela \u00e9vitera toute utilisation frauduleuse. Si vous le souhaitez, je peux vous guider pour trouver le num\u00e9ro \u00e0 appeler ou les d\u00e9marches \u00e0 suivre. N'h\u00e9sitez pas \u00e0 me demander."
+  },
+  {
+    "query": "Comment effectuer un virement ?",
+    "decision": "answer",
+    "response": "Bonjour, pour effectuer un virement, je vous recommande de vous connecter \u00e0 votre espace bancaire en ligne ou \u00e0 votre application mobile. Ensuite, rendez-vous dans la section d\u00e9di\u00e9e aux virements, saisissez les coordonn\u00e9es du b\u00e9n\u00e9ficiaire ainsi que le montant \u00e0 transf\u00e9rer, puis validez l'op\u00e9ration. Si vous avez besoin d'aide plus pr\u00e9cise, n'h\u00e9sitez pas \u00e0 me fournir plus d'informations. Je suis l\u00e0 pour vous accompagner !"
+  },
+  {
+    "query": "Comment signaler une fraude ?",
+    "decision": "answer",
+    "response": "Je comprends que la situation puisse \u00eatre inqui\u00e9tante. Pour signaler une fraude, je vous recommande de contacter rapidement le service client de votre banque afin de bloquer votre compte et s\u00e9curiser vos op\u00e9rations. Si vous avez des d\u00e9tails sp\u00e9cifiques sur la fraude, pr\u00e9parez-les pour faciliter le traitement de votre demande. N'h\u00e9sitez pas \u00e0 me fournir plus d'informations si vous avez besoin d'aide pour trouver les coordonn\u00e9es exactes de votre banque."
   }
 ]
