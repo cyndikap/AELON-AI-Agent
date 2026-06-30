@@ -16,8 +16,10 @@ class L1Agent:
         # 1. récupérer la requête utilisateur
         if isinstance(context, dict):
             user_query = context.get("user_query", "")
+            user_language = context.get("user_language", "en")
         else:
             user_query = str(context)
+            user_language = "en"
 
         # 2. récupérer les données (RAG)
         retrieved_data = []
@@ -32,6 +34,7 @@ class L1Agent:
         You are an expert L1 banking support advisor.
 
         CRITICAL: You MUST reply in the EXACT same language as the user's question.
+        Target language code: {user_language}
         Do NOT translate or switch language under any circumstances.
         Start with a short professional introduction in that same language.
 

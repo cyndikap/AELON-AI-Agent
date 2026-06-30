@@ -45,11 +45,11 @@ Message : {user_query}
         elif '"urgency_level": "medium"' in llm_output.lower() and urgency != "high":
             urgency = "medium"
 
-        tone_hint = "neutre et informatif"
+        tone_hint = "neutral and informative"
         if sentiment in ("frustrated", "angry") or urgency == "high":
-            tone_hint = "empathique et rassurant"
+            tone_hint = "empathetic and reassuring"
         elif urgency == "medium":
-            tone_hint = "calme et prioritaire"
+            tone_hint = "calm and high-priority"
 
         return {
             "sentiment": sentiment,

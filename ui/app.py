@@ -28,7 +28,7 @@ from multi_agent.observability.observability_agent import ObservabilityAgent
 from multi_agent.memory.memory_agent import MemoryAgent
 from multi_agent.analytics.analytics_agent import AnalyticsAgent
 from multi_agent.explainability.explainability_agent import ExplainabilityAgent
-
+from multi_agent.retrieval.retrieval_agent import RetrievalAgent
 
 # ================= AVATAR =================
 AELON_AVATAR = Path(__file__).resolve().parent / "aelon_avatar.png"
@@ -70,8 +70,10 @@ st.markdown ("""
     --purple-dark: #6D28D9;
     --purple-light: #8B5CF6;
     --pink: #EC4899;
-    --gradient-accent: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
-    --gradient-accent-soft: linear-gradient(135deg, rgba(124,58,237,0.15) 0%, rgba(236,72,153,0.10) 100%);
+    --cyan: #22D3EE;
+    --orange: #FB923C;
+    --gradient-accent: linear-gradient(135deg, #2563EB 0%, #22D3EE 50%, #FB923C 100%);
+    --gradient-accent-soft: linear-gradient(135deg, rgba(34,211,238,0.16) 0%, rgba(37,99,235,0.14) 45%, rgba(251,146,60,0.14) 100%);
 }
 
 html, body, .stApp {
@@ -81,7 +83,10 @@ html, body, .stApp {
 }
 
 [data-testid="stAppViewContainer"] {
-    background: var(--bg-deep) !important;
+    background:
+        radial-gradient(1200px 420px at 82% -10%, rgba(34,211,238,0.16), transparent 65%),
+        radial-gradient(900px 420px at -10% 4%, rgba(251,146,60,0.14), transparent 62%),
+        var(--bg-deep) !important;
 }
 
 section.main > div {
@@ -107,20 +112,22 @@ section.main > div {
 }
 
 .section-card {
-    background: #0F2A44;
+    background: linear-gradient(145deg, rgba(14,36,64,0.96) 0%, rgba(17,45,80,0.96) 55%, rgba(22,62,108,0.95) 100%);
     padding: 18px;
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(34, 211, 238, 0.28);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.06);
     margin-bottom: 20px;
 }
 
 .category-card {
-    background: linear-gradient(180deg, rgba(37, 99, 235, 0.10) 0%, rgba(15, 39, 71, 0.96) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: linear-gradient(160deg, rgba(37, 99, 235, 0.24) 0%, rgba(34, 211, 238, 0.16) 45%, rgba(15, 39, 71, 0.96) 100%);
+    border: 1px solid rgba(34, 211, 238, 0.28);
     border-radius: 14px;
     padding: 16px;
     min-height: 132px;
     margin-bottom: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.22);
 }
 
 .category-card-title {
@@ -175,7 +182,7 @@ p, li, span, div {
 
 /* ===== SIDEBAR ===== */
 section[data-testid="stSidebar"] {
-    background: var(--bg-card) !important;
+    background: linear-gradient(180deg, #112D50 0%, #0D2440 60%, #0A1D34 100%) !important;
     border-right: 3px solid var(--border);
     box-shadow: 6px 0 20px rgba(0, 0, 0, 0.3) !important;
     margin: 0;
@@ -298,9 +305,9 @@ section[data-testid="stSidebar"] * {
 }
 
 [data-testid="stSidebar"] [role="radio"][aria-checked="true"] {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(250, 204, 21, 0.45);
-    box-shadow: 0 0 18px rgba(250, 204, 21, 0.12);
+    background: linear-gradient(135deg, rgba(34,211,238,0.16) 0%, rgba(251,146,60,0.14) 100%);
+    border-color: rgba(34, 211, 238, 0.5);
+    box-shadow: 0 0 20px rgba(34, 211, 238, 0.20);
     transform: scale(1.05);
 }
 
@@ -415,13 +422,14 @@ button[kind="primary"],
 
 button:not([kind="primary"]) {
     background: linear-gradient(135deg, var(--blue) 0%, #1E40AF 100%) !important;
-    color: #111827 !important;
+    color: #F8FAFC !important;
     border: 2px solid var(--blue-dark) !important;
 }
 
 button[kind="secondary"] {
-    background: linear-gradient(135deg, var(--teal) 0%, #0D9488 100%) !important;
-    border: 2px solid #0D9488 !important;
+    background: linear-gradient(135deg, #22D3EE 0%, #0EA5E9 48%, #FB923C 100%) !important;
+    color: #0B1320 !important;
+    border: 2px solid #22D3EE !important;
 }
 
 /* ===== ADMIN CARDS ===== */
@@ -1015,24 +1023,25 @@ table td {
 
 /* ===== SAAS BANNER ===== */
 .saas-banner {
-    background: var(--gradient-accent-soft);
-    border: 1px solid rgba(139, 92, 246, 0.3);
+    background: linear-gradient(135deg, rgba(34,211,238,0.16) 0%, rgba(37,99,235,0.16) 45%, rgba(251,146,60,0.14) 100%);
+    border: 1px solid rgba(34, 211, 238, 0.34);
     border-radius: 16px;
     padding: 18px 22px;
     margin-bottom: 20px;
+    box-shadow: 0 14px 26px rgba(0, 0, 0, 0.24);
 }
 
 .saas-banner-tag {
     display: inline-block;
-    background: rgba(139, 92, 246, 0.2);
-    border: 1px solid var(--purple-light);
+    background: rgba(34, 211, 238, 0.18);
+    border: 1px solid rgba(34, 211, 238, 0.65);
     border-radius: 6px;
     padding: 2px 10px;
     font-size: 0.68rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.07em;
-    color: var(--purple-light) !important;
+    color: #67E8F9 !important;
     margin-bottom: 8px;
 }
 
@@ -1175,21 +1184,23 @@ table td {
 .analysis-card,
 .reco-card {
     width: 100%;
-    background: #0f2a44;
+    background: linear-gradient(150deg, rgba(15,42,68,0.98) 0%, rgba(24,62,99,0.95) 62%, rgba(42,89,138,0.92) 100%);
     padding: 18px;
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(34, 211, 238, 0.26);
     min-height: 168px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     line-height: 1.55;
     font-size: 0.92rem;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
 }
 
 .kpi-card {
-    background: #0f2a44;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(145deg, rgba(15,42,68,0.98) 0%, rgba(16,73,115,0.94) 100%);
+    border: 1px solid rgba(34, 211, 238, 0.3);
+    border-top: 3px solid #22D3EE;
     border-radius: 12px;
     padding: 12px 14px;
     min-height: 94px;
@@ -1197,6 +1208,7 @@ table td {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.22);
 }
 
 .kpi-label {
@@ -1396,6 +1408,7 @@ observability_agent = ObservabilityAgent()
 memory_agent = MemoryAgent()
 analytics_agent = AnalyticsAgent()
 explainability_agent = ExplainabilityAgent()
+retrieval_agent = RetrievalAgent()
 
 # ================= SESSION STATE =================
 if "page" not in st.session_state:
@@ -2679,7 +2692,7 @@ else:
                 sentiment_value   = "neutre"
 
             if agent_used == "L1" or escalated:
-                retrieval_context = get_retrieval_context_snippets(user_query)
+                retrieval_context = retrieval_agent.retrieve(user_query)
                 if retrieval_context:
                     context_lines = "\n".join([f"- {s[:240]}" for s in retrieval_context])
                     response = f"{response}\n\n📚 Contexte utile:\n{context_lines}"

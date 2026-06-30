@@ -5,6 +5,7 @@
 
 
 import json
+import re
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -56,7 +57,32 @@ class Orchestrator:
         self.memory = getattr(self.l0, "memory", None)
         self.user_agent = None
 
+    def _detect_user_language(self, query: str) -> str:
+        """Return a best-effort ISO 639-1 language code for the user query."""
+        text = str(query or "").strip()
+        if not text:
+            return "en"
+
+        try:
+            detection_prompt = f"""
+Detect the primary language of the text below.
+Return ONLY a 2-letter ISO 639-1 code in lowercase (examples: en, fr, es, de, ar, it, pt, nl, zh, ja, ko, ru).
+If uncertain, return en.
+
+Text:
+{text}
+"""
+            raw = self.llm(detection_prompt).strip().lower()
+            match = re.search(r"\b([a-z]{2})\b", raw)
+            if match:
+                return match.group(1)
+        except Exception:
+            pass
+
+        return "en"
+
     def handle_user_query(self, query):
+        user_language = self._detect_user_language(query)
 
         # -------------------------------
         # 1. USER CONTEXT
@@ -77,6 +103,7 @@ class Orchestrator:
                 "escalation_reason": "fraud_detected",
                 "agent": "blocked",
                 "sentiment": "neutre",
+                "language": user_language,
             }
 
         # -------------------------------
@@ -117,7 +144,17 @@ class Orchestrator:
         memory_context = ""
         if self.memory and hasattr(self.memory, "search"):
             memory_hits = self.memory.search(query)
-            memory_context = json.dumps(memory_hits, ensure_ascii=False)
+            # Avoid language drift: pass only lightweight metadata, not full past responses.
+            compact_hits = []
+            for hit in memory_hits or []:
+                if isinstance(hit, dict):
+                    compact_hits.append({
+                        "query": hit.get("query", ""),
+                        "decision": hit.get("decision", ""),
+                    })
+                else:
+                    compact_hits.append({"query": str(hit), "decision": ""})
+            memory_context = json.dumps(compact_hits, ensure_ascii=False)
 
         # -------------------------------
         # 7. CONTEXTE GLOBAL
@@ -144,7 +181,8 @@ class Orchestrator:
             l0_result = self.l0.handle(
                 query,
                 tone_hint=tone_hint,
-                context=full_context
+                context=full_context,
+                user_language=user_language,
             )
         except Exception:
             l0_result = {
@@ -161,7 +199,11 @@ class Orchestrator:
         if escalated:
             try:
                 l1_result = self.l1.diagnose_from_escalation(
-                    {"user_query": query, "full_context": full_context}
+                    {
+                        "user_query": query,
+                        "full_context": full_context,
+                        "user_language": user_language,
+                    }
                 )
                 raw_response = l1_result.get("technical_analysis", "")
             except Exception:
@@ -179,6 +221,7 @@ class Orchestrator:
     Then deliver the answer in a human and empathetic way.
 
     CRITICAL: You MUST reply in the EXACT same language as the user's original question.
+    Target language code: {user_language}
     Do NOT translate or switch language under any circumstances.
     User's original question: {query}
 
@@ -193,6 +236,7 @@ class Orchestrator:
     You are a professional banking assistant.
 
     CRITICAL: You MUST reply in the EXACT same language as the user's original question.
+    Target language code: {user_language}
     Do NOT translate or switch language under any circumstances.
     User's original question: {query}
 
@@ -209,10 +253,37 @@ class Orchestrator:
         # 11. COMPLIANCE + RETURN
         # -------------------------------
         try:
-            compliance = self.compliance.check(final_response, query)
-            final_response = compliance.get("corrected_response", final_response)
+            compliance = self.compliance.check(final_response, query, user_language=user_language)
+            # Only apply compliance rewrite when the answer is not compliant.
+            # This preserves the language chosen in the humanization step.
+            if compliance and not compliance.get("is_compliant", True):
+                final_response = compliance.get("corrected_response", final_response)
         except Exception:
             compliance = None
+
+        # -------------------------------
+        # 12. LANGUAGE LOCK (FINAL GUARD)
+        # -------------------------------
+        try:
+            language_lock_prompt = f"""
+You are a strict language guard.
+
+User original question:
+{query}
+
+Assistant response draft:
+{final_response}
+
+Task:
+- Return the response in the EXACT same language as the user's original question.
+- Target language code is: {user_language}
+- Keep the same meaning, level of detail, and professional tone.
+- Do not add explanations about translation.
+- Output only the final response text.
+"""
+            final_response = self.llm(language_lock_prompt)
+        except Exception:
+            pass
 
         return {
             "response": final_response,
@@ -221,4 +292,5 @@ class Orchestrator:
             "agent": "L1" if escalated else "L0",
             "sentiment": sentiment.get("sentiment", "neutre"),
             "compliance": compliance,
+            "language": user_language,
         }

@@ -29,7 +29,7 @@ class ComplianceAgent:
     def __init__(self, llm):
         self.llm = llm
 
-    def check(self, response: str, user_query: str) -> dict:
+    def check(self, response: str, user_query: str, user_language: str = "en") -> dict:
         # Vérification rapide par mots-clés
         response_lower = response.lower()
         sensitive_hit = [p for p in SENSITIVE_PATTERNS if p in response_lower]
@@ -47,6 +47,7 @@ Question du client : {user_query}
 Réponse à analyser : {response}
 
 IMPORTANT : Le champ "corrected_response" doit être rédigé dans la même langue que la question du client.
+Langue cible (code ISO 639-1) : {user_language}
 
 Réponds uniquement en JSON :
 {{

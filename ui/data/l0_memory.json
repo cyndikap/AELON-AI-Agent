@@ -948,5 +948,85 @@
     "query": "Comment signaler une fraude ?",
     "decision": "answer",
     "response": "Je comprends que la situation puisse \u00eatre inqui\u00e9tante. Pour signaler une fraude, je vous recommande de contacter rapidement le service client de votre banque afin de bloquer votre compte et s\u00e9curiser vos op\u00e9rations. Si vous avez des d\u00e9tails sp\u00e9cifiques sur la fraude, pr\u00e9parez-les pour faciliter le traitement de votre demande. N'h\u00e9sitez pas \u00e0 me fournir plus d'informations si vous avez besoin d'aide pour trouver les coordonn\u00e9es exactes de votre banque."
+  },
+  {
+    "query": "Comment signaler une fraude ?",
+    "decision": "answer",
+    "response": "Je comprends votre inqui\u00e9tude face \u00e0 une possible fraude. Pour signaler une fraude, je vous recommande de contacter imm\u00e9diatement votre service bancaire via les num\u00e9ros officiels ou votre espace client s\u00e9curis\u00e9. Ils pourront bloquer votre compte si n\u00e9cessaire et vous guider dans les d\u00e9marches \u00e0 suivre. Si vous avez besoin, je peux vous aider \u00e0 trouver les coordonn\u00e9es de contact. N'h\u00e9sitez pas \u00e0 me donner plus de d\u00e9tails si vous le souhaitez."
+  },
+  {
+    "query": "Comment effectuer un virement ?",
+    "decision": "answer",
+    "response": "Bonjour, pour effectuer un virement, je vous recommande de vous connecter \u00e0 votre espace bancaire en ligne ou \u00e0 votre application mobile. Ensuite, rendez-vous dans la section d\u00e9di\u00e9e aux virements, saisissez les coordonn\u00e9es du b\u00e9n\u00e9ficiaire ainsi que le montant \u00e0 transf\u00e9rer, puis validez l'op\u00e9ration. Si vous avez besoin d'aide plus pr\u00e9cise, n'h\u00e9sitez pas \u00e0 me fournir plus d'informations. Je suis l\u00e0 pour vous accompagner !"
+  },
+  {
+    "query": "je n'arrive pas a me connecter \u00e0 mon compte bancaire",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous rencontrez des difficult\u00e9s pour vous connecter \u00e0 votre compte bancaire. Pour mieux vous aider, pourriez-vous me pr\u00e9ciser si vous avez un message d'erreur ou si le probl\u00e8me survient \u00e0 une \u00e9tape particuli\u00e8re ? Cela nous permettra de trouver une solution rapidement. N'h\u00e9sitez pas \u00e0 me donner plus de d\u00e9tails."
+  },
+  {
+    "query": "Non riesco ad accedere al mio conto bancario\n",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous ne parvenez pas \u00e0 acc\u00e9der \u00e0 votre compte bancaire. Pour pouvoir vous aider au mieux, pourriez-vous me pr\u00e9ciser si vous rencontrez un probl\u00e8me avec votre identifiant, votre mot de passe, ou un autre type de difficult\u00e9 lors de la connexion ? Cela me permettra de vous guider plus efficacement."
+  },
+  {
+    "query": " Ich kann mich nicht bei meinem Bankkonto anmelden",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous rencontrez des difficult\u00e9s pour vous connecter \u00e0 votre compte bancaire. Pour pouvoir vous aider au mieux, pourriez-vous me fournir plus de d\u00e9tails sur le probl\u00e8me rencontr\u00e9 ? Par exemple, recevez-vous un message d'erreur sp\u00e9cifique ou avez-vous oubli\u00e9 votre mot de passe ? N'h\u00e9sitez pas \u00e0 me donner ces informations afin que je puisse vous guider efficacement."
+  },
+  {
+    "query": " No puedo iniciar sesi\u00f3n en mi cuenta bancaria\n",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous ne pouvez pas acc\u00e9der \u00e0 votre compte bancaire. Pour pouvoir vous aider au mieux, pourriez-vous me fournir plus de d\u00e9tails sur le probl\u00e8me que vous rencontrez ? Par exemple, recevez-vous un message d'erreur sp\u00e9cifique lorsque vous essayez de vous connecter ? Cela nous aidera \u00e0 trouver une solution rapidement."
+  },
+  {
+    "query": "I can't log in to my bank accoun",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous ne pouvez pas vous connecter \u00e0 votre compte bancaire. Pour pouvoir vous aider au mieux, pourriez-vous me fournir plus de d\u00e9tails sur le probl\u00e8me rencontr\u00e9 ? Par exemple, recevez-vous un message d'erreur sp\u00e9cifique ou avez-vous oubli\u00e9 votre mot de passe ? Cela nous permettra de trouver une solution rapidement."
+  },
+  {
+    "query": "\u0644\u0627 \u0623\u0633\u062a\u0637\u064a\u0639 \u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u062f\u062e\u0648\u0644 \u0625\u0644\u0649 \u062d\u0633\u0627\u0628\u064a \u0627\u0644\u0628\u0646\u0643\u064a",
+    "decision": "answer",
+    "response": "Je suis d\u00e9sol\u00e9 d'apprendre que vous ne pouvez pas vous connecter \u00e0 votre compte bancaire. Pour pouvoir vous aider au mieux, pourriez-vous me fournir plus de d\u00e9tails sur le probl\u00e8me que vous rencontrez ? Par exemple, recevez-vous un message d'erreur sp\u00e9cifique ou avez-vous oubli\u00e9 votre mot de passe ? Cela nous permettra de trouver une solution rapidement."
+  },
+  {
+    "query": "Comment signaler une fraude ?",
+    "decision": "answer",
+    "response": "Je comprends votre inqui\u00e9tude face \u00e0 une possible fraude. Pour signaler une fraude, je vous recommande de contacter imm\u00e9diatement votre service client bancaire via les num\u00e9ros officiels ou votre espace client en ligne. Ils pourront bloquer vos comptes si n\u00e9cessaire et vous guider dans les d\u00e9marches \u00e0 suivre. N'h\u00e9sitez pas \u00e0 agir rapidement pour s\u00e9curiser vos informations. Si vous avez besoin d'aide pour trouver les coordonn\u00e9es de votre banque, je suis l\u00e0 pour vous aider."
+  },
+  {
+    "query": "Comment effectuer un virement ?",
+    "decision": "answer",
+    "response": "Bonjour, pour effectuer un virement, je vous recommande de vous connecter \u00e0 votre espace client en ligne ou via votre application bancaire. Ensuite, vous pourrez acc\u00e9der \u00e0 la rubrique \"Virements\" o\u00f9 vous devrez renseigner les informations du b\u00e9n\u00e9ficiaire ainsi que le montant \u00e0 transf\u00e9rer. Si vous avez besoin d'aide plus pr\u00e9cise ou d'accompagnement, n'h\u00e9sitez pas \u00e0 me le dire. Je suis l\u00e0 pour vous aider !"
+  },
+  {
+    "query": "Je souhaite echanger avec un conseill\u00e9",
+    "decision": "answer",
+    "response": "Pour \u00e9changer avec un conseiller, je vous recommande de contacter directement votre agence bancaire ou d'utiliser les coordonn\u00e9es de contact fournies par votre banque, telles que le num\u00e9ro de t\u00e9l\u00e9phone du service client ou le chat en ligne sur le site officiel. Si vous avez besoin d'aide pour trouver ces informations, n'h\u00e9sitez pas \u00e0 me le demander."
+  },
+  {
+    "query": "touve moi des infos",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations. Pouvez-vous pr\u00e9ciser le type d'informations que vous recherchez ?"
+  },
+  {
+    "query": "la localisation de ma banque",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations. Pouvez-vous pr\u00e9ciser le nom de votre banque ou votre agence ?"
+  },
+  {
+    "query": "mm banque",
+    "decision": "answer",
+    "response": "J'ai besoin de plus d'informations. Pouvez-vous pr\u00e9ciser votre demande concernant \"mm banque\" ?"
+  },
+  {
+    "query": "je veux parler a un conseiller je suis en colere",
+    "decision": "answer",
+    "response": "Je comprends que vous soyez en col\u00e8re et je suis l\u00e0 pour vous aider. Pour parler \u00e0 un conseiller, je vous recommande de contacter directement le service client de votre banque via leur num\u00e9ro de t\u00e9l\u00e9phone officiel ou leur site internet. Si vous avez besoin, je peux vous guider pour trouver ces informations. N'h\u00e9sitez pas \u00e0 me dire comment je peux vous assister davantage."
+  },
+  {
+    "query": "je veux faire annuler un apiement",
+    "decision": "answer",
+    "response": "Je comprends que vous souhaitez annuler un paiement. Pour pouvoir vous aider au mieux, pourriez-vous me fournir plus de d\u00e9tails sur ce paiement ? Par exemple, la date, le montant, ou le destinataire. Cela nous permettra de v\u00e9rifier les possibilit\u00e9s d'annulation. N'h\u00e9sitez pas \u00e0 me donner ces informations pour que je puisse vous accompagner au mieux."
   }
 ]
