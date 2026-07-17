@@ -5,6 +5,7 @@ import json, os
 from fastapi import FastAPI, Depends, HTTPException
 from api.schemas import UserQueryRequest, AgentResponse, IncidentRequest
 from multi_agent.orchestrator import Orchestrator
+from multi_agent.privacy.privacy_agent import PrivacyAgent
 from auth import authenticate
 from models import LogEntry, QueryResponse, NewLogRequest, Incident as IncidentModel
 from typing import List, Optional
@@ -12,6 +13,7 @@ from datetime import datetime
 
 app = FastAPI(title="Agentic Support API", version="0.2.0")
 orchestrator = Orchestrator()
+privacy_agent = PrivacyAgent()
 
 LOGS_PATH = "data/processed/logs_clean.json"
 mock_incidents: list = []
@@ -56,12 +58,16 @@ def get_log_by_id(log_id: int):
 def create_log(payload: NewLogRequest):
     logs = _load_logs()
     new_id = max(l.id for l in logs) + 1 if logs else 1
+
+    message_privacy = privacy_agent.process(payload.message, language="fr")
+    safe_message = message_privacy.get("anonymized_text", payload.message)
+
     new_log = LogEntry(
         id=new_id,
         timestamp=datetime.utcnow().isoformat(),
         service=payload.service,
         severity=payload.severity,
-        message=payload.message,
+        message=safe_message,
     )
     # Persist back
     raw = json.loads(open(LOGS_PATH, encoding="utf-8").read()) if os.path.exists(LOGS_PATH) else []
@@ -88,7 +94,10 @@ def create_incident_endpoint(payload: IncidentRequest):
 
 @app.post("/support/query", response_model=AgentResponse, dependencies=[Depends(authenticate)])
 def handle_query(payload: UserQueryRequest):
-    response = orchestrator.handle_user_query(payload.query)
+    privacy_result = privacy_agent.process(payload.query, language="fr")
+    safe_query = privacy_result.get("anonymized_text", payload.query)
+
+    response = orchestrator.handle_user_query(safe_query)
     if not isinstance(response, dict):
         response = {
             "response": str(response),

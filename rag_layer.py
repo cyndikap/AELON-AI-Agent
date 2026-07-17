@@ -4,6 +4,7 @@ import requests
 import chromadb
 from chromadb.config import Settings
 from azure_embeddings import AzureEmbeddingClient
+from multi_agent.privacy.privacy_agent import PrivacyAgent
 
 RAG_STATE_PATH = "data/rag_state.json"
 
@@ -12,6 +13,7 @@ class LogRAG:
     def __init__(self, mcp_url="http://127.0.0.1:8000"):
         self.mcp_url = mcp_url
         self.embedding_client = AzureEmbeddingClient()
+        self.privacy_agent = PrivacyAgent()
 
         self.token = os.getenv("MCP_TOKEN")
         if not self.token:
@@ -63,11 +65,14 @@ class LogRAG:
     # --------------------------------------------------
     # Log formatting
     # --------------------------------------------------
+    def _safe_text(self, text: str) -> str:
+        return self.privacy_agent.process(text, language="fr").get("anonymized_text", str(text or ""))
+
     def log_to_text(self, log):
         return (
             f"Service: {log['service']}. "
             f"Severity: {log['severity']}. "
-            f"Message: {log['message']}. "
+            f"Message: {self._safe_text(log['message'])}. "
             f"Timestamp: {log['timestamp']}."
         )
 
@@ -91,11 +96,18 @@ class LogRAG:
         embeddings = self.embedding_client.embed(texts)
         ids = [str(log["id"]) for log in new_logs]
 
+        safe_metadatas = []
+        for log in new_logs:
+            safe_log = dict(log)
+            if "message" in safe_log:
+                safe_log["message"] = self._safe_text(safe_log["message"])
+            safe_metadatas.append(safe_log)
+
         self.collection.add(
             ids=ids,
             documents=texts,
             embeddings=embeddings,
-            metadatas=new_logs
+            metadatas=safe_metadatas
         )
 
         # Update state
@@ -111,7 +123,8 @@ class LogRAG:
     # Search
     # --------------------------------------------------
     def search(self, query: str, top_k: int = 3):
-        query_embedding = self.embedding_client.embed([query])
+        safe_query = self._safe_text(query)
+        query_embedding = self.embedding_client.embed([safe_query])
 
         results = self.collection.query(
             query_embeddings=query_embedding,

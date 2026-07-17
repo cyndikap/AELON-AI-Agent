@@ -28,6 +28,8 @@ class ComplianceAgent:
 
     def __init__(self, llm):
         self.llm = llm
+        from global_prompt import prepend
+        self._prepend = prepend
 
     def check(self, response: str, user_query: str, user_language: str = "en") -> dict:
         # Vérification rapide par mots-clés
@@ -36,7 +38,7 @@ class ComplianceAgent:
 
         rules_text = "\n".join(f"- {r}" for r in COMPLIANCE_RULES)
 
-        llm_output = self.llm(f"""
+        llm_output = self.llm(self._prepend(f"""
 Tu es un agent de conformité bancaire (RGPD, PCI-DSS, DORA).
 
 Analyse la réponse suivante générée pour un client bancaire.
@@ -56,7 +58,7 @@ Réponds uniquement en JSON :
   "corrected_response": "réponse corrigée si non conforme, sinon identique à l'originale",
   "risk_level": "low" | "medium" | "high"
 }}
-""")
+"""))
 
         is_compliant = (
             '"is_compliant": true' in llm_output.lower()

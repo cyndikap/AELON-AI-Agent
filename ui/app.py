@@ -5,6 +5,7 @@
 import sys
 import json
 import html
+from collections import Counter
 from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
@@ -29,6 +30,7 @@ from multi_agent.memory.memory_agent import MemoryAgent
 from multi_agent.analytics.analytics_agent import AnalyticsAgent
 from multi_agent.explainability.explainability_agent import ExplainabilityAgent
 from multi_agent.retrieval.retrieval_agent import RetrievalAgent
+from multi_agent.privacy.privacy_agent import PrivacyAgent
 
 # ================= AVATAR =================
 AELON_AVATAR = Path(__file__).resolve().parent / "aelon_avatar.png"
@@ -182,7 +184,7 @@ p, li, span, div {
 
 /* ===== SIDEBAR ===== */
 section[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #112D50 0%, #0D2440 60%, #0A1D34 100%) !important;
+    background: var(--bg-card) !important;
     border-right: 3px solid var(--border);
     box-shadow: 6px 0 20px rgba(0, 0, 0, 0.3) !important;
     margin: 0;
@@ -348,7 +350,7 @@ section[data-testid="stSidebar"] * {
 
 /* ===== SELECT BOX ===== */
 div[data-baseweb="select"] {
-    background: var(--bg-surface) !important;
+    background: #F8FAFC !important;
     border: 2px solid var(--border) !important;
     border-radius: 10px !important;
     min-height: 42px;
@@ -362,24 +364,40 @@ div[data-baseweb="select"]:focus-within {
 div[data-baseweb="select"] div,
 div[data-baseweb="select"] span,
 div[data-baseweb="select"] input {
-    color: var(--text-main) !important;
+    color: #0B1320 !important;
     font-weight: 500 !important;
 }
 
-div[role="listbox"] {
-    background: var(--bg-card) !important;
+div[role="listbox"],
+ul[role="listbox"] {
+    background: #F8FAFC !important;
     border: 2px solid var(--border) !important;
     border-radius: 10px !important;
 }
 
-div[role="option"] {
-    color: var(--text-main) !important;
+div[role="option"],
+li[role="option"] {
+    color: #0B1320 !important;
     font-weight: 500 !important;
     padding: 10px 14px !important;
+    background: transparent !important;
 }
 
-div[role="option"]:hover {
-    background: rgba(37, 99, 235, 0.2) !important;
+div[role="option"] *,
+li[role="option"] * {
+    color: #0B1320 !important;
+}
+
+div[role="option"]:hover,
+li[role="option"]:hover {
+    background: rgba(37, 99, 235, 0.12) !important;
+    color: #0B1320 !important;
+}
+
+div[role="option"][aria-selected="true"],
+li[role="option"][aria-selected="true"] {
+    background: rgba(34, 211, 238, 0.18) !important;
+    color: #0B1320 !important;
 }
 
 /* ===== DATE INPUT ===== */
@@ -1181,6 +1199,66 @@ table td {
     color: var(--text-main) !important;
 }
 
+/* ===== FLOATING AI WIDGET (Dashboard) ===== */
+.floating-ai-widget {
+    position: fixed;
+    left: 18px;
+    bottom: 16px;
+    width: 360px;
+    max-width: calc(100vw - 24px);
+    max-height: calc(100vh - 110px);
+    overflow: auto;
+    z-index: 9999;
+    background: linear-gradient(165deg, rgba(13, 33, 58, 0.97) 0%, rgba(17, 45, 80, 0.97) 100%);
+    border: 1px solid rgba(34, 211, 238, 0.34);
+    border-radius: 16px;
+    box-shadow: 0 18px 34px rgba(0, 0, 0, 0.36);
+    padding: 12px;
+}
+
+.floating-ai-title {
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #E2E8F0 !important;
+    margin: 2px 0 8px 0;
+}
+
+.floating-ai-launcher {
+    position: fixed;
+    left: 18px;
+    bottom: 16px;
+    z-index: 9999;
+}
+
+.floating-ai-widget [data-baseweb="select"] {
+    background: #F8FAFC !important;
+}
+
+.floating-ai-widget [data-baseweb="input"] input,
+.floating-ai-widget textarea,
+.floating-ai-widget input {
+    background: #F8FAFC !important;
+    color: #0B1320 !important;
+}
+
+@media (max-width: 980px) {
+    .floating-ai-widget {
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        width: auto;
+        max-width: none;
+        max-height: 58vh;
+    }
+
+    .floating-ai-launcher {
+        left: 10px;
+        bottom: 10px;
+    }
+}
+
 .analysis-card,
 .reco-card {
     width: 100%;
@@ -1383,6 +1461,56 @@ div[data-baseweb="calendar"] [role="heading"] {
     font-weight: 700 !important;
 }
 
+/* ===== CONTRAST SAFETY FOR DROPDOWNS/POPOVERS ===== */
+div[data-baseweb="popover"],
+div[data-baseweb="menu"],
+div[role="listbox"],
+ul[role="listbox"] {
+    background: #F8FAFC !important;
+    color: #0B1320 !important;
+}
+
+div[data-baseweb="popover"] *,
+div[data-baseweb="menu"] *,
+div[role="listbox"] *,
+ul[role="listbox"] * {
+    color: #0B1320 !important;
+}
+
+li[role="option"],
+div[role="option"],
+li[role="menuitem"],
+div[role="menuitem"] {
+    color: #0B1320 !important;
+    background: transparent !important;
+}
+
+li[role="option"]:hover,
+div[role="option"]:hover,
+li[role="menuitem"]:hover,
+div[role="menuitem"]:hover {
+    background: rgba(37, 99, 235, 0.12) !important;
+    color: #0B1320 !important;
+}
+
+li[role="option"][aria-selected="true"],
+div[role="option"][aria-selected="true"] {
+    background: rgba(34, 211, 238, 0.18) !important;
+    color: #0B1320 !important;
+}
+
+/* Keep selected calendar day readable after global popover overrides */
+div[data-baseweb="calendar"] button[aria-selected="true"],
+div[role="dialog"] button[aria-selected="true"] {
+    color: #FFFFFF !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: #64748B !important;
+    opacity: 1 !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -1399,10 +1527,11 @@ def init_agents():
         SentimentAgent(llm),
         ComplianceAgent(llm),
         L0Agent(llm, KB_PATH),
-        L1Agent(llm)
+        L1Agent(llm),
+        PrivacyAgent(),
     )
 
-fraud_agent, sentiment_agent, compliance_agent, l0_agent, l1_agent = init_agents()
+fraud_agent, sentiment_agent, compliance_agent, l0_agent, l1_agent, privacy_agent = init_agents()
 orchestrator = Orchestrator()
 observability_agent = ObservabilityAgent()
 memory_agent = MemoryAgent()
@@ -1427,6 +1556,10 @@ if "dashboard_needs_refresh" not in st.session_state:
     st.session_state.dashboard_needs_refresh = False
 if "show_explanations" not in st.session_state:
     st.session_state.show_explanations = True
+if "ai_widget_open" not in st.session_state:
+    st.session_state.ai_widget_open = True
+if "dashboard_collab_config" not in st.session_state:
+    st.session_state.dashboard_collab_config = None
 
 
 def set_page(p: str):
@@ -1626,6 +1759,50 @@ def format_sentiment_distribution(dataframe) -> str:
     return " · ".join(parts) if parts else "Aucune donnée"
 
 
+def compute_privacy_entity_stats(dataframe):
+    def _parse_entities(raw_value):
+        if isinstance(raw_value, list):
+            return raw_value
+        if isinstance(raw_value, str):
+            text = raw_value.strip()
+            if not text:
+                return []
+            try:
+                parsed = json.loads(text)
+                return parsed if isinstance(parsed, list) else []
+            except Exception:
+                return []
+        return []
+
+    entity_counter = Counter()
+    anonymized_interactions = 0
+
+    for _, row in dataframe.iterrows():
+        has_entity = False
+        for column in ("privacy_entities", "privacy_entities_response"):
+            if column not in dataframe.columns:
+                continue
+            for item in _parse_entities(row.get(column)):
+                if isinstance(item, dict):
+                    entity_type = str(item.get("entity_type", "")).strip()
+                else:
+                    entity_type = str(item).strip()
+                if entity_type:
+                    entity_counter[entity_type] += 1
+                    has_entity = True
+        if has_entity:
+            anonymized_interactions += 1
+
+    total_rows = int(len(dataframe))
+    coverage_rate = (anonymized_interactions / total_rows * 100) if total_rows else 0.0
+    return {
+        "entity_counts": dict(entity_counter),
+        "anonymized_interactions": anonymized_interactions,
+        "total_entities": int(sum(entity_counter.values())),
+        "coverage_rate": coverage_rate,
+    }
+
+
 def get_retrieval_context_snippets(query: str, max_items: int = 3) -> list[str]:
     snippets: list[str] = []
 
@@ -1743,13 +1920,14 @@ def _collab_ask(llm: AzureChatLLM, system_prompt: str, history: list, question: 
     return resp.choices[0].message.content.strip()
 
 
-def render_collab_section(page_key: str, context: str, suggestions: list) -> None:
+def render_collab_section(page_key: str, context: str, suggestions: list, show_header: bool = True) -> None:
     """Inline AI collaboration chat + suggestions for a dashboard page."""
-    st.markdown("### 💬 Assistant IA")
-    st.markdown(
-        '<div class="collab-section-sub">Posez vos questions sur les données pour obtenir des recommandations ciblées.</div>',
-        unsafe_allow_html=True,
-    )
+    if show_header:
+        st.markdown("### 💬 Assistant IA")
+        st.markdown(
+            '<div class="collab-section-sub">Posez vos questions sur les données pour obtenir des recommandations ciblées.</div>',
+            unsafe_allow_html=True,
+        )
 
     chat_key = f"collab_{page_key}"
     if chat_key not in st.session_state.collab_chat:
@@ -1810,6 +1988,47 @@ def render_collab_section(page_key: str, context: str, suggestions: list) -> Non
         f'<div class="collab-suggestions">{sug_html}</div>',
         unsafe_allow_html=True,
     )
+
+
+def set_dashboard_collab_widget(page_key: str, context: str, suggestions: list) -> None:
+    st.session_state.dashboard_collab_config = {
+        "page_key": page_key,
+        "context": context,
+        "suggestions": suggestions,
+    }
+
+
+def render_dashboard_collab_widget() -> None:
+    cfg = st.session_state.get("dashboard_collab_config")
+    if not cfg:
+        return
+
+    widget_key = str(cfg.get("page_key", "dashboard")).replace(" ", "_")
+
+    if not st.session_state.get("ai_widget_open", True):
+        st.markdown('<div class="floating-ai-launcher">', unsafe_allow_html=True)
+        if st.button("💬 Assistant IA", key=f"ai_widget_open_{widget_key}"):
+            st.session_state.ai_widget_open = True
+            st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
+        return
+
+    st.markdown('<div class="floating-ai-widget">', unsafe_allow_html=True)
+    hcol1, hcol2 = st.columns([5, 1])
+    with hcol1:
+        st.markdown('<div class="floating-ai-title">💬 Assistant IA</div>', unsafe_allow_html=True)
+    with hcol2:
+        if st.button("—", key=f"ai_widget_min_{widget_key}", help="Réduire le widget"):
+            st.session_state.ai_widget_open = False
+            st.rerun()
+
+    render_collab_section(
+        str(cfg["page_key"]),
+        str(cfg["context"]),
+        list(cfg["suggestions"]),
+        show_header=False,
+    )
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 # ================= ADMIN =================
@@ -1947,6 +2166,8 @@ if st.session_state.page == "📊 Dashboard":
         dp = "Vue globale"
         st.session_state.dashboard_page = "Vue globale"
 
+    st.session_state.dashboard_collab_config = None
+
     if dp == "Vue globale":
         open_section_card()
 
@@ -2037,6 +2258,27 @@ if st.session_state.page == "📊 Dashboard":
 
         st.markdown("### 📈 Activité globale")
         st.altair_chart(main_chart, use_container_width=True)
+
+        privacy_stats = compute_privacy_entity_stats(filtered)
+        st.markdown("### 🔒 Privacy Telemetry")
+        render_kpi_row(
+            [
+                ("Interactions anonymisées", f"{privacy_stats['anonymized_interactions']}"),
+                ("Entités détectées", f"{privacy_stats['total_entities']}"),
+                ("Couverture privacy", f"{privacy_stats['coverage_rate']:.1f}%"),
+            ],
+            columns=3,
+        )
+
+        privacy_counts = privacy_stats.get("entity_counts", {})
+        if privacy_counts:
+            privacy_df = pd.DataFrame(
+                list(privacy_counts.items()),
+                columns=["entity", "count"],
+            ).sort_values("count", ascending=False)
+            st.bar_chart(privacy_df.set_index("entity"))
+        else:
+            st.info("Aucune entité sensible détectée sur la période filtrée.")
 
         st.markdown("### 📌 Insights & Performance")
         col_left, col_right = st.columns(2)
@@ -2133,7 +2375,7 @@ if st.session_state.page == "📊 Dashboard":
         else:
             st.success("Aucune anomalie critique détectée ✅")
 
-        render_collab_section(
+        set_dashboard_collab_widget(
             "vue_globale",
             f"Vue globale — {total} interactions, escalade {escalation_rate:.1f}%, fraude moyenne {avg_fraud:.1f}, sentiment négatif {neg_rate:.1f}%. Analyse : {analysis}",
             [
@@ -2200,7 +2442,7 @@ if st.session_state.page == "📊 Dashboard":
             "Créer des réponses courtes et rassurantes pour les situations à forte frustration.",
         ]
         render_decision_cards(analysis, recs)
-        render_collab_section(
+        set_dashboard_collab_widget(
             "sentiments",
             f"Analyse des sentiments — taux négatif {neg_rate:.1f}%. Analyse : {analysis}",
             [
@@ -2274,7 +2516,7 @@ if st.session_state.page == "📊 Dashboard":
             "Mettre en place une revue hebdomadaire des raisons d'escalade.",
         ]
         render_decision_cards(analysis, recs)
-        render_collab_section(
+        set_dashboard_collab_widget(
             "escalades",
             f"Analyse des escalades — taux L1 {l1_rate:.1f}%. Analyse : {analysis}",
             [
@@ -2321,7 +2563,7 @@ if st.session_state.page == "📊 Dashboard":
             "Analyser les motifs textuels des cas suspects pour affiner les règles.",
         ]
         render_decision_cards(analysis, recs)
-        render_collab_section(
+        set_dashboard_collab_widget(
             "fraudes",
             f"Analyse des fraudes — taux fraude {fraud_rate:.1f}%, score moyen {avg_fraud_score:.1f}. Analyse : {analysis}",
             [
@@ -2418,7 +2660,7 @@ if st.session_state.page == "📊 Dashboard":
             "Mesurer l'impact des actions via un suivi hebdomadaire des volumes par catégorie.",
         ]
         render_decision_cards(analysis, recs)
-        render_collab_section(
+        set_dashboard_collab_widget(
             "categories",
             f"Analyse des catégories — top catégorie {top_ratio:.1f}% du volume. Analyse : {analysis}",
             [
@@ -2513,7 +2755,7 @@ if st.session_state.page == "📊 Dashboard":
         close_section_card()
 
         open_section_card()
-        render_collab_section(
+        set_dashboard_collab_widget(
             f"category_{selected_category}",
             (
                 f"Catégorie {selected_category} — {category_total} interactions, fraude moyenne {category_avg_fraud:.1f}, "
@@ -2535,28 +2777,136 @@ if st.session_state.page == "📊 Dashboard":
             tag="SETTINGS",
         )
 
-        # ── Profil ──────────────────────────────────────
-        st.markdown('<div class="settings-section-header">👤 Profil</div>', unsafe_allow_html=True)
+        # ── Session state defaults for profile fields ────────────────
+        if "admin_prenom" not in st.session_state:
+            st.session_state.admin_prenom = "Sarah"
+        if "admin_nom" not in st.session_state:
+            st.session_state.admin_nom = "Dupont"
+        if "admin_id" not in st.session_state:
+            st.session_state.admin_id = "ADM-2025-001"
+        if "admin_role" not in st.session_state:
+            st.session_state.admin_role = "Administrateur"
+        if "admin_email" not in st.session_state:
+            st.session_state.admin_email = "admin@aelon.ai"
+        if "admin_logged_out" not in st.session_state:
+            st.session_state.admin_logged_out = False
+
+        # ── Fiche admin ──────────────────────────────────
+        st.markdown('<div class="settings-section-header">👤 Profil administrateur</div>', unsafe_allow_html=True)
+
+        # Avatar card
+        initiales = (st.session_state.admin_prenom[:1] + st.session_state.admin_nom[:1]).upper()
+        role_colors = {
+            "Administrateur": ("#2563EB", "#1D4ED8"),
+            "Superviseur":    ("#7C3AED", "#6D28D9"),
+            "Analyste":       ("#0D9488", "#0F766E"),
+            "Support L1":     ("#D97706", "#B45309"),
+        }
+        role_color, role_border = role_colors.get(
+            st.session_state.admin_role, ("#2563EB", "#1D4ED8")
+        )
+        st.markdown(
+            f"""
+            <div style="
+                display:flex;align-items:center;gap:20px;
+                background:linear-gradient(135deg,rgba(37,99,235,0.12) 0%,rgba(15,39,71,0.96) 100%);
+                border:1px solid rgba(37,99,235,0.3);border-radius:16px;
+                padding:20px 24px;margin-bottom:20px;">
+                <div style="
+                    width:68px;height:68px;border-radius:50%;flex-shrink:0;
+                    background:linear-gradient(135deg,{role_color} 0%,{role_border} 100%);
+                    display:flex;align-items:center;justify-content:center;
+                    font-size:1.6rem;font-weight:800;color:#fff;
+                    border:3px solid {role_border};box-shadow:0 4px 16px rgba(37,99,235,0.35);">
+                    {initiales}
+                </div>
+                <div>
+                    <div style="font-size:1.15rem;font-weight:700;color:#F1F5F9;">
+                        {st.session_state.admin_prenom} {st.session_state.admin_nom}
+                    </div>
+                    <div style="font-size:0.78rem;color:#94A3B8;margin-top:2px;">
+                        ID : {st.session_state.admin_id}
+                    </div>
+                    <div style="margin-top:6px;">
+                        <span style="
+                            display:inline-block;padding:3px 12px;border-radius:20px;
+                            background:{role_color}22;border:1px solid {role_color};
+                            font-size:0.72rem;font-weight:700;color:{role_color};
+                            text-transform:uppercase;letter-spacing:0.07em;">
+                            {st.session_state.admin_role}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        # Editable fields
         col_p1, col_p2 = st.columns(2)
         with col_p1:
-            st.text_input("Nom d'affichage", value="Admin", key="settings_name")
+            st.session_state.admin_prenom = st.text_input(
+                "Prénom", value=st.session_state.admin_prenom, key="input_prenom"
+            )
         with col_p2:
-            st.text_input("Email", value="admin@aelon.ai", key="settings_email")
-        st.button("💾 Sauvegarder le profil", key="settings_save")
+            st.session_state.admin_nom = st.text_input(
+                "Nom", value=st.session_state.admin_nom, key="input_nom"
+            )
+
+        col_p3, col_p4 = st.columns(2)
+        with col_p3:
+            st.text_input(
+                "Identifiant", value=st.session_state.admin_id,
+                disabled=True, key="input_id",
+                help="L'identifiant est attribué par le système et ne peut pas être modifié."
+            )
+        with col_p4:
+            st.session_state.admin_role = st.selectbox(
+                "Rôle",
+                options=["Administrateur", "Superviseur", "Analyste", "Support L1"],
+                index=["Administrateur", "Superviseur", "Analyste", "Support L1"].index(
+                    st.session_state.admin_role
+                ),
+                key="input_role",
+            )
+
+        st.session_state.admin_email = st.text_input(
+            "Email", value=st.session_state.admin_email, key="input_email"
+        )
+
+        col_save, col_void = st.columns([1, 3])
+        with col_save:
+            if st.button("💾 Sauvegarder", key="settings_save", use_container_width=True):
+                st.success("✅ Profil mis à jour.")
 
         st.markdown("---")
 
-        # ── Abonnement ──────────────────────────────────
-        st.markdown('<div class="settings-section-header">💳 Abonnement</div>', unsafe_allow_html=True)
-        col_s1, col_s2 = st.columns([3, 1])
-        with col_s1:
-            st.markdown('<div class="ae-badge">✅ Plan Pro — Actif</div>', unsafe_allow_html=True)
+        # ── Déconnexion ──────────────────────────────────
+        st.markdown('<div class="settings-section-header">🔒 Session</div>', unsafe_allow_html=True)
+        st.markdown(
+            f'<p style="font-size:0.85rem;color:#94A3B8;margin-bottom:12px;">'
+            f'Connecté en tant que <strong style="color:#F1F5F9;">'
+            f'{st.session_state.admin_prenom} {st.session_state.admin_nom}</strong> '
+            f'— <span style="color:#60A5FA;">{st.session_state.admin_role}</span></p>',
+            unsafe_allow_html=True,
+        )
+        col_lo1, col_lo2 = st.columns([1, 3])
+        with col_lo1:
+            if st.button("🚪 Se déconnecter", key="settings_logout", use_container_width=True):
+                st.session_state.admin_logged_out = True
+
+        if st.session_state.admin_logged_out:
             st.markdown(
-                '<p style="margin-top:8px;font-size:0.85rem">Renouvellement : 25 juillet 2026 &nbsp;·&nbsp; Facturation mensuelle</p>',
+                """
+                <div style="
+                    background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.4);
+                    border-radius:12px;padding:14px 18px;margin-top:12px;">
+                    <strong style="color:#F87171;">Session terminée.</strong>
+                    <span style="color:#94A3B8;"> Fermez cet onglet ou rechargez la page pour vous reconnecter.</span>
+                </div>
+                """,
                 unsafe_allow_html=True,
             )
-        with col_s2:
-            st.button("🔄 Gérer", key="settings_plan")
 
         st.markdown("---")
 
@@ -2568,6 +2918,8 @@ if st.session_state.page == "📊 Dashboard":
         with col_d2:
             st.button("📞 Contacter le support", key="settings_support", use_container_width=True)
         close_section_card()
+
+    render_dashboard_collab_widget()
 
     if dp not in ("⚙️ Paramètres", "Paramètres"):
         st.markdown("---")
@@ -2594,7 +2946,7 @@ else:
         #  message de bienvenue
         st.session_state.messages.append({
             "role": "assistant",
-            "content": "👋 Bonjour, je suis **AELON**, votre assistant bancaire intelligent.\n\nComment puis-je vous aider aujourd'hui ?"
+            "content": "👋 Bonjour, Je suis AELON, un assistant bancaire basé sur l'intelligence artificielle. Les informations fournies sont générées automatiquement et ne remplacent pas les conseils d'un expert ou d'un conseiller bancaire."
         })
 
         #  message sécurité
@@ -2645,15 +2997,21 @@ else:
     )
 
     if user_input:
+        # The chat history and dashboard must only contain anonymized user text.
+        privacy_result = privacy_agent.process(user_input, language="fr")
+        safe_user_input = privacy_result.get("anonymized_text", user_input)
+        st.session_state["last_privacy_entities"] = privacy_result.get("detected_entities", [])
+
         # Affichage immédiat du message utilisateur + persistance dans l'historique.
         with st.chat_message("user"):
-            render_chat_bubble("user", user_input)
-        st.session_state.messages.append({"role": "user", "content": user_input})
+            render_chat_bubble("user", safe_user_input)
+        st.session_state.messages.append({"role": "user", "content": safe_user_input})
 
     # ===== TRAITEMENT =====
     if st.session_state.messages and st.session_state.messages[-1]["role"] == "user":
 
         user_query = st.session_state.messages[-1]["content"]
+        privacy_entities = st.session_state.get("last_privacy_entities", [])
 
         
         #  MEMORY (ajout ici)
@@ -2712,8 +3070,11 @@ else:
                 #  OBSERVABILITY (qualité réponse)
         if escalated:
             st.session_state.escalated_count += 1
+        response_privacy = privacy_agent.process(response, language="fr")
+        safe_response = response_privacy.get("anonymized_text", response)
+
         obs_result = observability_agent.analyze(
-            response,
+            safe_response,
             {
                 "escalated": escalated,
                 "escalated_count": st.session_state.escalated_count
@@ -2722,7 +3083,7 @@ else:
 
         explanation = explainability_agent.explain(
             user_query=user_query,
-            response=response,
+            response=safe_response,
             agent_used=agent_used,
             escalated=escalated,
             escalation_reason=escalation_reason,
@@ -2730,9 +3091,11 @@ else:
             quality_score=obs_result.get("quality_score"),
         )
 
-        response_for_display = response
-        if explanation and st.session_state.get("show_explanations", True):
-            response_for_display = f"{response}\n\n🧠 Explication:\n{explanation}"
+        explanation_privacy = privacy_agent.process(explanation or "", language="fr")
+        safe_explanation = explanation_privacy.get("anonymized_text", explanation or "")
+        response_for_display = safe_response
+        if safe_explanation and st.session_state.get("show_explanations", True):
+            response_for_display = f"{safe_response}\n\n🧠 Explication:\n{safe_explanation}"
 
         # ===== AFFICHAGE =====
         with st.chat_message("assistant", avatar=AELON_AVATAR_BYTES):
@@ -2747,7 +3110,7 @@ else:
         memory_agent.update_memory(
             session_id,
             user_query,
-            response
+            safe_response
         )
 
         # ===== LOG DATA =====
@@ -2762,13 +3125,15 @@ else:
             "agent":             agent_used,
             "escalated":         escalated,
             "escalation_reason": escalation_reason,
-            "response":          response,
-            "response_preview":  response[:100],
+            "response":          safe_response,
+            "response_preview":  safe_response[:100],
             "sentiment":         sentiment_value,
             "resolution_status": "fraud_blocked" if fraud_result["is_fraud"] else "resolved",
             "quality_score": obs_result["quality_score"],
             "issues": obs_result["issues"],
-            "explanation": explanation,
+            "explanation": safe_explanation,
+            "privacy_entities": privacy_entities,
+            "privacy_entities_response": response_privacy.get("detected_entities", []),
         }
 
         data = load_data()

@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from multi_agent.l0.knowledge_base import KnowledgeBase
 from multi_agent.l0.memory import L0Memory
 from multi_agent.l0.azure_kb import AzureKB
+from global_prompt import prepend
 load_dotenv()
 
 AZURE_SEARCH_ENDPOINT = os.getenv("AZURE_SEARCH_ENDPOINT")
@@ -35,7 +36,7 @@ class L0Agent:
         context_text = "\n\n".join([chunk["text"] for chunk in chunks]) if chunks else ""
         memory_hits = self.memory.search(user_query)
 
-        llm_output = self.llm(f"""
+        llm_output = self.llm(prepend(f"""
     Tu es un agent de support bancaire niveau L0.
     Ton de réponse attendu : {tone_hint}.
 
@@ -48,7 +49,7 @@ class L0Agent:
 
     Question :
     {user_query}
-    """)
+    """))
 
 
         normalized = llm_output.lower()

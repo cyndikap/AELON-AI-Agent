@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from typing import Dict, Any
+from global_prompt import prepend
 
 
 class L1Agent:
@@ -51,7 +52,7 @@ class L1Agent:
         """
 
         # 4. appel LLM
-        full_response = self.llm(prompt)
+        full_response = self.llm(prepend(prompt))
 
         # 6. retour structuré
         return {

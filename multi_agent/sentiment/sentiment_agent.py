@@ -15,11 +15,13 @@ class SentimentAgent:
 
     def __init__(self, llm):
         self.llm = llm
+        from global_prompt import prepend
+        self._prepend = prepend
 
     def analyze(self, user_query: str) -> dict:
         keyword_urgent = any(k in user_query.lower() for k in URGENT_KEYWORDS)
 
-        llm_output = self.llm(f"""
+        llm_output = self.llm(self._prepend(f"""
 Tu es un agent d'analyse de sentiment pour un support bancaire.
 
 Analyse le message client suivant et retourne uniquement un JSON :
@@ -31,7 +33,7 @@ Analyse le message client suivant et retourne uniquement un JSON :
 }}
 
 Message : {user_query}
-""")
+"""))
 
         sentiment = "neutral"
         for s in ("positive", "frustrated", "angry"):

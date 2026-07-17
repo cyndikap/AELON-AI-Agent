@@ -1,11 +1,12 @@
 import json
 from pathlib import Path
 
-MEMORY_PATH = Path("data/l0_memory.json")
+MEMORY_PATH = Path(__file__).resolve().parents[2] / "data" / "l0_memory.json"
 
 class L0Memory:
     def __init__(self):
         if not MEMORY_PATH.exists():
+            MEMORY_PATH.parent.mkdir(parents=True, exist_ok=True)
             MEMORY_PATH.write_text("[]", encoding="utf-8")
 
     def load(self):

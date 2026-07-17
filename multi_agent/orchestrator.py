@@ -15,6 +15,7 @@ from multi_agent.l1.l1_agent import L1Agent
 from multi_agent.fraud.fraud_agent import FraudAgent
 from multi_agent.sentiment.sentiment_agent import SentimentAgent
 from multi_agent.compliance.compliance_agent import ComplianceAgent
+from multi_agent.privacy.privacy_agent import PrivacyAgent
 
 from multi_agent.data_access.databricks_connector import DatabricksConnector
 from multi_agent.retrieval_agent import RetrievalAgent
@@ -51,6 +52,7 @@ class Orchestrator:
         self.fraud = FraudAgent(llm)
         self.sentiment = SentimentAgent(llm)
         self.compliance = ComplianceAgent(llm)
+        self.privacy = PrivacyAgent()
 
         # Optional providers sourced from L0 when available.
         self.azure_kb = getattr(self.l0, "kb", None)
@@ -82,19 +84,21 @@ Text:
         return "en"
 
     def handle_user_query(self, query):
-        user_language = self._detect_user_language(query)
+        privacy_result = self.privacy.process(query, language="fr")
+        query_safe = privacy_result.get("anonymized_text", str(query or ""))
+        user_language = self._detect_user_language(query_safe)
 
         # -------------------------------
         # 1. USER CONTEXT
         # -------------------------------
         user_context = ""
         if self.user_agent and hasattr(self.user_agent, "get_user_context"):
-            user_context = self.user_agent.get_user_context(query)
+            user_context = self.user_agent.get_user_context(query_safe)
 
         # -------------------------------
         # 2. FRAUD CHECK
         # -------------------------------
-        fraud_result = self.fraud.analyze(query)
+        fraud_result = self.fraud.analyze(query_safe)
 
         if fraud_result.get("is_fraud", False):
             return {
@@ -109,7 +113,7 @@ Text:
         # -------------------------------
         # 3. SENTIMENT
         # -------------------------------
-        sentiment = self.sentiment.analyze(query)
+        sentiment = self.sentiment.analyze(query_safe)
         tone_hint = sentiment.get("tone_hint", "neutre")
 
         # -------------------------------
@@ -131,7 +135,7 @@ Text:
         # -------------------------------
         kb_results = []
         if self.azure_kb and hasattr(self.azure_kb, "search"):
-            kb_results = self.azure_kb.search(query)
+            kb_results = self.azure_kb.search(query_safe)
 
         kb_context = "\n".join([
             r.get("text", "") if isinstance(r, dict) else str(r)
@@ -143,7 +147,7 @@ Text:
         # -------------------------------
         memory_context = ""
         if self.memory and hasattr(self.memory, "search"):
-            memory_hits = self.memory.search(query)
+            memory_hits = self.memory.search(query_safe)
             # Avoid language drift: pass only lightweight metadata, not full past responses.
             compact_hits = []
             for hit in memory_hits or []:
@@ -162,7 +166,7 @@ Text:
         full_context = f"""
     User: {user_context}
 
-    Query: {query}
+    Query: {query_safe}
 
     Knowledge Base:
     {kb_context}
@@ -179,7 +183,7 @@ Text:
         # -------------------------------
         try:
             l0_result = self.l0.handle(
-                query,
+                query_safe,
                 tone_hint=tone_hint,
                 context=full_context,
                 user_language=user_language,
@@ -200,7 +204,7 @@ Text:
             try:
                 l1_result = self.l1.diagnose_from_escalation(
                     {
-                        "user_query": query,
+                        "user_query": query_safe,
                         "full_context": full_context,
                         "user_language": user_language,
                     }
@@ -223,7 +227,7 @@ Text:
     CRITICAL: You MUST reply in the EXACT same language as the user's original question.
     Target language code: {user_language}
     Do NOT translate or switch language under any circumstances.
-    User's original question: {query}
+    User's original question: {query_safe}
 
     Client sentiment: {sentiment.get('sentiment')}
     Expected tone: {tone_hint}
@@ -238,7 +242,7 @@ Text:
     CRITICAL: You MUST reply in the EXACT same language as the user's original question.
     Target language code: {user_language}
     Do NOT translate or switch language under any circumstances.
-    User's original question: {query}
+    User's original question: {query_safe}
 
     Client sentiment: {sentiment.get('sentiment')}
     Tone: {tone_hint}
@@ -253,7 +257,7 @@ Text:
         # 11. COMPLIANCE + RETURN
         # -------------------------------
         try:
-            compliance = self.compliance.check(final_response, query, user_language=user_language)
+            compliance = self.compliance.check(final_response, query_safe, user_language=user_language)
             # Only apply compliance rewrite when the answer is not compliant.
             # This preserves the language chosen in the humanization step.
             if compliance and not compliance.get("is_compliant", True):
@@ -269,7 +273,7 @@ Text:
 You are a strict language guard.
 
 User original question:
-{query}
+{query_safe}
 
 Assistant response draft:
 {final_response}
@@ -293,4 +297,8 @@ Task:
             "sentiment": sentiment.get("sentiment", "neutre"),
             "compliance": compliance,
             "language": user_language,
+            "privacy": {
+                "anonymized_query": query_safe,
+                "detected_entities": privacy_result.get("detected_entities", []),
+            },
         }
