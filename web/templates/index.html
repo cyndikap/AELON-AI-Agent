@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AELON | Banking Assistant</title>
+  <link rel="icon" type="image/svg+xml" href="/static/aelon-icon.svg" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="platform-bg"></div>
+  <div class="container-fluid app-shell py-3 py-lg-4">
+    <div class="row g-3 g-lg-4 min-vh-100">
+      <aside class="col-12 col-lg-2 col-xl-2">
+        <div class="sidebar card-panel p-3 p-lg-3 h-100">
+          <div class="brand mb-4">
+            <div class="brand-logo">
+              <span class="brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <rect x="8" y="8" width="112" height="112" rx="28" fill="#0A3D91"/>
+                  <circle cx="64" cy="24" r="6" fill="#D4AF37"/>
+                  <path d="M33 90L64 30L95 90" stroke="white" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                  <path d="M47 66H81" stroke="#D4AF37" stroke-width="8" stroke-linecap="round"/>
+                  <path d="M64 90V102" stroke="#D4AF37" stroke-width="8" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <span class="brand-title">AELON</span>
+            </div>
+            <div class="brand-sub brand-baseline">From Customer Conversations</div>
+            <div class="brand-sub brand-meta">to Intelligent Decisions</div>
+          </div>
+
+          <div class="section-label">Espaces</div>
+          <div class="d-grid gap-2 mb-4" id="spaceSwitcher">
+            <button class="btn nav-space active" data-space="customer" data-role="Client bancaire">
+              <span class="nav-label">💬 Banking Chat</span>
+              <span class="brand-sub">Votre assistant bancaire intelligent</span>
+            </button>
+            <button class="btn nav-space" data-space="analytics" data-role="Business Analyst">
+              <span class="nav-label">📊 Analytics Chat</span>
+              <span class="brand-sub">Comprendre vos clients grâce à l'IA</span>
+            </button>
+            <button class="btn nav-space" data-space="governance" data-role="Data Steward">
+              <span class="nav-label">🏛️ Governance Chat</span>
+              <span class="brand-sub">Superviser et évaluer l'IA</span>
+            </button>
+          </div>
+
+          <div class="user-card mb-4">
+            <div class="small text-uppercase text-white-50">Utilisateur actif</div>
+            <div class="fw-semibold" id="activeRoleLabel">Client bancaire</div>
+          </div>
+
+          <div class="theme-switch mb-4">
+            <div class="section-label mb-2">Apparence</div>
+            <button id="themeToggle" class="btn theme-toggle-btn" type="button" aria-pressed="false">
+              <i class="bi bi-bank2 me-2"></i>Theme banque privee
+            </button>
+          </div>
+
+          <div id="customerQuickBlock">
+            <div class="section-label">Questions rapides</div>
+            <div class="d-grid gap-2" id="quickQuestions">
+              <button class="btn btn-quick" data-question="Comment signaler une fraude ?">Comment signaler une fraude ?</button>
+              <button class="btn btn-quick" data-question="J'ai perdu ma carte bancaire">J'ai perdu ma carte bancaire</button>
+              <button class="btn btn-quick" data-question="Comment effectuer un virement ?">Comment effectuer un virement ?</button>
+              <button class="btn btn-quick" data-question="Je n'arrive pas à me connecter à mon compte">Je n'arrive pas à me connecter à mon compte</button>
+              <button class="btn btn-quick" data-question="Comment contacter un conseiller ?">Comment contacter un conseiller ?</button>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <main class="col-12 col-lg-9 col-xl-10 space-stage">
+        <section id="space-customer" class="space-screen active">
+          <div class="customer-hero">
+            <div class="hero-kicker">
+              <span class="brand-mark mini" aria-hidden="true">
+                <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <rect x="8" y="8" width="112" height="112" rx="28" fill="#0A3D91"/>
+                  <circle cx="64" cy="24" r="6" fill="#D4AF37"/>
+                  <path d="M33 90L64 30L95 90" stroke="white" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                  <path d="M47 66H81" stroke="#D4AF37" stroke-width="8" stroke-linecap="round"/>
+                  <path d="M64 90V102" stroke="#D4AF37" stroke-width="8" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <span>AELON</span>
+            </div>
+            <h2>Banking Intelligence Platform</h2>
+            <p>From Customer Conversations to Intelligent Decisions.</p>
+          </div>
+
+          <div class="chat-zone card-panel d-flex flex-column space-content">
+            <header class="chat-header d-flex align-items-center justify-content-between px-3 px-lg-4 py-3">
+              <div class="d-flex align-items-center gap-2">
+                <div class="hero-avatar" aria-label="AELON icon">
+                  <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <rect x="8" y="8" width="112" height="112" rx="28" fill="#0A3D91"/>
+                    <circle cx="64" cy="24" r="6" fill="#D4AF37"/>
+                    <path d="M33 90L64 30L95 90" stroke="white" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <path d="M47 66H81" stroke="#D4AF37" stroke-width="8" stroke-linecap="round"/>
+                    <path d="M64 90V102" stroke="#D4AF37" stroke-width="8" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div>
+                  <h1 class="h5 m-0">AELON</h1>
+                  <p class="m-0 small text-secondary">Votre assistant bancaire intelligent</p>
+                </div>
+              </div>
+              <span class="session-badge"><i class="bi bi-shield-lock me-1"></i>Session sécurisée</span>
+            </header>
+
+            <section id="messages" class="messages flex-grow-1 px-3 px-lg-4 py-3"></section>
+
+            <footer class="composer px-3 px-lg-4 py-3">
+              <form id="chatForm" class="composer-form d-flex gap-2 align-items-center">
+                <input id="chatInput" type="text" class="form-control chat-input" placeholder="Écrivez votre message..." autocomplete="off" />
+                <button class="btn btn-send" type="submit"><i class="bi bi-arrow-up"></i></button>
+              </form>
+            </footer>
+
+            <section class="privacy-notice px-3 px-lg-4 py-3">
+              <div><i>En poursuivant la conversation, vous acceptez que vos données soient utilisées à des fins d’analyse, d’amélioration du service et de suivi de la qualité, dans le respect de la confidentialité.</i></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="space-analytics" class="space-screen">
+          <div class="card-panel premium-shell p-3 p-lg-4 h-100 space-content">
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+              <div>
+                <h2 class="h5 m-0">📊 Analytics Chat</h2>
+                <p class="text-secondary m-0">Power BI Executive</p>
+              </div>
+            </div>
+
+            <div class="business-summary mb-4">
+              <div class="summary-header">📋 Synthèse IA</div>
+              <div class="summary-grid">
+                <div class="summary-item">
+                  <span class="summary-label">Conversations</span>
+                  <strong>15 analysées</strong>
+                </div>
+                <div class="summary-item">
+                  <span class="summary-label">Demandes connexion</span>
+                  <strong>+25%</strong>
+                </div>
+                <div class="summary-item">
+                  <span class="summary-label">Alertes fraude</span>
+                  <strong>7</strong>
+                </div>
+                <div class="summary-item">
+                  <span class="summary-label">Sentiment dominant</span>
+                  <strong>Neutre</strong>
+                </div>
+              </div>
+              <div class="summary-note">Recommandation : améliorer la gestion des comptes bloqués.</div>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-12 col-md-3">
+                <label class="form-label filter-label">Date debut</label>
+                <input id="filterStartDate" type="date" class="form-control" />
+              </div>
+              <div class="col-12 col-md-3">
+                <label class="form-label filter-label">Date fin</label>
+                <input id="filterEndDate" type="date" class="form-control" />
+              </div>
+              <div class="col-12 col-md-2">
+                <label class="form-label filter-label">Categorie</label>
+                <select id="filterCategory" class="form-select"><option value="all">Toutes</option></select>
+              </div>
+              <div class="col-12 col-md-2">
+                <label class="form-label filter-label">Sentiment</label>
+                <select id="filterSentiment" class="form-select"><option value="all">Tous</option></select>
+              </div>
+              <div class="col-12 col-md-2">
+                <label class="form-label filter-label">Agent</label>
+                <select id="filterAgent" class="form-select"><option value="all">Tous</option></select>
+              </div>
+            </div>
+
+            <div class="d-flex gap-2 mb-4 flex-wrap">
+              <button id="applyFilters" class="btn btn-outline-primary btn-sm">Appliquer filtres</button>
+              <button id="resetFilters" class="btn btn-outline-secondary btn-sm">Reinitialiser</button>
+              <button id="exportAnalyticsCsv" class="btn btn-outline-dark btn-sm">Export Analytics CSV</button>
+              <button id="exportAnalyticsPdf" class="btn btn-outline-dark btn-sm">Export Analytics PDF</button>
+            </div>
+
+            <div class="kpi-grid mb-4 stagger-group" id="analyticsKpis"></div>
+
+            <div class="row g-3 mb-4 stagger-group" id="analyticsChartGrid">
+              <div class="col-12 col-xl-8">
+                <div class="mini-panel">
+                  <div class="mini-title">Courbe temporelle - volume des conversations</div>
+                  <div id="chartVolumeTimeline" class="chart-box"></div>
+                </div>
+              </div>
+              <div class="col-12 col-xl-4">
+                <div class="mini-panel">
+                  <div class="mini-title">Heatmap activite conversationnelle</div>
+                  <div id="chartActivityHeatmap" class="chart-box"></div>
+                </div>
+              </div>
+              <div class="col-12 col-xl-4">
+                <div class="mini-panel">
+                  <div class="mini-title">Camembert repartition categories</div>
+                  <div id="chartCategoriesPie" class="chart-box"></div>
+                </div>
+              </div>
+              <div class="col-12 col-xl-4">
+                <div class="mini-panel">
+                  <div class="mini-title">Donut sentiments</div>
+                  <div id="chartSentimentsDonut" class="chart-box"></div>
+                </div>
+              </div>
+              <div class="col-12 col-xl-4">
+                <div class="mini-panel">
+                  <div class="mini-title">Histogramme fraudes</div>
+                  <div id="chartFraudHistogram" class="chart-box"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row g-3 mb-4 stagger-group" id="analyticsDetailGrid">
+              <div class="col-12 col-xl-6">
+                <div class="mini-panel">
+                  <div class="mini-title">Catégories</div>
+                  <div id="analyticsCategories" class="list-rows"></div>
+                </div>
+              </div>
+              <div class="col-12 col-xl-6">
+                <div class="mini-panel">
+                  <div class="mini-title">Sentiments</div>
+                  <div id="analyticsSentiments" class="list-rows"></div>
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="mini-panel">
+                  <div class="mini-title">Tendances (7 jours)</div>
+                  <div id="analyticsTrends" class="list-rows"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="copilot-box insight-chat-box analytics-chatbox">
+              <div class="mini-title">🤖 Chat IA Analytics</div>
+              <div class="prompt-chips mb-2" id="analyticsPromptChips">
+                <button class="btn prompt-chip" data-q="Pourquoi les escalades augmentent ?">Pourquoi les escalades augmentent ?</button>
+                <button class="btn prompt-chip" data-q="Quelles catégories progressent ?">Quelles catégories progressent ?</button>
+                <button class="btn prompt-chip" data-q="Quels problèmes sont récurrents ?">Quels problèmes sont récurrents ?</button>
+                <button class="btn prompt-chip" data-q="Quelles recommandations proposes-tu ?">Quelles recommandations proposes-tu ?</button>
+              </div>
+              <div id="analyticsCopilotHistory" class="copilot-history"></div>
+              <form id="analyticsCopilotForm" class="d-flex gap-2 mt-2">
+                <input id="analyticsCopilotInput" class="form-control" placeholder="Ex: Pourquoi les escalades augmentent ?" />
+                <button class="btn btn-send" type="submit"><i class="bi bi-send"></i></button>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <section id="space-governance" class="space-screen">
+          <div class="card-panel premium-shell p-3 p-lg-4 h-100 space-content">
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+              <div>
+                <h2 class="h5 m-0">🏛 Governance Chat</h2>
+                <p class="text-secondary m-0">AI Trust Center</p>
+              </div>
+            </div>
+
+            <div class="governance-status-strip mb-4">
+              <div class="status-pill ok"><span class="status-dot"></span> Privacy conforme</div>
+              <div class="status-pill ok"><span class="status-dot"></span> Compliance conforme</div>
+              <div class="status-pill ok"><span class="status-dot"></span> Data Quality excellente</div>
+              <div class="status-pill warn"><span class="status-dot"></span> Evaluation à surveiller</div>
+            </div>
+
+            <div class="d-flex gap-2 mb-3 flex-wrap">
+              <button id="exportGovernanceCsv" class="btn btn-outline-dark btn-sm">Export Governance CSV</button>
+              <button id="exportGovernancePdf" class="btn btn-outline-dark btn-sm">Export Governance PDF</button>
+            </div>
+
+            <div class="governance-tabs mb-3">
+              <button class="btn gov-tab active" data-gov-tab="evaluation">Evaluation Agent</button>
+              <button class="btn gov-tab" data-gov-tab="observability">Observability</button>
+              <button class="btn gov-tab" data-gov-tab="dataquality">Data Governance</button>
+            </div>
+
+            <div id="gov-evaluation" class="gov-panel active"></div>
+            <div id="gov-observability" class="gov-panel"></div>
+            <div id="gov-dataquality" class="gov-panel"></div>
+
+            <div class="copilot-box mt-4 governance-chatbox">
+              <div class="mini-title">🤖 Chat IA Governance</div>
+              <div id="governanceCopilotHistory" class="copilot-history"></div>
+              <form id="governanceCopilotForm" class="d-flex gap-2 mt-2">
+                <input id="governanceCopilotInput" class="form-control" placeholder="Ex: Pourquoi le Quality Score baisse ?" />
+                <button class="btn btn-send" type="submit"><i class="bi bi-send"></i></button>
+              </form>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>

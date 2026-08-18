@@ -1,0 +1,28 @@
+<svg width="1500" height="330" viewBox="0 0 1500 330" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">AELON premium banking monogram</title>
+  <desc id="desc">Luxury private banking AELON monogram with a high-end geometric structure and gold focal point.</desc>
+
+  <rect width="1500" height="330" fill="#F5F7FB"/>
+
+  <g transform="translate(54 52)">
+    <rect x="0" y="0" width="220" height="220" rx="52" fill="#0A3D91"/>
+
+    <circle cx="110" cy="40" r="12" fill="#D4AF37"/>
+
+    <path d="M52 156L110 36L168 156" stroke="white" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+    <path d="M82 116H138" stroke="#D4AF37" stroke-width="12" stroke-linecap="round"/>
+
+    <path d="M92 156H128" stroke="white" stroke-width="9" stroke-linecap="round" opacity="0.95"/>
+
+    <path d="M110 156V182" stroke="#D4AF37" stroke-width="9" stroke-linecap="round"/>
+    <path d="M96 182H124" stroke="#D4AF37" stroke-width="9" stroke-linecap="round"/>
+
+    <path d="M52 168H168" stroke="rgba(255,255,255,0.18)" stroke-width="2" stroke-linecap="round"/>
+  </g>
+
+  <g transform="translate(330 96)">
+    <text x="0" y="82" font-family="Segoe UI, Arial, sans-serif" font-size="108" font-weight="700" letter-spacing="10" fill="#0A3D91">AELON</text>
+    <text x="3" y="146" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="600" letter-spacing="1.8" fill="#53657F">FROM CUSTOMER CONVERSATIONS TO INTELLIGENT DECISIONS</text>
+  </g>
+</svg>
