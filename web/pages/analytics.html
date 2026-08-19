@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AELON | Analytics Dashboard</title>
+  <link rel="icon" type="image/svg+xml" href="/static/aelon-icon.svg" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/global.css" />
+  <link rel="stylesheet" href="/css/analytics.css" />
+</head>
+<body>
+  <div class="aelon-app-shell">
+    <aside class="aelon-sidebar">
+      <div class="aelon-brand">
+        <span class="aelon-brand-mark">
+          <img src="/static/aelon-icon.svg" alt="AELON" />
+        </span>
+        <div>
+          <div class="aelon-brand-title">AELON</div>
+          <div class="aelon-brand-sub">From Customer Conversations</div>
+        </div>
+      </div>
+
+      <div class="aelon-nav-section">
+        <div class="aelon-section-label">Espaces</div>
+        <div class="aelon-space-group">
+          <a class="aelon-space-link" data-space="customer" href="/banking">
+            <strong>💬 Banking Chat</strong>
+            <small>Votre assistant bancaire intelligent</small>
+          </a>
+          <a class="aelon-space-link active" data-space="analytics" href="/dashboards/analytics">
+            <strong>📊 Analytics Dashboard</strong>
+            <small>Analyse des conversations clients</small>
+          </a>
+          <a class="aelon-space-link" data-space="governance" href="/dashboards/governance">
+            <strong>🏛 Governance Dashboard</strong>
+            <small>Supervision IA et qualité des données</small>
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <main class="aelon-main">
+      <div class="aelon-page">
+        <header class="aelon-page-header">
+          <div>
+            <h1 class="aelon-page-title">Analytics Dashboard</h1>
+            <p class="aelon-page-subtitle">Power BI Executive</p>
+          </div>
+          <span class="aelon-status-badge"><i class="bi bi-graph-up-arrow me-1"></i>Live intelligence</span>
+        </header>
+
+        <div class="aelon-page-content analytics-page">
+          <div class="aelon-brand-strip">
+            <div class="aelon-brand-strip-mark">
+              <img src="/static/aelon-icon.svg" alt="AELON logo" />
+            </div>
+            <div>
+              <div class="aelon-brand-strip-name">AELON</div>
+              <div class="aelon-brand-strip-tag">Banking Intelligence Platform</div>
+            </div>
+          </div>
+
+          <div class="analytics-summary">
+            <h2>📋 Synthèse IA</h2>
+            <div class="analytics-summary-grid">
+              <div class="analytics-summary-item"><small>Conversations</small><strong>15 analysées</strong></div>
+              <div class="analytics-summary-item"><small>Demandes connexion</small><strong>+25%</strong></div>
+              <div class="analytics-summary-item"><small>Alertes fraude</small><strong>7</strong></div>
+              <div class="analytics-summary-item"><small>Sentiment dominant</small><strong>Neutre</strong></div>
+            </div>
+          </div>
+
+          <div class="analytics-controls">
+            <div class="analytics-control"><label>Date début</label><input type="date" /></div>
+            <div class="analytics-control"><label>Date fin</label><input type="date" /></div>
+            <div class="analytics-control"><label>Catégorie</label><select><option>Toutes</option></select></div>
+            <div class="analytics-control"><label>Sentiment</label><select><option>Tous</option></select></div>
+            <div class="analytics-control"><label>Agent</label><select><option>Tous</option></select></div>
+          </div>
+
+          <div class="analytics-actions">
+            <button class="analytics-action-btn" type="button">Appliquer filtres</button>
+            <button class="analytics-secondary-btn" type="button">Réinitialiser</button>
+            <button class="analytics-secondary-btn" type="button">Export CSV</button>
+          </div>
+
+          <div id="analyticsKpiGrid" class="analytics-kpi-grid"></div>
+
+          <div class="analytics-grid">
+            <div class="analytics-panel large">
+              <h3>Questions par jour</h3>
+              <div id="questionsByDayPanel" class="analytics-chart-box">Chargement...</div>
+            </div>
+            <div class="analytics-panel medium">
+              <h3>Temps de réponse</h3>
+              <div id="responseTimePanel" class="analytics-chart-box">Chargement...</div>
+            </div>
+            <div class="analytics-panel medium">
+              <h3>Questions par catégorie</h3>
+              <div id="categoriesPanel" class="analytics-chart-box">Chargement...</div>
+            </div>
+            <div class="analytics-panel">
+              <h3>Top sources</h3>
+              <div id="topSourcesList" class="analytics-list">
+                <div class="analytics-list-item"><span>Chargement...</span><strong>-</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="analytics-chat-box">
+            <h3>Chat IA Analytics</h3>
+            <div class="analytics-prompt-chips">
+              <button class="analytics-prompt-chip" type="button" data-question="Pourquoi les escalades augmentent ?">Pourquoi les escalades augmentent ?</button>
+              <button class="analytics-prompt-chip" type="button" data-question="Quelles catégories progressent ?">Quelles catégories progressent ?</button>
+              <button class="analytics-prompt-chip" type="button" data-question="Quels problèmes sont récurrents ?">Quels problèmes sont récurrents ?</button>
+            </div>
+            <div id="analyticsChatHistory" class="analytics-chat-history"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/analytics.js"></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+.text-bold {
+  font-weight: bold;
+}
+
+.display-block {
+  display: block!important;
+}
+
+.view-search-page .attachment-before {
+  margin-top: 6% !important;
+}
+
+.view-search-page .view-filters .views-exposed-form .form-item-field-type-espace-1 input:checked + label {
+  border-color: #428bca !important;
+  background-color: #428bca !important;
+}
+
+.view-search-page .view-content .views-row {
+  margin-top: 4% !important;
+}

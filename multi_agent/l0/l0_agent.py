@@ -31,10 +31,16 @@ class L0Agent:
         
         self.memory = L0Memory()
 
-    def handle(self, user_query, tone_hint=None, context=None):
+    def handle(self, user_query, tone_hint=None, context=None, user_language=None):
         chunks = self.kb.search(user_query)
         context_text = "\n\n".join([chunk["text"] for chunk in chunks]) if chunks else ""
         memory_hits = self.memory.search(user_query)
+
+        if user_language:
+            user_query_lang = str(user_language).lower()
+            language_instruction = f"Réponds dans la langue du client: {user_query_lang}."
+        else:
+            language_instruction = "Réponds dans la même langue que la user_query."
 
         llm_output = self.llm(prepend(f"""
     Tu es un agent de support bancaire niveau L0.
@@ -42,7 +48,7 @@ class L0Agent:
 
     Utilise uniquement le contexte ci-dessous pour répondre à la question.
     Si le contexte ne contient pas assez d'information, réponds : "J'ai besoins de plus d'informations".
-    Réponds dans la même langue que la user_query.
+    {language_instruction}
 
     Contexte :
     {context_text}

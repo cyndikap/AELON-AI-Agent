@@ -1,0 +1,207 @@
+.banking-chat-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  height: 100%;
+}
+
+.banking-chat-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 26px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(244,247,252,0.92));
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+}
+
+.banking-chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.1rem 0.8rem;
+  border-bottom: 1px solid var(--aelon-border);
+  background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(245,248,252,0.94));
+}
+
+.banking-chat-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.banking-chat-mark {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--aelon-blue), var(--aelon-blue-2));
+}
+
+.banking-chat-brand-copy h1 {
+  margin: 0;
+  font-size: 1.3rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--aelon-blue-deep);
+}
+
+.banking-chat-brand-copy p {
+  margin: 0.15rem 0 0;
+  color: var(--aelon-muted);
+  font-size: 0.76rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.banking-quick-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 0.55rem;
+  padding: 0.8rem 0.9rem 0;
+  transition: opacity 0.2s ease, max-height 0.25s ease, margin 0.25s ease, padding 0.25s ease;
+  overflow: hidden;
+}
+
+.banking-quick-actions.is-hidden {
+  opacity: 0;
+  max-height: 0;
+  margin: 0;
+  padding: 0;
+  pointer-events: none;
+}
+
+.banking-quick-action {
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: linear-gradient(180deg, rgba(255,255,255,0.8), rgba(240,245,255,0.9));
+  color: var(--aelon-blue-deep);
+  padding: 0.65rem 0.7rem;
+  border-radius: 12px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.banking-quick-action:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+}
+
+.banking-messages {
+  flex: 1;
+  min-height: 0;
+  padding: 1rem 1rem 0.5rem;
+  overflow-y: auto;
+  background: linear-gradient(180deg, rgba(248,250,252,0.8), rgba(255,255,255,0.82));
+  scrollbar-width: thin;
+}
+
+.banking-message-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.banking-message-row.user {
+  justify-content: flex-end;
+}
+
+.banking-message-row.assistant {
+  justify-content: flex-start;
+}
+
+.banking-message {
+  max-width: 75%;
+  border-radius: 24px;
+  padding: 1.05rem 1.2rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  font-size: 0.96rem;
+  letter-spacing: 0.01em;
+}
+
+.banking-message.assistant {
+  background: white;
+  border: 1px solid #eef2f7;
+  color: var(--aelon-text);
+  border-radius: 24px 24px 24px 8px;
+  box-shadow: 0 15px 40px rgba(15, 23, 42, 0.08);
+}
+
+.banking-message.user {
+  background: linear-gradient(135deg, var(--aelon-blue), var(--aelon-blue-2));
+  color: #fff;
+  border-radius: 24px 24px 8px 24px;
+  box-shadow: 0 12px 28px rgba(10, 61, 145, 0.2);
+}
+
+.banking-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #ebf3ff, #dfeafe);
+  border: 1px solid rgba(96,165,250,0.45);
+  flex-shrink: 0;
+  box-shadow: 0 10px 22px rgba(59, 130, 246, 0.12);
+}
+
+.banking-composer {
+  border-top: 1px solid var(--aelon-border);
+  padding: 0.8rem 0.9rem 0.9rem;
+  background: rgba(255,255,255,0.9);
+}
+
+.banking-composer-form {
+  display: flex;
+  gap: 0.7rem;
+  align-items: center;
+  border: 1px solid var(--aelon-border);
+  border-radius: 12px;
+  padding: 0.5rem 0.6rem 0.5rem 0.8rem;
+  background: #fff;
+}
+
+.banking-composer-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.95rem;
+}
+
+.banking-send-btn {
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--aelon-blue-deep), var(--aelon-blue-2));
+  color: #fff;
+  width: 42px;
+  height: 42px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.banking-privacy {
+  padding: 0.7rem 1rem 1rem;
+  color: var(--aelon-muted);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .banking-message {
+    max-width: 92%;
+  }
+
+  .banking-chat-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

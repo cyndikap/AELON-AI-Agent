@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AELON | Governance Dashboard</title>
+  <link rel="icon" type="image/svg+xml" href="/static/aelon-icon.svg" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/global.css" />
+  <link rel="stylesheet" href="/css/governance.css" />
+</head>
+<body>
+  <div class="aelon-app-shell">
+    <aside class="aelon-sidebar">
+      <div class="aelon-brand">
+        <span class="aelon-brand-mark">
+          <img src="/static/aelon-icon.svg" alt="AELON" />
+        </span>
+        <div>
+          <div class="aelon-brand-title">AELON</div>
+          <div class="aelon-brand-sub">From Customer Conversations</div>
+        </div>
+      </div>
+
+      <div class="aelon-nav-section">
+        <div class="aelon-section-label">Espaces</div>
+        <div class="aelon-space-group">
+          <a class="aelon-space-link" data-space="customer" href="/banking">
+            <strong>💬 Banking Chat</strong>
+            <small>Votre assistant bancaire intelligent</small>
+          </a>
+          <a class="aelon-space-link" data-space="analytics" href="/dashboards/analytics">
+            <strong>📊 Analytics Dashboard</strong>
+            <small>Analyse des conversations clients</small>
+          </a>
+          <a class="aelon-space-link active" data-space="governance" href="/dashboards/governance">
+            <strong>🏛 Governance Dashboard</strong>
+            <small>Supervision IA et qualité des données</small>
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <main class="aelon-main">
+      <div class="aelon-page">
+        <header class="aelon-page-header">
+          <div>
+            <h1 class="aelon-page-title">Governance Dashboard</h1>
+            <p class="aelon-page-subtitle">AI Trust Center</p>
+          </div>
+          <span class="aelon-status-badge"><i class="bi bi-shield-check me-1"></i>Control center</span>
+        </header>
+
+        <div class="aelon-page-content governance-page">
+          <div class="aelon-brand-strip">
+            <div class="aelon-brand-strip-mark">
+              <img src="/static/aelon-icon.svg" alt="AELON logo" />
+            </div>
+            <div>
+              <div class="aelon-brand-strip-name">AELON</div>
+              <div class="aelon-brand-strip-tag">Banking Intelligence Platform</div>
+            </div>
+          </div>
+
+          <div class="governance-status-strip">
+            <div class="governance-status-pill ok"><span class="governance-dot"></span>Privacy conforme</div>
+            <div class="governance-status-pill ok"><span class="governance-dot"></span>Compliance conforme</div>
+            <div class="governance-status-pill warn"><span class="governance-dot"></span>Evaluation à surveiller</div>
+          </div>
+
+          <div class="governance-grid">
+            <div class="governance-card">
+              <h3>Data Quality</h3>
+              <div class="governance-metric"><span class="governance-metric-label">Completeness</span><span class="governance-metric-value">98%</span></div>
+              <div class="governance-metric"><span class="governance-metric-label">Consistency</span><span class="governance-metric-value">96%</span></div>
+              <div class="governance-metric"><span class="governance-metric-label">Validity</span><span class="governance-metric-value">94%</span></div>
+            </div>
+
+            <div class="governance-card">
+              <h3>Privacy</h3>
+              <div class="governance-metric"><span class="governance-metric-label">Masquage</span><span class="governance-metric-value">Actif</span></div>
+              <div class="governance-metric"><span class="governance-metric-label">DPIA</span><span class="governance-metric-value">OK</span></div>
+            </div>
+
+            <div class="governance-card">
+              <h3>Compliance</h3>
+              <div class="governance-metric"><span class="governance-metric-label">RGPD</span><span class="governance-metric-value">OK</span></div>
+              <div class="governance-metric"><span class="governance-metric-label">Audit trail</span><span class="governance-metric-value">100%</span></div>
+            </div>
+          </div>
+
+          <div class="governance-tabs">
+            <button class="governance-tab active" type="button" data-tab="evaluation">Evaluation Agent</button>
+            <button class="governance-tab" type="button" data-tab="observability">Observability</button>
+            <button class="governance-tab" type="button" data-tab="dataquality">Data Governance</button>
+          </div>
+
+          <div id="gov-evaluation" class="governance-panel active">
+            <div class="governance-metric"><span class="governance-metric-label">Retrieval rate</span><span id="retrievalRateValue" class="governance-metric-value">-</span></div>
+            <div class="governance-metric"><span class="governance-metric-label">Documents utilisés</span><span id="documentsUsedValue" class="governance-metric-value">-</span></div>
+            <div class="governance-metric"><span class="governance-metric-label">Contexte moyen</span><span id="avgContextValue" class="governance-metric-value">-</span></div>
+          </div>
+
+          <div id="gov-observability" class="governance-panel">
+            <div class="governance-metric"><span class="governance-metric-label">Réponses avec sources</span><span id="withSourcesValue" class="governance-metric-value">-</span></div>
+            <div class="governance-metric"><span class="governance-metric-label">Réponses sans sources</span><span id="withoutSourcesValue" class="governance-metric-value">-</span></div>
+            <div class="governance-metric"><span class="governance-metric-label">Retrieval vide</span><span id="emptyRetrievalValue" class="governance-metric-value">-</span></div>
+          </div>
+
+          <div id="gov-dataquality" class="governance-panel">
+            <div class="governance-metric"><span class="governance-metric-label">Sources citées</span><span id="sourcesCitedValue" class="governance-metric-value">-</span></div>
+          </div>
+
+          <div class="governance-chat-box">
+            <h3>Chat IA Governance</h3>
+            <div id="governanceChatHistory" class="governance-chat-history"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/governance.js"></script>
+</body>
+</html>

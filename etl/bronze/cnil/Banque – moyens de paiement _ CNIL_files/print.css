@@ -1,0 +1,113 @@
+@media print {
+  * {
+    text-shadow: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    line-height: 1.30 !important;
+  }
+  a,
+  a:visited {
+    text-decoration: underline;
+    color: blue !important;
+  }
+  a:after {
+    content: "" !important;
+  }
+  pre,
+  blockquote {
+    border: 1px solid #999;
+    page-break-inside: avoid;
+  }
+  thead {
+    display: table-header-group;
+  }
+  tr,
+  img {
+    page-break-inside: avoid;
+  }
+  img {
+    max-width: 100% !important;
+  }
+  @page {
+    margin: 2cm .5cm;
+  }
+  p,
+  h2,
+  h3 {
+    orphans: 3;
+    widows: 3;
+  }
+  h2,
+  h3 {
+    page-break-after: avoid;
+  }
+  select {
+    background: #fff !important;
+  }
+  #page-header {
+    display: none;
+  }
+  .ctn-gen .social-share {
+    display: none;
+  }
+  .table td,
+  .table th {
+    background-color: #fff !important;
+  }
+  .btn > .caret,
+  .dropup > .btn > .caret {
+    border-top-color: #000 !important;
+  }
+  .label {
+    border: 1px solid #000;
+  }
+  .table {
+    border-collapse: collapse !important;
+  }
+  .table-bordered th,
+  .table-bordered td {
+    border: 1px solid #ddd !important;
+  }
+  .ctn-gen-titre h1 { 
+    font-size: 26px !important; 
+  }
+  .ctn-gen-introduction p  { 
+    font-size: 13px !important; 
+  }
+  .ctn-gen .ctn-gen-introduction, 
+  .ctn-gen .ctn-gen-chiffre-contenu .ctn-gen-chiffre-texte { 
+    text-align: left; 
+  }
+  .ctn-gen-body p, li { 
+    font-size: 11px !important; 
+  }
+  .ctn-gen-ascenseur-titre { 
+    font-size: 22px !important; 
+  }
+  .ctn-gen .apparte {
+    border-left: none !important;
+    margin-left: -5px !important;
+  }
+  .ctn-gen .ctn-gen-apparte-texte p {
+    border-left: none !important;
+    margin-left: 10px !important;
+  }
+  .ctn-gen .chiffre, 
+  .ctn-gen .ctn-gen-chiffre-contenu {
+    border: none !important;
+    padding: 0 !important
+  }
+  .ctn-gen-code-copier, 
+  .ctn-gen-load-more-wrapper, 
+  .outils,
+  .interest { 
+    display: none; 
+  }
+  .ctn-gen-code-source #text-copy-button-codesource {
+    border-bottom: 0;
+    height: auto;
+  }
+  footer{ 
+    display: none !important; 
+  }
+}

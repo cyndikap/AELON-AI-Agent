@@ -1,25 +1,22 @@
-# auth.py
-# auth.py
 import os
 from dotenv import load_dotenv
 load_dotenv()
 from fastapi import HTTPException, Security
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
-security = HTTPBearer()
+security = HTTPBearer(auto_error=False)
 
-# Load from env variable
-ENV_TOKEN = os.getenv("MCP_TOKEN")
+ENV_TOKEN = (os.getenv("MCP_TOKEN") or "").strip()
+AUTH_REQUIRED = (os.getenv("MCP_AUTH_REQUIRED") or "false").strip().lower() in {"1", "true", "yes"}
+VALID_TOKENS = {ENV_TOKEN} if ENV_TOKEN else set()
 
-if ENV_TOKEN is None:
-    raise RuntimeError(
-        "Environment variable MCP_TOKEN is not set. "
-        "Please export MCP_TOKEN before starting the server."
-    )
+def authenticate(credentials: HTTPAuthorizationCredentials | None = Security(security)):
+    if not AUTH_REQUIRED and not VALID_TOKENS:
+        return True
 
-VALID_TOKENS = {ENV_TOKEN}
+    if credentials is None:
+        raise HTTPException(status_code=401, detail="Missing authentication token")
 
-def authenticate(credentials: HTTPAuthorizationCredentials = Security(security)):
     token = credentials.credentials
     if token not in VALID_TOKENS:
         raise HTTPException(status_code=401, detail="Invalid or missing authentication token")

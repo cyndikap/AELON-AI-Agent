@@ -124,30 +124,26 @@ Extract → Transform → Load (JSON/Chroma/Delta)
 
 ## 6. 🎨 Interface Utilisateur
 
-### Streamlit
-- **Framework** : Application web interactive Python
-- **Fichier entrypoint** : `ui/app.py`
+### FastAPI Web UI
+- **Framework** : Interface web servie par FastAPI (templates + static)
+- **Entrypoint** : `api/main.py`
+- **Templates/Assets** : `web/templates/index.html`, `web/static/styles.css`, `web/static/app.js`
 - **Fonctionnalités** :
-  - Chat conversationnel (Mode Utilisateur)
-  - Dashboard analytique (Mode Admin)
-  - Visualisation en temps réel
-  - Thème sombre personnalisé
-- **Composants Streamlit** :
-  - `st.chat_message()` — Messages conversationnels
-  - `st.metric()` — KPIs
-  - `st.bar_chart()`, `st.dataframe()` — Visualisations
-  - `st.expander()` — Sections repliables
-  - `st.session_state` — État persistant
+  - Chat conversationnel utilisateur
+  - Questions rapides cliquables
+  - Affichage des scores d'évaluation (quality/relevance/compliance)
+  - Bandeau de consentement et explication agent
+- **Endpoints UI** :
+  - `GET /` — page web
+  - `POST /web/chat` — endpoint chat frontend
 
 ### Styling CSS Personnalisé
-- **Gradients** : Blues, purples, teals (inspiré IMG_2155)
+- **Thème** : palette bleue bancaire + contraste élevé
 - **Composants** :
-  - `.dashboard-header` — En-tête admin
-  - `.kpi-card` — Cartes métriques
-  - `.chart-container` — Conteneurs de graphiques
-  - `.section-title` — Titres de sections
-  - `.stat-badge` — Badges statistiques
-- **Fonts** : Inter (Google Fonts)
+  - Sidebar questions rapides
+  - Bulles de chat user/assistant
+  - Badges de métadonnées agent
+  - Composer et bandeau de consentement
 
 ---
 
@@ -168,7 +164,7 @@ Extract → Transform → Load (JSON/Chroma/Delta)
 ### Logging & Monitoring
 - Fichiers logs : `data/processed/logs_clean.json`
 - Modèle `LogEntry` avec timestamp, severity, service
-- Persistence en session Streamlit (`interactions.json`)
+- Persistence locale des interactions (`interactions.json`) et échanges frontend via endpoint `/web/chat`
 
 ---
 
@@ -218,9 +214,9 @@ GEN.AI/
 │   ├── transform.py
 │   ├── load.py
 │   └── pipeline.py
-├── ui/                  # Interface Streamlit
-│   ├── app.py          # Application principale
-│   └── data/           # Données persistantes
+├── web/                # Interface web (templates + static)
+│   ├── templates/      # Pages HTML Jinja2
+│   └── static/         # CSS/JS frontend
 ├── knowledge_base/      # Knowledge base IT
 │   └── it_support_kb.md
 └── data/               # Données brutes & traitées
@@ -234,7 +230,7 @@ GEN.AI/
 ## 10. 🔄 Flux d'Architecture Globale
 
 ```
-Utilisateur (Streamlit UI)
+Utilisateur (Web UI FastAPI)
     ↓
 Orchestrator
     ├→ FraudAgent (scoring de fraude)
@@ -245,7 +241,7 @@ Orchestrator
     ├→ L1Agent (escalade technique)
     │   └→ RetrievalAgent (données Databricks)
     ├→ ComplianceAgent (conformité)
-    └→ Response → Streamlit UI
+    └→ Response → Web UI FastAPI
     
 Data Pipeline (ETL)
     Extract (CSV) → Transform → Load (Chroma/Delta/JSON)
@@ -262,7 +258,7 @@ API (FastAPI)
 |---------|---------|-------------|
 | **fastapi** | Latest | Serveur API REST |
 | **uvicorn** | Latest | ASGI server |
-| **streamlit** | Latest | Interface utilisateur |
+| **jinja2** | Latest | Moteur templates HTML |
 | **openai** | Latest | Client Azure OpenAI |
 | **chromadb** | Latest | Base vectorielle |
 | **pandas** | Latest | Manipulation données |
@@ -308,8 +304,8 @@ python -m uvicorn api.main:app --host 0.0.0.0 --port 8000
 
 ### Mode Interface Utilisateur
 ```bash
-# Lancer l'app Streamlit
-streamlit run ui/app.py
+# Lancer l'UI Web FastAPI
+python -m uvicorn api.main:app --host 127.0.0.1 --port 8010 --reload
 ```
 
 ### Mode Test/Orchestration
@@ -355,9 +351,9 @@ run_pipeline()
 ## 15. 📊 Persistence & Data Flow
 
 ### Interaction Logging
-- **Fichier** : `ui/data/interactions.json`
-- **Champs** : timestamp, query, agent, sentiment, urgency, risk_level, fraud_score, compliant
-- **Utilisation** : Reconstruction dashboard admin
+- **Fichier** : `data/processed/logs_clean.json`
+- **Champs** : timestamp, query, response, agent, sentiment, scores qualité/conformité
+- **Utilisation** : monitoring opérationnel, analytics, et audit API
 
 ### L0 Memory
 - **Type** : In-memory cache
@@ -378,7 +374,7 @@ GEN.AI intègre une **stack cloud-native complète** combinant :
 - ✅ Recherche sémantique (ChromaDB + Azure Search)
 - ✅ Architecture multi-agent orchestrée
 - ✅ API REST scalable (FastAPI)
-- ✅ Interface utilisateur responsive (Streamlit)
+- ✅ Interface utilisateur web (FastAPI + HTML/CSS/JS)
 - ✅ Détection fraude & conformité intégrée
 - ✅ Pipeline ETL modulaire
 - ✅ Analytics temps réel

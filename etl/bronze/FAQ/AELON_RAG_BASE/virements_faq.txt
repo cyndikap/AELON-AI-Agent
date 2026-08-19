@@ -1,0 +1,5 @@
+Q: Comment effectuer un virement SEPA ?
+R: Ajoutez un bénéficiaire, renseignez l'IBAN et validez l'opération via l'authentification forte.
+
+Q: Peut-on annuler un virement ?
+R: Uniquement avant son exécution par la banque.

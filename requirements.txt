@@ -4,12 +4,12 @@ requests
 numpy
 pandas
 plotly
-
-streamlit==1.59.2
+jinja2
 
 openai
 tiktoken
 chromadb
+scikit-learn
 
 python-dotenv==1.2.2
 
@@ -19,3 +19,5 @@ azure-search-documents
 presidio-analyzer==2.2.363
 presidio-anonymizer==2.2.363
 spacy==3.8.13
+
+pytest

@@ -1,0 +1,17 @@
+id_document	source_document	categorie	titre	url	date_publication	langue	langue2	niveau_conformite
+DOC001	Banque de France	Fraude	Comment signaler une fraude bancaire	Lancement de la plateforme des IBAN suspects : un nouvel outil-clé de lutte contre la fraude aux paiements | Banque de France				
+DOC002	CNIL	RGPD	Protection des données personnelles					
+DOC003	ACPR	Conformité	Obligations réglementaires	Publications page 1 sur 70 | Autorité de contrôle prudentiel et de résolution				
+DOC004	Banque de France	Fraude bancaire						
+DOC005	Banque de France	Cartes bancaires						
+DOC006	Banque de France	Virements						
+DOC007	Banque de France	Comptes						
+DOC008	ACPR	Réglementation		Publications page 1 sur 70 | Autorité de contrôle prudentiel et de résolution				
+DOC009	ACPR	Conformité		Publications page 1 sur 70 | Autorité de contrôle prudentiel et de résolution				
+DOC010	ACPR	Contrôle bancaire		Publications page 1 sur 70 | Autorité de contrôle prudentiel et de résolution				
+DOC011	CNIL	RGPD		Banque – moyens de paiement | CNIL				
+DOC012	CNIL	Protection des données		Banque – moyens de paiement | CNIL				
+DOC013	CNIL	IA responsable		Banque – moyens de paiement | CNIL				
+DOC014	Fédération Bancaire Française	Services bancaires						
+DOC015	Fédération Bancaire Française	Paiements						
+DOC016	Fédération Bancaire Française	Sécurité						

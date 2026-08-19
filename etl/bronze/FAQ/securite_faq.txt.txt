@@ -1,0 +1,11 @@
+Q : Comment sécuriser mon compte bancaire ?
+
+R : Activez l'authentification multifactorielle et ne communiquez jamais vos identifiants.
+
+Q : Que faire si je reçois un email suspect ?
+
+R : Ne cliquez sur aucun lien et signalez le message à votre banque.
+
+Q : Comment reconnaître une tentative de phishing ?
+
+R : Les fraudeurs demandent souvent des informations confidentielles via email, SMS ou téléphone.

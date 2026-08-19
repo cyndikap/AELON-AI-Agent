@@ -1,0 +1,5 @@
+Q: Pourquoi fournir une pièce d'identité ?
+R: Pour respecter les obligations KYC de connaissance du client.
+
+Q: Pourquoi un justificatif de domicile ?
+R: Pour vérifier l'adresse déclarée du client.

@@ -1,5 +1,8 @@
+import csv
 import os
 import json
+from pathlib import Path
+
 import requests
 import chromadb
 from chromadb.config import Settings
@@ -12,29 +15,34 @@ RAG_STATE_PATH = "data/rag_state.json"
 class LogRAG:
     def __init__(self, mcp_url="http://127.0.0.1:8000"):
         self.mcp_url = mcp_url
-        self.embedding_client = AzureEmbeddingClient()
         self.privacy_agent = PrivacyAgent()
-
         self.token = os.getenv("MCP_TOKEN")
-        if not self.token:
-            raise RuntimeError("MCP_TOKEN not set")
+        self.use_local_fallback = False
+
+        try:
+            self.embedding_client = AzureEmbeddingClient()
+        except Exception:
+            self.embedding_client = None
+            self.use_local_fallback = True
 
         self.headers = {
             "Authorization": f"Bearer {self.token}",
             "Content-Type": "application/json"
-        }
+        } if self.token else {}
 
-        # Vector Store
-        self.chroma = chromadb.PersistentClient(
-          path="data/chroma")
-
-        self.collection = self.chroma.get_or_create_collection(
-            name="log_vectors",
-            metadata={"hnsw:space": "cosine"}
-        )
+        try:
+            self.chroma = chromadb.PersistentClient(path="data/chroma")
+            self.collection = self.chroma.get_or_create_collection(
+                name="log_vectors",
+                metadata={"hnsw:space": "cosine"}
+            )
+        except Exception:
+            self.collection = None
+            self.use_local_fallback = True
 
         # Load RAG state
         self.indexed_log_ids = self._load_state()
+        self._fallback_documents = self._load_local_documents()
 
     # --------------------------------------------------
     # State management
@@ -57,10 +65,49 @@ class LogRAG:
     # --------------------------------------------------
     # MCP fetch
     # --------------------------------------------------
+    def _load_local_documents(self):
+        possible_paths = [
+            Path("data/processed/logs_clean.json"),
+            Path("data/documents.csv"),
+            Path("knowledge_base/it_support_kb.md"),
+        ]
+
+        for path in possible_paths:
+            if not path.exists():
+                continue
+            try:
+                if path.suffix == ".json":
+                    with open(path, "r", encoding="utf-8") as handle:
+                        payload = json.load(handle)
+                    if isinstance(payload, list):
+                        return payload
+                elif path.suffix == ".csv":
+                    with open(path, "r", encoding="utf-8", newline="") as handle:
+                        reader = csv.DictReader(handle)
+                        return list(reader)
+                else:
+                    return [{"text": path.read_text(encoding="utf-8", errors="ignore")}]
+            except Exception:
+                continue
+        return [
+            {"text": "client cannot login"},
+            {"text": "payment failed for order #1234"},
+            {"text": "how to reset my password?"},
+            {"text": "fraud detected on account"},
+        ]
+
     def fetch_logs(self):
-        response = requests.get(f"{self.mcp_url}/logs", headers=self.headers)
-        response.raise_for_status()
-        return response.json()["logs"]
+        if not self.token or not self.mcp_url:
+            return self._fallback_documents
+
+        try:
+            response = requests.get(f"{self.mcp_url}/logs", headers=self.headers, timeout=10)
+            response.raise_for_status()
+            payload = response.json()
+            logs = payload.get("logs") if isinstance(payload, dict) else payload
+            return logs if isinstance(logs, list) else self._fallback_documents
+        except Exception:
+            return self._fallback_documents
 
     # --------------------------------------------------
     # Log formatting
@@ -124,6 +171,14 @@ class LogRAG:
     # --------------------------------------------------
     def search(self, query: str, top_k: int = 3):
         safe_query = self._safe_text(query)
+        if self.use_local_fallback or self.collection is None or self.embedding_client is None:
+            matches = []
+            for item in self._fallback_documents:
+                text = item.get("text") if isinstance(item, dict) else str(item)
+                if safe_query.lower() in text.lower():
+                    matches.append({"score": 1.0, "log": item})
+            return matches[:top_k]
+
         query_embedding = self.embedding_client.embed([safe_query])
 
         results = self.collection.query(

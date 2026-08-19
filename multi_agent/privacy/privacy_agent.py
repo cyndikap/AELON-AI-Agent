@@ -38,6 +38,11 @@ class PrivacyAgent:
 
     def _register_custom_recognizers(self) -> None:
         # Robust card and IBAN detection independent of language model quality.
+        phone_pattern = Pattern(
+            name="phone_pattern",
+            regex=r"(?:(?:\+|00)\d{1,3}[\s.-]?)?(?:\(\d{1,4}\)[\s.-]?)?\d{2}[\s.-]?\d{2}[\s.-]?\d{2}[\s.-]?\d{2}[\s.-]?\d{2}",
+            score=0.8,
+        )
         credit_card_pattern = Pattern(
             name="credit_card_pattern",
             regex=r"\b(?:\d[ -]*?){13,19}\b",
@@ -50,10 +55,23 @@ class PrivacyAgent:
         )
         bank_account_pattern = Pattern(
             name="bank_account_pattern",
-            regex=r"\b\d{8,20}\b",
-            score=0.45,
+            regex=r"\b[\d]{8,20}\b",
+            score=0.8,
+        )
+        bank_account_pattern_alphanum = Pattern(
+            name="bank_account_pattern_alphanum",
+            regex=r"\b[A-Z0-9]{10,25}\b",
+            score=0.75,
         )
 
+        self.analyzer.registry.add_recognizer(
+            PatternRecognizer(
+                supported_entity="PHONE_NUMBER",
+                patterns=[phone_pattern],
+                context=["téléphone", "tel", "mobile", "appeler", "joindre", "portable"],
+                supported_language="fr",
+            )
+        )
         self.analyzer.registry.add_recognizer(
             PatternRecognizer(
                 supported_entity="CREDIT_CARD",
@@ -69,7 +87,9 @@ class PrivacyAgent:
         self.analyzer.registry.add_recognizer(
             PatternRecognizer(
                 supported_entity="BANK_ACCOUNT",
-                patterns=[bank_account_pattern],
+                patterns=[bank_account_pattern, bank_account_pattern_alphanum],
+                context=["compte", "numero", "numéro", "compte bancaire"],
+                supported_language="fr",
             )
         )
 

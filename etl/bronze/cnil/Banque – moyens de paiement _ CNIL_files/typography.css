@@ -1,0 +1,43 @@
+.text-center,
+.rtecenter {
+  text-align: center;
+}
+
+.clearfix {
+  clear: both;
+}
+
+.plus .separator-item:last-child {
+  display: none;
+}
+
+video {
+  max-width: 100%;
+}
+
+.field-collection-container {
+  border-bottom: 1px solid #d3d7d9;
+  margin-bottom: 1em;
+}
+
+.ctn-gen .captcha .img-responsive {
+  width: auto;
+}
+
+.view-filters .bef-exposed-form .form--inline > .form-item {
+  float: none;
+}
+
+.view-filters .views-exposed-widgets {
+  text-align: center;
+}
+
+.page-node-type-webform .messages-container {
+  display: none;
+}
+
+.main-container .alert-danger,
+.main-container .has-error {
+  background: none;
+  border: none;
+}

@@ -1,0 +1,276 @@
+:root {
+  --aelon-blue: #0a3d91;
+  --aelon-blue-2: #2f8df7;
+  --aelon-blue-deep: #072a63;
+  --aelon-gold: #d4af37;
+  --aelon-bg: #f4f7fb;
+  --aelon-surface: #ffffff;
+  --aelon-text: #102033;
+  --aelon-muted: #64748b;
+  --aelon-border: #dfe7f1;
+  --aelon-success: #1fa971;
+  --aelon-warning: #f59e0b;
+  --aelon-danger: #ef4444;
+  --aelon-shadow: 0 18px 42px rgba(15, 23, 42, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #f5f7fb 0%, #edf3fb 100%);
+  color: var(--aelon-text);
+  overflow: hidden;
+}
+
+body {
+  min-height: 100vh;
+  height: 100vh;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button, input, select {
+  font: inherit;
+}
+
+.aelon-app-shell {
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+}
+
+.aelon-sidebar {
+  background: linear-gradient(180deg, rgba(7, 26, 58, 0.99), rgba(11, 39, 78, 0.98));
+  color: #fff;
+  padding: 1.2rem 0.9rem;
+  border-right: 1px solid rgba(255,255,255,0.12);
+}
+
+.aelon-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1.4rem;
+}
+
+.aelon-brand-mark {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--aelon-blue), var(--aelon-blue-2));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.3);
+}
+
+.aelon-brand-title {
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.aelon-brand-sub {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  opacity: 0.82;
+}
+
+.aelon-nav-section {
+  margin-top: 1rem;
+}
+
+.aelon-section-label {
+  color: rgba(255,255,255,0.72);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 0.7rem;
+}
+
+.aelon-space-group {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.aelon-space-link {
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+  text-decoration: none;
+  padding: 0.8rem 0.8rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  color: #fff;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.aelon-space-link:hover,
+.aelon-space-link.active {
+  transform: translateY(-1px);
+  border-color: rgba(125, 211, 252, 0.7);
+  background: linear-gradient(135deg, rgba(12, 56, 125, 0.72), rgba(47, 141, 247, 0.18));
+}
+
+.aelon-space-link[data-space="analytics"].active,
+.aelon-space-link[data-space="analytics"]:hover {
+  border-color: rgba(196, 181, 253, 0.72);
+  background: linear-gradient(135deg, rgba(92, 71, 200, 0.62), rgba(168, 85, 247, 0.18));
+}
+
+.aelon-space-link[data-space="governance"].active,
+.aelon-space-link[data-space="governance"]:hover {
+  border-color: rgba(134, 239, 172, 0.72);
+  background: linear-gradient(135deg, rgba(5, 112, 88, 0.58), rgba(16, 185, 129, 0.2));
+}
+
+.aelon-space-link strong {
+  font-size: 0.98rem;
+  font-weight: 700;
+}
+
+.aelon-space-link small {
+  font-size: 0.7rem;
+  opacity: 0.78;
+}
+
+.aelon-user-card {
+  margin-top: 1.2rem;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.14);
+  padding: 0.8rem 0.9rem;
+}
+
+.aelon-user-card-label {
+  font-size: 0.64rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  opacity: 0.72;
+}
+
+.aelon-user-card-name {
+  margin-top: 0.2rem;
+  font-weight: 700;
+}
+
+.aelon-main {
+  height: 100vh;
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(233,241,250,0.45));
+}
+
+.aelon-page {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 2rem);
+  background: rgba(255,255,255,0.72);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 24px;
+  box-shadow: var(--aelon-shadow);
+  overflow: hidden;
+}
+
+.aelon-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.1rem 1.2rem 0.9rem;
+  border-bottom: 1px solid var(--aelon-border);
+  background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(246,249,252,0.95));
+}
+
+.aelon-page-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.aelon-page-subtitle {
+  margin: 0.15rem 0 0;
+  color: var(--aelon-muted);
+  font-size: 0.8rem;
+}
+
+.aelon-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border-radius: 999px;
+  padding: 0.42rem 0.7rem;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  background: rgba(212, 175, 55, 0.12);
+  color: #7a5d12;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.aelon-page-content {
+  flex: 1;
+  min-height: 0;
+  padding: 1rem 1.1rem 1.2rem;
+  overflow: hidden;
+}
+
+.aelon-brand-strip {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.7rem 0.85rem;
+  background: linear-gradient(180deg, rgba(255,255,255,0.8), rgba(240,244,250,0.96));
+  border: 1px solid var(--aelon-border);
+  border-radius: 16px;
+  margin-bottom: 1rem;
+}
+
+.aelon-brand-strip-mark {
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--aelon-blue), var(--aelon-blue-2));
+}
+
+.aelon-brand-strip-name {
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--aelon-blue-deep);
+}
+
+.aelon-brand-strip-tag {
+  color: var(--aelon-muted);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 960px) {
+  .aelon-app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .aelon-sidebar {
+    border-right: none;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+  }
+
+  .aelon-main {
+    padding: 0.75rem;
+  }
+}

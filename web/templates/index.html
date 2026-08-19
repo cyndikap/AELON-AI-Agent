@@ -11,8 +11,8 @@
 </head>
 <body>
   <div class="platform-bg"></div>
-  <div class="container-fluid app-shell py-3 py-lg-4">
-    <div class="row g-3 g-lg-4 min-vh-100">
+  <div class="container-fluid app-shell py-0 py-lg-0">
+    <div class="row g-2 g-lg-3 h-100 align-items-stretch">
       <aside class="col-12 col-lg-2 col-xl-2">
         <div class="sidebar card-panel p-3 p-lg-3 h-100">
           <div class="brand mb-4">
@@ -33,18 +33,21 @@
           </div>
 
           <div class="section-label">Espaces</div>
-          <div class="d-grid gap-2 mb-4" id="spaceSwitcher">
+          <div class="nav-group mb-4" id="spaceSwitcher">
+            <div class="nav-group-title">Customer Space</div>
             <button class="btn nav-space active" data-space="customer" data-role="Client bancaire">
               <span class="nav-label">💬 Banking Chat</span>
               <span class="brand-sub">Votre assistant bancaire intelligent</span>
             </button>
+
+            <div class="nav-group-title nav-group-title-secondary">Analyst Space</div> 
             <button class="btn nav-space" data-space="analytics" data-role="Business Analyst">
-              <span class="nav-label">📊 Analytics Chat</span>
-              <span class="brand-sub">Comprendre vos clients grâce à l'IA</span>
-            </button>
+           <span class="nav-label">📊 Analytics Dashboard</span>
+              <span class="brand-sub">Analyse des conversations clients</span>
+            </button> 
             <button class="btn nav-space" data-space="governance" data-role="Data Steward">
-              <span class="nav-label">🏛️ Governance Chat</span>
-              <span class="brand-sub">Superviser et évaluer l'IA</span>
+              <span class="nav-label">🏛️ Governance Dashboard</span>
+              <span class="brand-sub">Supervision IA et qualité des données</span>
             </button>
           </div>
 
@@ -59,76 +62,71 @@
               <i class="bi bi-bank2 me-2"></i>Theme banque privee
             </button>
           </div>
-
-          <div id="customerQuickBlock">
-            <div class="section-label">Questions rapides</div>
-            <div class="d-grid gap-2" id="quickQuestions">
-              <button class="btn btn-quick" data-question="Comment signaler une fraude ?">Comment signaler une fraude ?</button>
-              <button class="btn btn-quick" data-question="J'ai perdu ma carte bancaire">J'ai perdu ma carte bancaire</button>
-              <button class="btn btn-quick" data-question="Comment effectuer un virement ?">Comment effectuer un virement ?</button>
-              <button class="btn btn-quick" data-question="Je n'arrive pas à me connecter à mon compte">Je n'arrive pas à me connecter à mon compte</button>
-              <button class="btn btn-quick" data-question="Comment contacter un conseiller ?">Comment contacter un conseiller ?</button>
-            </div>
-          </div>
         </div>
       </aside>
 
       <main class="col-12 col-lg-9 col-xl-10 space-stage">
         <section id="space-customer" class="space-screen active">
-          <div class="customer-hero">
-            <div class="hero-kicker">
-              <span class="brand-mark mini" aria-hidden="true">
-                <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                  <rect x="8" y="8" width="112" height="112" rx="28" fill="#0A3D91"/>
-                  <circle cx="64" cy="24" r="6" fill="#D4AF37"/>
-                  <path d="M33 90L64 30L95 90" stroke="white" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                  <path d="M47 66H81" stroke="#D4AF37" stroke-width="8" stroke-linecap="round"/>
-                  <path d="M64 90V102" stroke="#D4AF37" stroke-width="8" stroke-linecap="round"/>
-                </svg>
-              </span>
-              <span>AELON</span>
-            </div>
-            <h2>Banking Intelligence Platform</h2>
-            <p>From Customer Conversations to Intelligent Decisions.</p>
-          </div>
+          <div class="chat-wrapper">
+            <div class="chat-card card-panel d-flex flex-column space-content">
+              <header class="chat-header d-flex align-items-center justify-content-between px-3 px-lg-4 py-3">
+                <div class="chat-header-main">
+                  <div class="chat-kicker"><i class="bi bi-chat-left-text me-2"></i>Banking Chat</div>
+                  <div class="chat-brand-row">
+                    <div class="hero-avatar" aria-label="AELON icon">
+                      <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="8" y="8" width="112" height="112" rx="28" fill="#0A3D91"/>
+                        <circle cx="64" cy="24" r="6" fill="#D4AF37"/>
+                        <path d="M33 90L64 30L95 90" stroke="white" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        <path d="M47 66H81" stroke="#D4AF37" stroke-width="8" stroke-linecap="round"/>
+                        <path d="M64 90V102" stroke="#D4AF37" stroke-width="8" stroke-linecap="round"/>
+                      </svg>
+                    </div>
+                    <div class="chat-brand-copy">
+                      <h1 class="h5 m-0">AELON</h1>
+                      <p class="m-0">Banking Intelligence Platform</p>
+                      <span>From Customer Conversations to Intelligent Decisions</span>
+                    </div>
+                  </div>
+                </div>
+                <span class="session-badge"><i class="bi bi-shield-lock me-1"></i>Session sécurisée</span>
+              </header>
 
-          <div class="chat-zone card-panel d-flex flex-column space-content">
-            <header class="chat-header d-flex align-items-center justify-content-between px-3 px-lg-4 py-3">
-              <div class="d-flex align-items-center gap-2">
-                <div class="hero-avatar" aria-label="AELON icon">
-                  <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <rect x="8" y="8" width="112" height="112" rx="28" fill="#0A3D91"/>
-                    <circle cx="64" cy="24" r="6" fill="#D4AF37"/>
-                    <path d="M33 90L64 30L95 90" stroke="white" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                    <path d="M47 66H81" stroke="#D4AF37" stroke-width="8" stroke-linecap="round"/>
-                    <path d="M64 90V102" stroke="#D4AF37" stroke-width="8" stroke-linecap="round"/>
-                  </svg>
-                </div>
-                <div>
-                  <h1 class="h5 m-0">AELON</h1>
-                  <p class="m-0 small text-secondary">Votre assistant bancaire intelligent</p>
-                </div>
+              <div class="premium-quick-actions" aria-label="Actions rapides premium">
+                <button class="quick-action" type="button" data-question="Ma carte bancaire est bloquée. Pouvez-vous m'aider ?"><span>💳</span> Carte bancaire bloquée</button>
+                <button class="quick-action" type="button" data-question="Comment effectuer un virement bancaire ?"><span>💸</span> Effectuer un virement</button>
+                <button class="quick-action" type="button" data-question="Je n'arrive pas à accéder à mon compte."><span>🔐</span> Accès au compte</button>
+                <button class="quick-action" type="button" data-question="Je souhaite signaler une opération suspecte ou une fraude."><span>🚨</span> Signaler une fraude</button>
+                <button class="quick-action" type="button" data-question="Comment contacter un conseiller bancaire ?"><span>👤</span> Contacter un conseiller</button>
               </div>
-              <span class="session-badge"><i class="bi bi-shield-lock me-1"></i>Session sécurisée</span>
-            </header>
 
-            <section id="messages" class="messages flex-grow-1 px-3 px-lg-4 py-3"></section>
+              <section id="messages" class="messages flex-grow-1 px-3 px-lg-4 py-3"></section>
 
-            <footer class="composer px-3 px-lg-4 py-3">
-              <form id="chatForm" class="composer-form d-flex gap-2 align-items-center">
-                <input id="chatInput" type="text" class="form-control chat-input" placeholder="Écrivez votre message..." autocomplete="off" />
-                <button class="btn btn-send" type="submit"><i class="bi bi-arrow-up"></i></button>
-              </form>
-            </footer>
+              <footer class="composer px-3 px-lg-4 py-3">
+                <form id="chatForm" class="composer-form d-flex gap-2 align-items-center">
+                  <input id="chatInput" type="text" class="form-control chat-input" placeholder="Écrivez votre message..." autocomplete="off" />
+                  <button class="btn btn-send" type="submit"><i class="bi bi-arrow-up"></i></button>
+                </form>
+              </footer>
 
-            <section class="privacy-notice px-3 px-lg-4 py-3">
-              <div><i>En poursuivant la conversation, vous acceptez que vos données soient utilisées à des fins d’analyse, d’amélioration du service et de suivi de la qualité, dans le respect de la confidentialité.</i></div>
-            </section>
+              <section class="privacy-notice px-3 px-lg-4 py-3">
+                <div><i>En poursuivant la conversation, vous acceptez que vos données soient utilisées à des fins d’analyse, d’amélioration du service et de suivi de la qualité, dans le respect de la confidentialité.</i></div>
+              </section>
+            </div>
           </div>
         </section>
 
         <section id="space-analytics" class="space-screen">
           <div class="card-panel premium-shell p-3 p-lg-4 h-100 space-content">
+            <div class="brand-strip mb-3">
+              <div class="brand-strip-mark">
+                <img src="/static/aelon-icon.svg" alt="AELON logo" />
+              </div>
+              <div class="brand-strip-copy">
+                <div class="brand-strip-name">AELON</div>
+                <div class="brand-strip-tag">Banking Intelligence Platform</div>
+              </div>
+            </div>
             <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
               <div>
                 <h2 class="h5 m-0">📊 Analytics Chat</h2>
@@ -246,7 +244,7 @@
             </div>
 
             <div class="copilot-box insight-chat-box analytics-chatbox">
-              <div class="mini-title">🤖 Chat IA Analytics</div>
+              <div class="mini-title mini-title-brand"><span class="mini-brand-mark"><img src="/static/aelon-icon.svg" alt="AELON logo" /></span>Chat IA Analytics</div>
               <div class="prompt-chips mb-2" id="analyticsPromptChips">
                 <button class="btn prompt-chip" data-q="Pourquoi les escalades augmentent ?">Pourquoi les escalades augmentent ?</button>
                 <button class="btn prompt-chip" data-q="Quelles catégories progressent ?">Quelles catégories progressent ?</button>
@@ -264,6 +262,15 @@
 
         <section id="space-governance" class="space-screen">
           <div class="card-panel premium-shell p-3 p-lg-4 h-100 space-content">
+            <div class="brand-strip mb-3">
+              <div class="brand-strip-mark">
+                <img src="/static/aelon-icon.svg" alt="AELON logo" />
+              </div>
+              <div class="brand-strip-copy">
+                <div class="brand-strip-name">AELON</div>
+                <div class="brand-strip-tag">Banking Intelligence Platform</div>
+              </div>
+            </div>
             <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
               <div>
                 <h2 class="h5 m-0">🏛 Governance Chat</h2>
@@ -294,7 +301,7 @@
             <div id="gov-dataquality" class="gov-panel"></div>
 
             <div class="copilot-box mt-4 governance-chatbox">
-              <div class="mini-title">🤖 Chat IA Governance</div>
+              <div class="mini-title mini-title-brand"><span class="mini-brand-mark"><img src="/static/aelon-icon.svg" alt="AELON logo" /></span>Chat IA Governance</div>
               <div id="governanceCopilotHistory" class="copilot-history"></div>
               <form id="governanceCopilotForm" class="d-flex gap-2 mt-2">
                 <input id="governanceCopilotInput" class="form-control" placeholder="Ex: Pourquoi le Quality Score baisse ?" />

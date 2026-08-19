@@ -1,0 +1,5 @@
+Q: Comment protéger mon compte bancaire ?
+R: Activez l'authentification multifactorielle et ne partagez jamais vos identifiants.
+
+Q: Comment reconnaître un phishing ?
+R: Méfiez-vous des messages demandant des informations sensibles.

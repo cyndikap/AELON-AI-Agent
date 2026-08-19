@@ -1,0 +1,25 @@
+.path-auteur .main-container > .row,
+.path-tag .main-container > .row {
+  background: #fff;
+}
+.view-auteur {
+  margin: 0 20px 30px;
+  overflow: hidden;
+}
+.view-auteur .grid-item {
+  display: none!important;
+}
+.view-auteur .list-item {
+  display: block!important;
+}
+#views-record-count-text {
+  text-align: center;
+  font-size: 30px;
+  font-family: 'open_sans_condensedbold', Arial, sans-serif;
+  margin: 30px 0;
+}
+#views-record-count-text strong {
+  font-size: 40px;
+}
+
+/*# sourceMappingURL=maps/auteur.css.map */

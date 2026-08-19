@@ -17,7 +17,7 @@ User
 ## What is protected
 
 - Dashboard records (query/response)
-- Conversation history in Streamlit session state
+- Conversation history and chat payloads handled by the web frontend
 - MemoryAgent storage
 - API log persistence
 - ChromaDB document text and metadata
@@ -26,7 +26,7 @@ User
 ## Files changed for integration
 
 - `multi_agent/privacy/privacy_agent.py`
-- `ui/app.py`
+- `api/main.py` (`/web/chat`)
 - `api/main.py`
 - `multi_agent/orchestrator.py`
 - `multi_agent/memory/memory_agent.py`
