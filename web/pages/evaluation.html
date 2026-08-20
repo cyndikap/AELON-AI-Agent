@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AELON | Evaluation Dashboard</title>
+  <link rel="icon" type="image/svg+xml" href="/static/aelon-icon.svg" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/global.css" />
+  <link rel="stylesheet" href="/css/evaluation.css" />
+</head>
+<body>
+  <div class="aelon-app-shell">
+    <aside class="aelon-sidebar">
+      <div class="aelon-brand">
+        <span class="aelon-brand-mark">
+          <img src="/static/aelon-icon.svg" alt="AELON" />
+        </span>
+        <div>
+          <div class="aelon-brand-title">AELON</div>
+          <div class="aelon-brand-sub">From Customer Conversations</div>
+        </div>
+      </div>
+
+      <div class="aelon-nav-section">
+        <div class="aelon-section-label">Espaces</div>
+        <div class="aelon-space-group">
+          <a class="aelon-space-link" data-space="customer" href="/banking">
+            <strong>💬 Banking Chat</strong>
+            <small>Votre assistant bancaire intelligent</small>
+          </a>
+          <a class="aelon-space-link" data-space="analytics" href="/dashboards/analytics">
+            <strong>📊 Analytics Dashboard</strong>
+            <small>Analyse des conversations clients</small>
+          </a>
+          <a class="aelon-space-link" data-space="governance" href="/dashboards/governance">
+            <strong>🏛 Governance Dashboard</strong>
+            <small>Supervision IA et qualité des données</small>
+          </a>
+          <a class="aelon-space-link active" data-space="evaluation" href="/dashboards/evaluation">
+            <strong>🧪 Evaluation Dashboard</strong>
+            <small>Mesure automatique du RAG</small>
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <main class="aelon-main">
+      <div class="aelon-page">
+        <header class="aelon-page-header">
+          <div>
+            <h1 class="aelon-page-title">Evaluation Dashboard</h1>
+            <p class="aelon-page-subtitle">RAG Automatic Evaluation</p>
+          </div>
+          <span class="aelon-status-badge">Benchmark continu</span>
+        </header>
+
+        <div class="aelon-page-content evaluation-page">
+          <div class="analytics-summary">
+            <h2>📋 Synthèse Evaluation</h2>
+            <div id="evaluationKpiGrid" class="analytics-kpi-grid"></div>
+          </div>
+
+          <div class="analytics-grid">
+            <div class="analytics-panel large">
+              <h3>Couverture des catégories</h3>
+              <div id="evaluationCoveragePanel" class="analytics-chart-box">Chargement...</div>
+            </div>
+            <div class="analytics-panel medium">
+              <h3>Temps de réponse moyen</h3>
+              <div id="evaluationResponsePanel" class="analytics-chart-box">Chargement...</div>
+            </div>
+            <div class="analytics-panel medium">
+              <h3>Chunks récupérés</h3>
+              <div id="evaluationChunksPanel" class="analytics-chart-box">Chargement...</div>
+            </div>
+            <div class="analytics-panel">
+              <h3>Détail par question</h3>
+              <div id="evaluationDetailsList" class="analytics-list">
+                <div class="analytics-list-item"><span>Chargement...</span><strong>-</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="analytics-chat-box">
+            <h3>Lecture rapide</h3>
+            <div id="evaluationInsightHistory" class="analytics-chat-history"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/evaluation.js"></script>
+</body>
+</html>

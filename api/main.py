@@ -21,6 +21,7 @@ from datetime import datetime
 from pydantic import BaseModel
 from utils.category_detector import detect_category
 from multi_agent.data_access.databricks_sql_client import DatabricksSQLClient
+from multi_agent.evaluation.rag_evaluation_service import RAGEvaluationService
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(name)s %(message)s')
 logger = logging.getLogger("aelon.api")
@@ -44,6 +45,7 @@ mock_incidents: list = []
 sql_client = DatabricksSQLClient()
 ANALYTICS_TABLE = "fr_raise.rag_pipeline.analytics_metrics"
 GOVERNANCE_TABLE = "fr_raise.rag_pipeline.governance_metrics"
+rag_evaluation_service = RAGEvaluationService(sql_client)
 
 
 class WebChatRequest(BaseModel):
@@ -370,6 +372,35 @@ LIMIT 1
     }
 
 
+def _evaluation_kpis() -> dict:
+    try:
+        if sql_client.is_configured():
+            summary = rag_evaluation_service.latest_summary()
+            details = rag_evaluation_service.latest_details()
+            summary["details"] = details
+            summary["source"] = "databricks.rag_evaluation"
+            return summary
+    except Exception:
+        pass
+
+    return {
+        "total_questions": 0,
+        "retrieval_success_rate": 0.0,
+        "category_match_rate": 0.0,
+        "source_match_rate": 0.0,
+        "keyword_match_rate": 0.0,
+        "avg_response_time": 0.0,
+        "avg_chunks_retrieved": 0.0,
+        "category_coverage": 0.0,
+        "avg_answer_quality": 0.0,
+        "avg_faithfulness_score": 0.0,
+        "avg_relevance_score": 0.0,
+        "latest_run_at": None,
+        "details": [],
+        "source": "empty",
+    }
+
+
 def _copilot_answer(question: str, context: dict, mode: str) -> str:
     q = str(question or "").strip()
     if not q:
@@ -437,6 +468,14 @@ def governance_page(request: Request):
     return HTMLResponse(content=page_path.read_text(encoding="utf-8"))
 
 
+@app.get("/dashboards/evaluation", response_class=HTMLResponse)
+def evaluation_page(request: Request):
+    page_path = WEB_DIR / "pages" / "evaluation.html"
+    if not page_path.exists():
+        raise HTTPException(status_code=404, detail="Evaluation page not found")
+    return HTMLResponse(content=page_path.read_text(encoding="utf-8"))
+
+
 @app.get("/analytics")
 def get_analytics_kpis():
     return _analytics_kpis()
@@ -445,6 +484,11 @@ def get_analytics_kpis():
 @app.get("/governance")
 def get_governance_kpis():
     return _governance_kpis()
+
+
+@app.get("/evaluation")
+def get_evaluation_kpis():
+    return _evaluation_kpis()
 
 
 @app.post("/web/chat")

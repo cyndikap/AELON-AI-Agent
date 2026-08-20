@@ -1,0 +1,28 @@
+CREATE TABLE IF NOT EXISTS fr_raise.rag_pipeline.rag_evaluation (
+    evaluation_id STRING,
+    executed_at TIMESTAMP,
+    dataset_name STRING,
+    question_id STRING,
+    question STRING,
+    expected_category STRING,
+    predicted_category STRING,
+    reference_answer STRING,
+    answer STRING,
+    expected_sources_json STRING,
+    expected_keywords_json STRING,
+    sources_json STRING,
+    categories_json STRING,
+    category_match INT,
+    source_match_rate DOUBLE,
+    keyword_match_rate DOUBLE,
+    retrieval_count INT,
+    retrieval_success INT,
+    response_time_ms DOUBLE,
+    relevance_score DOUBLE,
+    faithfulness_score DOUBLE,
+    hallucination_rate DOUBLE,
+    answer_quality DOUBLE,
+    compliance_score DOUBLE,
+    created_at TIMESTAMP
+)
+USING DELTA;

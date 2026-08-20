@@ -1,0 +1,7 @@
+@import url('/css/analytics.css');
+
+.evaluation-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}

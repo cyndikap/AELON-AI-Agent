@@ -1,3 +1,4 @@
-from .evaluation_agent import EvaluationAgent
+"""Evaluation package.
 
-__all__ = ["EvaluationAgent"]
+Keep this module free of heavy imports to avoid orchestrator circular imports.
+"""

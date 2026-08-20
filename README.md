@@ -1,65 +1,65 @@
-# 
-AV Bancaire Multi-Agents
+# AELON
 
-This project's goal is to build a multi agent system aiming at the resolution of technical issues encountered by the clients in the banking sector.
+Plateforme bancaire orientee Data + IA, construite sur Databricks, pour ingerer, traiter, ordonner et exploiter des contenus documentaires et conversationnels afin d'alimenter un assistant RAG, des KPI metier, des tableaux de bord Analytics et des controles de Governance.
 
-## Local Environment
+## Objectif produit
 
-Use the repository virtual environment only.
+AELON ne se limite pas a un chat. Le coeur de la plateforme est une chaine de valeur data centree sur Databricks :
 
-### Bootstrap
+- ingestion de sources documentaires bancaires
+- structuration via architecture medaillon
+- preparation des chunks et embeddings
+- exposition via Vector Search
+- consommation par le moteur RAG pour generer les reponses
+- persistance des conversations pour l'analytics, la gouvernance et l'amelioration continue
 
-```powershell
-Set-Location C:/Users/csileuka/OneDrive - Capgemini/Bureau/PROJETS/AI.Agent.AELON/GEN.AI
-powershell -ExecutionPolicy Bypass -File .\scripts\bootstrap-ui.ps1
-```
-
-### Run the UI
-
-```powershell
-Set-Location C:/Users/csileuka/OneDrive - Capgemini/Bureau/PROJETS/AI.Agent.AELON/GEN.AI
-powershell -ExecutionPolicy Bypass -File .\scripts\run-ui.ps1
-```
-
-The web UI is served by FastAPI on `http://127.0.0.1:8010/`.
-
-### Notes
-
-- The workspace is configured to use `.venv` as the default interpreter.
-- `PYTHONNOUSERSITE=1` is enforced to prevent conflicts with packages installed under AppData.
-- Privacy dependencies are installed in the local environment together with the required spaCy models.
-
-## Current Platform Scope
-
-The AELON platform now includes a production-ready RAG support flow for banking conversations:
-
-- Bronze, Silver, and Gold data layers
-- Chunking and Databricks embeddings with `databricks-gte-large-en`
-- Databricks Vector Search retrieval
-- Retrieval agent plugged into the orchestrator
-- LLM answer generation grounded on retrieved document chunks
-- Automatic conversation persistence in Databricks
-- Analytics and Governance KPI pipelines
-- FastAPI-based dashboards and KPI APIs
-
-## Runtime Flow
+## Architecture cible
 
 ```text
-User
--> Orchestrator
--> Retrieval Agent
+Sources documentaires
+-> Bronze
+-> Silver
+-> Gold
+-> Chunking / Embeddings
 -> Databricks Vector Search
--> Top Chunks
--> LLM
--> Response
--> Conversation Logger
--> fr_raise.rag_pipeline.gold_conversations
--> Analytics / Governance KPIs
+-> Retrieval Agent
+-> Orchestrator IA
+-> Chat / APIs
+-> gold_conversations
+-> Analytics Metrics / Governance Metrics
+-> Dashboards / Supervision
 ```
 
-## Databricks Tables
+## Architecture medaillon Databricks
 
-Operational RAG tables:
+### Bronze
+
+Couche d'atterrissage des sources brutes. Elle conserve les documents collectes avec une logique de tracabilite et de reprise.
+
+Exemples de contenus :
+
+- FAQ bancaires
+- contenus ACPR
+- contenus Banque de France
+- contenus CNIL / FBF
+- documents PDF et sources textuelles
+
+### Silver
+
+Couche de normalisation et de nettoyage. Les documents y sont harmonises, dedoublonnes, nettoyes et prepares pour la suite du pipeline.
+
+Objectifs :
+
+- standardiser les structures de donnees
+- isoler les contenus utiles au RAG
+- supprimer le bruit documentaire
+- faciliter la qualite et la gouvernance de la donnee
+
+### Gold
+
+Couche de consommation metier et IA. Elle contient les actifs directement exploitables par les composants applicatifs et analytiques.
+
+Tables principales :
 
 - `fr_raise.rag_pipeline.bronze_documents`
 - `fr_raise.rag_pipeline.silver_documents`
@@ -68,14 +68,132 @@ Operational RAG tables:
 - `fr_raise.rag_pipeline.gold_conversations`
 - `fr_raise.rag_pipeline.gold_governance`
 
-KPI tables:
+Tables KPI :
 
 - `fr_raise.rag_pipeline.analytics_metrics`
 - `fr_raise.rag_pipeline.governance_metrics`
 
-## Key Environment Variables
+## Chaine RAG
 
-The following variables are required for the full production flow:
+Le RAG AELON s'appuie sur Databricks comme socle de preparation et de restitution du contexte.
+
+### Etapes principales
+
+1. ingestion des documents dans la medallion architecture
+2. generation des chunks documentaires
+3. calcul des embeddings avec `databricks-gte-large-en`
+4. indexation dans Databricks Vector Search
+5. recherche des top chunks par le Retrieval Agent
+6. injection du contexte dans l'Orchestrator
+7. generation de la reponse par le LLM
+8. persistance de la conversation pour reusage analytique et gouvernance
+
+### Flux d'execution
+
+```text
+Utilisateur
+-> Orchestrator
+-> Retrieval Agent
+-> Databricks Vector Search
+-> Top Chunks
+-> LLM
+-> Reponse
+-> Conversation Logger
+-> gold_conversations
+```
+
+## Couches IA et usages
+
+### Chat bancaire
+
+Le chat consomme le contexte RAG pour fournir des reponses alimentees par la base documentaire. Les agents de privacy, fraude, sentiment, compliance, explainability et evaluation enrichissent le traitement.
+
+### Analytics
+
+La couche Analytics exploite les conversations sauvegardees pour produire des KPI de pilotage :
+
+- volume de conversations
+- questions par jour
+- questions par categorie
+- sources les plus utilisees
+- nombre moyen de chunks recuperes
+- temps moyen de reponse
+- top requetes utilisateurs
+
+### Governance
+
+La couche Governance suit la qualite et la robustesse du systeme RAG :
+
+- taux de retrieval reussi
+- taux de retrieval vide
+- nombre de reponses avec sources
+- nombre moyen de documents recuperes
+- contexte moyen injecte
+- citations par source
+- signaux d'observabilite et de compliance
+
+## Persistance des conversations
+
+Chaque reponse generee est enregistree dans `fr_raise.rag_pipeline.gold_conversations` avec les attributs suivants :
+
+- `conversation_id`
+- `timestamp`
+- `question`
+- `answer`
+- `sources`
+- `categories`
+- `retrieval_count`
+- `response_time_ms`
+- `user_session_id`
+
+Cette table devient la source de verite pour :
+
+- l'analyse des usages
+- les dashboards metiers
+- le suivi de performance du RAG
+- l'audit et la gouvernance
+
+Si le SQL Warehouse Databricks est indisponible, les evenements sont stockes temporairement dans :
+
+- `data/processed/failed_conversation_events.jsonl`
+
+Le rejeu est disponible via :
+
+```powershell
+Set-Location C:/Users/csileuka/OneDrive - Capgemini/Bureau/PROJETS/AI.Agent.AELON/GEN.AI
+.\.venv\Scripts\python.exe .\scripts\replay_failed_conversations.py
+```
+
+## APIs principales
+
+### Surface applicative
+
+- `POST /web/chat`
+- `GET /dashboards/analytics`
+- `GET /dashboards/governance`
+
+### APIs KPI
+
+- `GET /analytics`
+- `GET /governance`
+
+Ces endpoints exposent les indicateurs consolides issus des tables Databricks de metrics, avec fallback local si les tables ne sont pas encore materialisees.
+
+## Artefacts Data / KPI
+
+### Scripts SQL
+
+- `sql/analytics_metrics.sql`
+- `sql/governance_metrics.sql`
+- `sql/analytics_kpis.sql`
+- `sql/governance_kpis.sql`
+
+### Notebooks Databricks
+
+- `notebooks/05_analytics_metrics.ipynb`
+- `notebooks/06_governance_metrics.ipynb`
+
+## Variables d'environnement critiques
 
 ```env
 DATABRICKS_HOST=...
@@ -92,65 +210,11 @@ AZURE_AI_SEARCH_INDEX_NAME=...
 AZURE_AI_SEARCH_API_KEY=...
 ```
 
-Without `DATABRICKS_SQL_WAREHOUSE_ID`, the application falls back to local failed-event buffering instead of writing directly to `gold_conversations`.
+Sans `DATABRICKS_SQL_WAREHOUSE_ID`, l'ecriture directe dans `gold_conversations` n'est pas possible et le systeme bascule sur le fichier de reprise local.
 
-## Main APIs
+## Monitoring et exploitation
 
-User and dashboards:
-
-- `POST /web/chat`
-- `GET /dashboards/analytics`
-- `GET /dashboards/governance`
-
-KPI JSON APIs:
-
-- `GET /analytics`
-- `GET /governance`
-
-Legacy / internal endpoints are still present in `api/main.py`.
-
-## Conversation Persistence
-
-Each generated answer is persisted through `multi_agent/conversation_logger.py` with the following payload:
-
-- `conversation_id`
-- `timestamp`
-- `question`
-- `answer`
-- `sources`
-- `categories`
-- `retrieval_count`
-- `response_time_ms`
-- `user_session_id`
-
-If the SQL warehouse is unavailable, events are buffered in:
-
-- `data/processed/failed_conversation_events.jsonl`
-
-Replay is supported with:
-
-```powershell
-Set-Location C:/Users/csileuka/OneDrive - Capgemini/Bureau/PROJETS/AI.Agent.AELON/GEN.AI
-.\.venv\Scripts\python.exe .\scripts\replay_failed_conversations.py
-```
-
-## KPI Jobs
-
-SQL assets used to provision and populate KPI tables:
-
-- `sql/analytics_metrics.sql`
-- `sql/governance_metrics.sql`
-- `sql/analytics_kpis.sql`
-- `sql/governance_kpis.sql`
-
-Databricks notebooks:
-
-- `notebooks/05_analytics_metrics.ipynb`
-- `notebooks/06_governance_metrics.ipynb`
-
-## Monitoring
-
-The platform emits structured logs for:
+Les logs structurants suivants sont emis pour superviser la chaine RAG :
 
 - `orchestrator.start`
 - `orchestrator.end`
@@ -163,7 +227,31 @@ The platform emits structured logs for:
 - `llm.end`
 - `conversation.saved`
 
-## Quick Start
+Points de surveillance prioritaires :
+
+- disponibilite du SQL Warehouse
+- volume de fichiers de reprise locale
+- taux de retrieval vide
+- degradation du temps de reponse
+- baisse du nombre de sources citees
+
+## Demarrage local
+
+### Bootstrap
+
+```powershell
+Set-Location C:/Users/csileuka/OneDrive - Capgemini/Bureau/PROJETS/AI.Agent.AELON/GEN.AI
+powershell -ExecutionPolicy Bypass -File .\scripts\bootstrap-ui.ps1
+```
+
+### Lancement
+
+```powershell
+Set-Location C:/Users/csileuka/OneDrive - Capgemini/Bureau/PROJETS/AI.Agent.AELON/GEN.AI
+powershell -ExecutionPolicy Bypass -File .\scripts\run-ui.ps1
+```
+
+Ou en execution directe :
 
 ```powershell
 python -m venv .venv
@@ -171,3 +259,14 @@ python -m venv .venv
 pip install -r requirements.txt
 python -m uvicorn api.main:app --host 127.0.0.1 --port 8010 --reload
 ```
+
+L'interface web est exposee sur `http://127.0.0.1:8010/`.
+
+## Positionnement AELON
+
+AELON doit etre lu comme une plateforme complete :
+
+- Databricks porte l'ingestion, le traitement et l'ordonnancement des donnees
+- la couche RAG se branche sur cette fondation pour alimenter les reponses
+- la persistance des conversations alimente l'analytics et la governance
+- la couche IA n'est pas isolee : elle repose sur une base data industrialisee, traçable et exploitable
