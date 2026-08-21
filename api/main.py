@@ -113,6 +113,60 @@ def _strict_mask_sensitive(text: str) -> str:
     return value
 
 
+def _naturalize_missing_placeholders(text: str) -> str:
+    """Convert technical masking placeholders into natural banking wording."""
+    value = str(text or "")
+    placeholder_map = {
+        "[ACCOUNT_NUMBER]": "votre etablissement bancaire",
+        "[BANK_ACCOUNT]": "votre etablissement bancaire",
+        "[CARD_NUMBER]": "votre etablissement bancaire",
+        "[EMAIL]": "votre adresse e-mail",
+        "[PHONE]": "le service client de votre banque",
+        "[PHONE_NUMBER]": "le service client de votre banque",
+        "[PERSON]": "votre conseiller bancaire",
+    }
+    for placeholder, natural_text in placeholder_map.items():
+        value = value.replace(placeholder, natural_text)
+
+    # Fallback for any remaining technical token, ex: [VARIABLE].
+    value = re.sub(r"\[[A-Z0-9_]+\]", "les informations necessaires", value)
+    value = re.sub(r"\s+([,;:.!?])", r"\1", value)
+    value = re.sub(r"\s{2,}", " ", value)
+    return value.strip()
+
+
+def _premium_fallback_answer() -> str:
+    return (
+        "Nous vous recommandons de contacter votre etablissement bancaire "
+        "ou son service client securise afin d'obtenir une assistance personnalisee. "
+        "Pour proteger vos informations, les donnees sensibles ne sont pas affichees dans cette conversation."
+    )
+
+
+def _extract_sources_for_web(response_payload: dict, limit: int = 4) -> list[dict]:
+    rows = response_payload.get("sources") if isinstance(response_payload, dict) else []
+    if not isinstance(rows, list):
+        return []
+
+    seen: set[tuple[str, str]] = set()
+    extracted: list[dict] = []
+    for item in rows:
+        if not isinstance(item, dict):
+            continue
+        source = str(item.get("source", "")).strip()
+        category = str(item.get("categorie", "")).strip()
+        if not source:
+            continue
+        key = (source, category)
+        if key in seen:
+            continue
+        seen.add(key)
+        extracted.append({"source": source, "category": category or "Documentation"})
+        if len(extracted) >= limit:
+            break
+    return extracted
+
+
 def _mean(rows: list[dict], key: str, default=0.0) -> float:
     values = [_float(r.get(key, default), default) for r in rows]
     return float(mean(values)) if values else float(default)
@@ -517,8 +571,13 @@ def web_chat(payload: WebChatRequest, request: Request):
 
     final_answer_raw = response.get("answer") or response.get("response") or ""
     answer_privacy = privacy_agent.process(final_answer_raw, language="fr")
-    final_answer = _strict_mask_sensitive(answer_privacy.get("anonymized_text", final_answer_raw))
+    masked_answer = _strict_mask_sensitive(answer_privacy.get("anonymized_text", final_answer_raw))
+    placeholder_hits = re.findall(r"\[[A-Z0-9_]+\]", masked_answer)
+    final_answer = _naturalize_missing_placeholders(masked_answer)
+    if placeholder_hits and len(placeholder_hits) >= 2:
+        final_answer = _premium_fallback_answer()
     evaluation = response.get("evaluation", {}) if isinstance(response.get("evaluation", {}), dict) else {}
+    sources = _extract_sources_for_web(response)
     logger.info("web_chat.response ready answer_length=%s agent=%s", len(final_answer), response.get("agent", "unknown"))
 
     explainability = (
@@ -544,6 +603,7 @@ def web_chat(payload: WebChatRequest, request: Request):
         "privacy": {
             "detected_entities": privacy_result.get("detected_entities", []),
         },
+        "sources": sources,
     }
 
     elapsed_ms = (datetime.utcnow() - start).total_seconds() * 1000.0

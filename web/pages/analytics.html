@@ -7,7 +7,8 @@
   <link rel="icon" type="image/svg+xml" href="/static/aelon-icon.svg" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="/css/global.css" />
-  <link rel="stylesheet" href="/css/analytics.css" />
+  <link rel="stylesheet" href="/css/copilot-assistant.css?v=20260821" />
+  <link rel="stylesheet" href="/css/analytics.css?v=20260821" />
 </head>
 <body>
   <div class="aelon-app-shell">
@@ -35,7 +36,7 @@
           </a>
           <a class="aelon-space-link" data-space="governance" href="/dashboards/governance">
             <strong>🏛 Governance Dashboard</strong>
-            <small>Supervision IA et qualité des données</small>
+            <small>Supervision IA et qualite des donnees</small>
           </a>
           <a class="aelon-space-link" data-space="evaluation" href="/dashboards/evaluation">
             <strong>🧪 Evaluation Dashboard</strong>
@@ -55,7 +56,7 @@
           <span class="aelon-status-badge"><i class="bi bi-graph-up-arrow me-1"></i>Live intelligence</span>
         </header>
 
-        <div class="aelon-page-content analytics-page">
+        <div class="aelon-page-content analytics-page" id="analyticsScrollableArea">
           <div class="aelon-brand-strip">
             <div class="aelon-brand-strip-mark">
               <img src="/static/aelon-icon.svg" alt="AELON logo" />
@@ -66,67 +67,59 @@
             </div>
           </div>
 
-          <div class="analytics-summary">
-            <h2>📋 Synthèse IA</h2>
-            <div class="analytics-summary-grid">
-              <div class="analytics-summary-item"><small>Conversations</small><strong>15 analysées</strong></div>
-              <div class="analytics-summary-item"><small>Demandes connexion</small><strong>+25%</strong></div>
-              <div class="analytics-summary-item"><small>Alertes fraude</small><strong>7</strong></div>
-              <div class="analytics-summary-item"><small>Sentiment dominant</small><strong>Neutre</strong></div>
-            </div>
-          </div>
+          <section class="analytics-summary">
+            <h2>📋 Synthese IA</h2>
+            <p class="analytics-summary-lead">Tableau de bord decisionnel pour prioriser les actions support, surveiller les risques et piloter la qualite conversationnelle.</p>
+          </section>
 
           <div class="analytics-controls">
-            <div class="analytics-control"><label>Date début</label><input type="date" /></div>
+            <div class="analytics-control"><label>Date debut</label><input type="date" /></div>
             <div class="analytics-control"><label>Date fin</label><input type="date" /></div>
-            <div class="analytics-control"><label>Catégorie</label><select><option>Toutes</option></select></div>
+            <div class="analytics-control"><label>Categorie</label><select><option>Toutes</option></select></div>
             <div class="analytics-control"><label>Sentiment</label><select><option>Tous</option></select></div>
             <div class="analytics-control"><label>Agent</label><select><option>Tous</option></select></div>
           </div>
 
           <div class="analytics-actions">
             <button class="analytics-action-btn" type="button">Appliquer filtres</button>
-            <button class="analytics-secondary-btn" type="button">Réinitialiser</button>
+            <button class="analytics-secondary-btn" type="button">Reinitialiser</button>
             <button class="analytics-secondary-btn" type="button">Export CSV</button>
           </div>
 
-          <div id="analyticsKpiGrid" class="analytics-kpi-grid"></div>
+          <section class="analytics-section">
+            <div class="analytics-section-title">KPI Cards</div>
+            <div id="analyticsKpiGrid" class="analytics-kpi-grid"></div>
+          </section>
 
-          <div class="analytics-grid">
-            <div class="analytics-panel large">
-              <h3>Questions par jour</h3>
-              <div id="questionsByDayPanel" class="analytics-chart-box">Chargement...</div>
-            </div>
-            <div class="analytics-panel medium">
-              <h3>Temps de réponse</h3>
-              <div id="responseTimePanel" class="analytics-chart-box">Chargement...</div>
-            </div>
-            <div class="analytics-panel medium">
-              <h3>Questions par catégorie</h3>
-              <div id="categoriesPanel" class="analytics-chart-box">Chargement...</div>
-            </div>
-            <div class="analytics-panel">
-              <h3>Top sources</h3>
-              <div id="topSourcesList" class="analytics-list">
-                <div class="analytics-list-item"><span>Chargement...</span><strong>-</strong></div>
+          <section class="analytics-section">
+            <div class="analytics-section-title">Graphiques</div>
+            <div class="analytics-grid">
+              <div class="analytics-panel large">
+                <h3>Evolution des conversations</h3>
+                <div id="conversationsLineChart" class="analytics-chart-box"></div>
+              </div>
+              <div class="analytics-panel medium">
+                <h3>Repartition categories</h3>
+                <div id="categoriesPieChart" class="analytics-chart-box"></div>
+              </div>
+              <div class="analytics-panel medium">
+                <h3>Sources utilisees</h3>
+                <div id="sourcesBarChart" class="analytics-chart-box"></div>
+              </div>
+              <div class="analytics-panel medium">
+                <h3>Analyse des sentiments</h3>
+                <div id="sentimentsDonutChart" class="analytics-chart-box"></div>
               </div>
             </div>
-          </div>
+          </section>
 
-          <div class="analytics-chat-box">
-            <h3>Chat IA Analytics</h3>
-            <div class="analytics-prompt-chips">
-              <button class="analytics-prompt-chip" type="button" data-question="Pourquoi les escalades augmentent ?">Pourquoi les escalades augmentent ?</button>
-              <button class="analytics-prompt-chip" type="button" data-question="Quelles catégories progressent ?">Quelles catégories progressent ?</button>
-              <button class="analytics-prompt-chip" type="button" data-question="Quels problèmes sont récurrents ?">Quels problèmes sont récurrents ?</button>
-            </div>
-            <div id="analyticsChatHistory" class="analytics-chat-history"></div>
-          </div>
         </div>
       </div>
     </main>
   </div>
 
-  <script src="/js/analytics.js"></script>
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  <script src="/js/copilot-assistant.js?v=20260821"></script>
+  <script src="/js/analytics.js?v=20260821"></script>
 </body>
 </html>

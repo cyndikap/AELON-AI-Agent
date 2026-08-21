@@ -4,13 +4,40 @@ document.addEventListener('DOMContentLoaded', async () => {
   const responsePanel = document.getElementById('evaluationResponsePanel');
   const chunksPanel = document.getElementById('evaluationChunksPanel');
   const detailsList = document.getElementById('evaluationDetailsList');
-  const insightHistory = document.getElementById('evaluationInsightHistory');
+  let evaluationContext = {
+    categoryMatchRate: 0,
+    retrievalSuccessRate: 0,
+    bestDomain: 'N/A',
+    sourceMatchRate: 0,
+    keywordMatchRate: 0,
+  };
 
-  const addInsight = (text) => {
-    const bubble = document.createElement('div');
-    bubble.className = 'analytics-chat-message';
-    bubble.textContent = text;
-    insightHistory.appendChild(bubble);
+  const localEvaluationAnswer = (question) => {
+    if (question.includes('Category Match Rate')) {
+      return `Le Category Match Rate (${evaluationContext.categoryMatchRate.toFixed(2)}%) baisse quand les questions couvrent des cas hors taxonomie. Il faut enrichir les categories metier et le mapping des intents.`;
+    }
+    if (question.includes('performent')) {
+      return `Les domaines les plus performants sont ceux avec les meilleurs taux de source/keyword match. Domaine dominant estime: ${evaluationContext.bestDomain}.`;
+    }
+    if (question.includes('attention')) {
+      return `Les KPI prioritaires sont retrieval success (${evaluationContext.retrievalSuccessRate.toFixed(2)}%), source match (${evaluationContext.sourceMatchRate.toFixed(2)}%) et keyword match (${evaluationContext.keywordMatchRate.toFixed(2)}%).`;
+    }
+    return `Pour ameliorer le Retrieval Success Rate, renforcez la couverture documentaire, ajustez le chunking et revoyez les regles de reformulation des requetes.`;
+  };
+
+  const mountEvaluationCopilot = () => {
+    if (!window.CopilotAssistant?.create) return;
+    window.CopilotAssistant.create({
+      mode: 'evaluation',
+      questions: [
+        'Pourquoi le Category Match Rate est faible ?',
+        'Quels domaines metier performent le mieux ?',
+        'Quels KPI necessitent une attention particuliere ?',
+        'Comment ameliorer le Retrieval Success Rate ?',
+      ],
+      initialMessage: 'Selectionnez une question pour interpreter les resultats d evaluation.',
+      onAsk: async (question) => localEvaluationAnswer(question),
+    });
   };
 
   try {
@@ -56,17 +83,25 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
     }
 
-    addInsight(`Dernier run: ${data.latest_run_at || 'N/A'}`);
-    addInsight(`Qualité moyenne: ${Number(data.avg_answer_quality || 0).toFixed(2)}`);
-    addInsight(`Faithfulness moyenne: ${Number(data.avg_faithfulness_score || 0).toFixed(2)}`);
-    addInsight(`Relevance moyenne: ${Number(data.avg_relevance_score || 0).toFixed(2)}`);
-    addInsight(`Category match: ${Number(data.category_match_rate || 0).toFixed(2)}%`);
-    addInsight(`Source match: ${Number(data.source_match_rate || 0).toFixed(2)}%`);
-    addInsight(`Keyword match: ${Number(data.keyword_match_rate || 0).toFixed(2)}%`);
+    const domainCounts = new Map();
+    details.forEach((detail) => {
+      const domain = String(detail.expected_category || 'N/A');
+      domainCounts.set(domain, (domainCounts.get(domain) || 0) + 1);
+    });
+    const bestDomain = [...domainCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
+
+    evaluationContext = {
+      categoryMatchRate: Number(data.category_match_rate || 0),
+      retrievalSuccessRate: Number(data.retrieval_success_rate || 0),
+      bestDomain,
+      sourceMatchRate: Number(data.source_match_rate || 0),
+      keywordMatchRate: Number(data.keyword_match_rate || 0),
+    };
+    mountEvaluationCopilot();
   } catch (error) {
     coveragePanel.textContent = 'Indisponible';
     responsePanel.textContent = 'Indisponible';
     chunksPanel.textContent = 'Indisponible';
-    addInsight('Impossible de charger les métriques d’évaluation RAG.');
+    mountEvaluationCopilot();
   }
 });

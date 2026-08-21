@@ -1,7 +1,30 @@
 @import url('/css/analytics.css');
 
+.aelon-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.aelon-main {
+  overflow: hidden;
+}
+
+.aelon-page {
+  overflow: hidden;
+}
+
+.aelon-page-content.evaluation-page {
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 5rem;
+}
+
 .evaluation-page {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  height: 100%;
+  min-height: 0;
 }

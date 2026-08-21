@@ -1448,3 +1448,186 @@ body.private-theme .theme-toggle-btn {
     max-width: 92%;
   }
 }
+
+/* Banking Chat Premium Refresh */
+#space-customer.space-screen.active {
+  align-items: center;
+}
+
+.chat-wrapper {
+  width: min(78vw, 980px);
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0.35rem 0 0.4rem;
+}
+
+.chat-card {
+  min-height: calc(100vh - 22px);
+  max-height: calc(100vh - 22px);
+}
+
+.messages {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 1.2rem 1.15rem 1rem;
+}
+
+.message-row {
+  margin-bottom: 1rem;
+  animation: messageReveal 0.28s cubic-bezier(0.2, 0.7, 0, 1);
+}
+
+.message-row.user {
+  justify-content: flex-end;
+}
+
+.message-row.assistant {
+  justify-content: flex-start;
+}
+
+.message {
+  border-radius: 20px;
+  padding: 0.82rem 0.96rem;
+  line-height: 1.58;
+}
+
+.message.user {
+  max-width: 65%;
+  border-radius: 20px 20px 6px 20px;
+  background: linear-gradient(145deg, #0a3d91 0%, #1f67da 100%);
+}
+
+.message.assistant {
+  max-width: 70%;
+  border-radius: 20px 20px 20px 6px;
+  background: #edf1f7;
+  border: 1px solid #dae2ef;
+}
+
+.assistant-avatar,
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.assistant-avatar {
+  background: linear-gradient(135deg, #ecf3ff 0%, #dfe9ff 100%);
+  border: 1px solid rgba(96, 165, 250, 0.35);
+}
+
+.user-avatar {
+  background: #e2ecfa;
+  border: 1px solid #b8cae6;
+  color: #12326b;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.typing-row .typing-bubble {
+  background: #eef3fb;
+  border: 1px solid #d9e4f6;
+}
+
+.typing-copy {
+  color: #294b86;
+  font-weight: 600;
+  margin-right: 0.45rem;
+}
+
+.typing-dots {
+  display: inline-flex;
+  gap: 0.2rem;
+  vertical-align: middle;
+}
+
+.typing-dots i {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #3f73c9;
+  display: inline-block;
+  animation: typingPulse 1s ease-in-out infinite;
+}
+
+.typing-dots i:nth-child(2) {
+  animation-delay: 0.14s;
+}
+
+.typing-dots i:nth-child(3) {
+  animation-delay: 0.28s;
+}
+
+.message-sources {
+  margin-top: 0.72rem;
+  border-top: 1px dashed rgba(18, 50, 107, 0.2);
+  padding-top: 0.58rem;
+}
+
+.message-sources-title {
+  color: #294b86;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+}
+
+.message-sources-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.message-source-chip {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  font-size: 0.72rem;
+  color: #1f3b72;
+  background: #deebff;
+  border: 1px solid #c5dafd;
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+}
+
+@keyframes typingPulse {
+  0%,
+  80%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes messageReveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 992px) {
+  .chat-wrapper {
+    width: min(96vw, 980px);
+  }
+
+  .message.user,
+  .message.assistant {
+    max-width: 86%;
+  }
+}

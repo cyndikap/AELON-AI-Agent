@@ -1,10 +1,37 @@
+.aelon-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.aelon-main {
+  overflow: hidden;
+}
+
+.aelon-page {
+  overflow: hidden;
+}
+
+.aelon-page-content.governance-page {
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 6rem;
+}
+
 .governance-page {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.1rem;
   height: 100%;
   min-height: 0;
-  overflow: hidden;
+  overflow: visible;
+  background:
+    radial-gradient(circle at 10% -10%, rgba(1, 124, 255, 0.08) 0%, transparent 42%),
+    radial-gradient(circle at 110% 15%, rgba(36, 214, 199, 0.09) 0%, transparent 46%),
+    linear-gradient(180deg, rgba(248, 251, 255, 0.85), rgba(244, 248, 255, 0.72));
+  border-radius: 18px;
+  padding: 0.25rem;
 }
 
 .governance-status-strip {
@@ -18,11 +45,12 @@
   align-items: center;
   gap: 0.45rem;
   border-radius: 999px;
-  padding: 0.5rem 0.7rem;
-  border: 1px solid var(--aelon-border);
-  background: rgba(255,255,255,0.8);
+  padding: 0.5rem 0.78rem;
+  border: 1px solid rgba(167, 186, 214, 0.55);
+  background: rgba(255, 255, 255, 0.9);
   font-size: 0.75rem;
   font-weight: 700;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
 }
 
 .governance-status-pill.ok {
@@ -32,9 +60,9 @@
 }
 
 .governance-status-pill.warn {
-  background: rgba(245,158,11,0.08);
-  border-color: rgba(245,158,11,0.18);
-  color: #92400e;
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.28);
+  color: #9a5800;
 }
 
 .governance-dot {
@@ -52,110 +80,221 @@
   background: var(--aelon-warning);
 }
 
-.governance-grid {
+.governance-section {
+  border: 1px solid rgba(170, 190, 219, 0.52);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.88);
+  padding: 1rem;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+}
+
+.governance-section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-bottom: 0.9rem;
+}
+
+.governance-section-head h2 {
+  margin: 0;
+  font-size: 1.02rem;
+  color: #0f3569;
+}
+
+.governance-section-head span {
+  color: #52688c;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.governance-kpi-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 0.8rem;
+  gap: 0.72rem;
 }
 
-.governance-card {
-  border: 1px solid var(--aelon-border);
-  border-radius: 16px;
-  background: rgba(255,255,255,0.85);
-  padding: 0.95rem;
+.governance-kpi-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(173, 192, 218, 0.55);
+  border-radius: 14px;
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.98), rgba(237, 245, 255, 0.86));
+  padding: 0.82rem;
 }
 
-.governance-card h3 {
-  margin: 0 0 0.7rem;
-  font-size: 0.92rem;
-  color: var(--aelon-blue-deep);
+.governance-kpi-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #0f60d6, #1da3c6);
 }
 
-.governance-metric {
-  display: flex;
-  justify-content: space-between;
+.governance-kpi-label {
+  font-size: 0.76rem;
+  color: #50678a;
+  font-weight: 700;
+}
+
+.governance-kpi-value {
+  margin-top: 0.32rem;
+  font-size: 1.18rem;
+  font-weight: 900;
+  color: #0d2344;
+}
+
+.governance-kpi-trend {
+  margin-top: 0.28rem;
+  font-size: 0.72rem;
+  color: #647b9e;
+}
+
+.governance-table-wrap {
+  overflow-x: auto;
+  border: 1px solid rgba(176, 195, 220, 0.52);
+  border-radius: 14px;
+}
+
+.governance-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.governance-table th,
+.governance-table td {
+  padding: 0.66rem 0.74rem;
+  border-bottom: 1px solid rgba(180, 197, 220, 0.45);
+  text-align: left;
+  font-size: 0.84rem;
+}
+
+.governance-table th {
+  background: linear-gradient(180deg, #ecf4ff, #e7f0fc);
+  color: #2a4a78;
+  font-size: 0.78rem;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.governance-table tbody tr:hover {
+  background: rgba(236, 245, 255, 0.72);
+}
+
+.governance-agent {
+  font-weight: 700;
+  color: #123f79;
+}
+
+.governance-status-badge {
+  display: inline-flex;
   align-items: center;
-  border: 1px solid var(--aelon-border);
-  border-radius: 10px;
-  padding: 0.55rem 0.7rem;
-  margin-top: 0.5rem;
-  background: #fbfdff;
-}
-
-.governance-metric-label {
-  color: var(--aelon-muted);
-  font-size: 0.75rem;
-}
-
-.governance-metric-value {
+  border-radius: 999px;
+  padding: 0.2rem 0.58rem;
+  font-size: 0.72rem;
   font-weight: 800;
 }
 
-.governance-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+.governance-status-badge.ok {
+  background: rgba(16, 185, 129, 0.16);
+  color: #047857;
 }
 
-.governance-tab {
-  border: 1px solid var(--aelon-border);
-  border-radius: 10px;
-  background: #fff;
-  color: var(--aelon-text);
-  padding: 0.55rem 0.8rem;
-  cursor: pointer;
+.governance-status-badge.warn {
+  background: rgba(245, 158, 11, 0.2);
+  color: #a16207;
 }
 
-.governance-tab.active {
-  background: linear-gradient(135deg, rgba(219,234,254,0.9), rgba(224,242,254,0.8));
-  border-color: rgba(96,165,250,0.7);
-  color: var(--aelon-blue-deep);
+.governance-status-badge.risk {
+  background: rgba(239, 68, 68, 0.17);
+  color: #b91c1c;
 }
 
-.governance-panel {
-  display: none;
-  border: 1px solid var(--aelon-border);
-  border-radius: 16px;
-  background: rgba(255,255,255,0.8);
-  padding: 0.9rem;
+.governance-doc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 0.78rem;
 }
 
-.governance-panel.active {
-  display: block;
+.governance-doc-card {
+  border: 1px solid rgba(171, 190, 216, 0.55);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(242, 248, 255, 0.86));
+  padding: 0.78rem;
 }
 
-.governance-chat-box {
-  border: 1px solid rgba(148,163,184,0.24);
-  border-radius: 18px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.88), rgba(240,255,250,0.8));
-  padding: 0.9rem;
+.governance-doc-card h3 {
+  margin: 0 0 0.6rem;
+  font-size: 0.9rem;
+  color: #133f73;
 }
 
-.governance-chat-history {
+.governance-bars {
   display: grid;
   gap: 0.5rem;
-  max-height: 220px;
-  overflow-y: auto;
-  margin-bottom: 0.7rem;
 }
 
-.governance-chat-message {
-  max-width: 85%;
-  border-radius: 14px;
-  padding: 0.7rem 0.8rem;
-  border: 1px solid var(--aelon-border);
-  background: #fff;
+.governance-bar-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.45rem;
+  align-items: center;
 }
 
-.governance-chat-message.user {
-  margin-left: auto;
-  background: linear-gradient(135deg, var(--aelon-blue), var(--aelon-blue-2));
-  color: #fff;
-  border-color: transparent;
+.governance-bar-label {
+  grid-column: 1 / -1;
+  font-size: 0.74rem;
+  color: #3f5983;
+  font-weight: 700;
+}
+
+.governance-bar-track {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(190, 210, 236, 0.6);
+  overflow: hidden;
+}
+
+.governance-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #0c67d6, #10a0cb);
+}
+
+.governance-bar-value {
+  font-size: 0.75rem;
+  color: #355985;
+  font-weight: 800;
+}
+
+.governance-bar-empty {
+  color: #647a9c;
+  font-size: 0.82rem;
+}
+
+.governance-unused-list {
+  margin: 0;
+  padding-left: 1rem;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.governance-unused-list li {
+  font-size: 0.8rem;
+  color: #355781;
 }
 
 @media (max-width: 640px) {
-  .governance-grid {
+  .governance-kpi-grid {
     grid-template-columns: 1fr;
+  }
+
+  .governance-table th,
+  .governance-table td {
+    padding: 0.55rem;
+    font-size: 0.78rem;
   }
 }

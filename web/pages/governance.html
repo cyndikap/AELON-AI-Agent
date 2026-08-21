@@ -7,7 +7,8 @@
   <link rel="icon" type="image/svg+xml" href="/static/aelon-icon.svg" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="/css/global.css" />
-  <link rel="stylesheet" href="/css/governance.css" />
+  <link rel="stylesheet" href="/css/copilot-assistant.css?v=20260821b" />
+  <link rel="stylesheet" href="/css/governance.css?v=20260821b" />
 </head>
 <body>
   <div class="aelon-app-shell">
@@ -62,68 +63,89 @@
             </div>
             <div>
               <div class="aelon-brand-strip-name">AELON</div>
-              <div class="aelon-brand-strip-tag">Banking Intelligence Platform</div>
+              <div class="aelon-brand-strip-tag">AI Governance Control Tower</div>
             </div>
           </div>
 
           <div class="governance-status-strip">
-            <div class="governance-status-pill ok"><span class="governance-dot"></span>Privacy conforme</div>
-            <div class="governance-status-pill ok"><span class="governance-dot"></span>Compliance conforme</div>
-            <div class="governance-status-pill warn"><span class="governance-dot"></span>Evaluation à surveiller</div>
+            <div class="governance-status-pill ok"><span class="governance-dot"></span>RGPD Monitoring actif</div>
+            <div class="governance-status-pill ok"><span class="governance-dot"></span>Audit trail complet</div>
+            <div class="governance-status-pill warn"><span class="governance-dot"></span>Supervision continue requise</div>
           </div>
 
-          <div class="governance-grid">
-            <div class="governance-card">
-              <h3>Data Quality</h3>
-              <div class="governance-metric"><span class="governance-metric-label">Completeness</span><span class="governance-metric-value">98%</span></div>
-              <div class="governance-metric"><span class="governance-metric-label">Consistency</span><span class="governance-metric-value">96%</span></div>
-              <div class="governance-metric"><span class="governance-metric-label">Validity</span><span class="governance-metric-value">94%</span></div>
+          <section class="governance-section">
+            <div class="governance-section-head">
+              <h2>Section 1 · KPI Gouvernance</h2>
+              <span>Supervision qualité RAG, réponses, conformité et sources</span>
             </div>
-
-            <div class="governance-card">
-              <h3>Privacy</h3>
-              <div class="governance-metric"><span class="governance-metric-label">Masquage</span><span class="governance-metric-value">Actif</span></div>
-              <div class="governance-metric"><span class="governance-metric-label">DPIA</span><span class="governance-metric-value">OK</span></div>
+            <div id="governanceKpiGrid" class="governance-kpi-grid">
+              <article class="governance-kpi-card">
+                <div class="governance-kpi-label">Chargement KPI...</div>
+                <div class="governance-kpi-value">-</div>
+              </article>
             </div>
+          </section>
 
-            <div class="governance-card">
-              <h3>Compliance</h3>
-              <div class="governance-metric"><span class="governance-metric-label">RGPD</span><span class="governance-metric-value">OK</span></div>
-              <div class="governance-metric"><span class="governance-metric-label">Audit trail</span><span class="governance-metric-value">100%</span></div>
+          <section class="governance-section">
+            <div class="governance-section-head">
+              <h2>Section 2 · Monitoring des Agents</h2>
+              <span>Vue opérationnelle inspirée Azure Monitor pour les agents IA critiques</span>
             </div>
-          </div>
+            <div class="governance-table-wrap">
+              <table class="governance-table">
+                <thead>
+                  <tr>
+                    <th>Agent</th>
+                    <th>Statut</th>
+                    <th>Temps moyen</th>
+                    <th>Succès</th>
+                    <th>Erreurs</th>
+                  </tr>
+                </thead>
+                <tbody id="governanceAgentsBody">
+                  <tr>
+                    <td colspan="5">Chargement du monitoring agents...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
 
-          <div class="governance-tabs">
-            <button class="governance-tab active" type="button" data-tab="evaluation">Evaluation Agent</button>
-            <button class="governance-tab" type="button" data-tab="observability">Observability</button>
-            <button class="governance-tab" type="button" data-tab="dataquality">Data Governance</button>
-          </div>
+          <section class="governance-section">
+            <div class="governance-section-head">
+              <h2>Section 3 · Qualité documentaire</h2>
+              <span>Traçabilité des sources documentaires et zones de couverture</span>
+            </div>
+            <div class="governance-doc-grid">
+              <article class="governance-doc-card">
+                <h3>Sources les plus utilisées</h3>
+                <div id="governanceTopSources" class="governance-bars">
+                  <div class="governance-bar-empty">Chargement...</div>
+                </div>
+              </article>
 
-          <div id="gov-evaluation" class="governance-panel active">
-            <div class="governance-metric"><span class="governance-metric-label">Retrieval rate</span><span id="retrievalRateValue" class="governance-metric-value">-</span></div>
-            <div class="governance-metric"><span class="governance-metric-label">Documents utilisés</span><span id="documentsUsedValue" class="governance-metric-value">-</span></div>
-            <div class="governance-metric"><span class="governance-metric-label">Contexte moyen</span><span id="avgContextValue" class="governance-metric-value">-</span></div>
-          </div>
+              <article class="governance-doc-card">
+                <h3>Documents les plus cités</h3>
+                <div id="governanceTopDocuments" class="governance-bars">
+                  <div class="governance-bar-empty">Chargement...</div>
+                </div>
+              </article>
 
-          <div id="gov-observability" class="governance-panel">
-            <div class="governance-metric"><span class="governance-metric-label">Réponses avec sources</span><span id="withSourcesValue" class="governance-metric-value">-</span></div>
-            <div class="governance-metric"><span class="governance-metric-label">Réponses sans sources</span><span id="withoutSourcesValue" class="governance-metric-value">-</span></div>
-            <div class="governance-metric"><span class="governance-metric-label">Retrieval vide</span><span id="emptyRetrievalValue" class="governance-metric-value">-</span></div>
-          </div>
+              <article class="governance-doc-card">
+                <h3>Documents jamais utilisés</h3>
+                <ul id="governanceUnusedDocs" class="governance-unused-list">
+                  <li>Chargement...</li>
+                </ul>
+              </article>
+            </div>
+          </section>
 
-          <div id="gov-dataquality" class="governance-panel">
-            <div class="governance-metric"><span class="governance-metric-label">Sources citées</span><span id="sourcesCitedValue" class="governance-metric-value">-</span></div>
-          </div>
-
-          <div class="governance-chat-box">
-            <h3>Chat IA Governance</h3>
-            <div id="governanceChatHistory" class="governance-chat-history"></div>
-          </div>
         </div>
       </div>
     </main>
   </div>
 
-  <script src="/js/governance.js"></script>
+  <script src="/js/copilot-assistant.js?v=20260821b"></script>
+  <script src="/js/governance.js?v=20260821b"></script>
 </body>
 </html>

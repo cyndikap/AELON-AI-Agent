@@ -56,10 +56,13 @@ const analyticsChartIds = [
 const staggerGroups = document.querySelectorAll('.stagger-group');
 
 const privacyDisplayMap = {
-  '[PHONE_NUMBER]': '[donnee protegee]',
-  '[PERSON]': '[identite masquee]',
-  '[BANK_ACCOUNT]': '[numero de compte masque]',
-  '[ACCOUNT_NUMBER]': '[numero de compte masque]',
+  '[PHONE_NUMBER]': 'le service client de votre banque',
+  '[PHONE]': 'le service client de votre banque',
+  '[PERSON]': 'votre conseiller bancaire',
+  '[BANK_ACCOUNT]': 'votre etablissement bancaire',
+  '[ACCOUNT_NUMBER]': 'votre etablissement bancaire',
+  '[EMAIL]': 'votre adresse e-mail',
+  '[CARD_NUMBER]': 'votre etablissement bancaire',
 };
 
 function safeText(v) {
@@ -76,37 +79,95 @@ function normalizeMaskedText(value) {
   Object.entries(privacyDisplayMap).forEach(([source, target]) => {
     out = out.split(source).join(target);
   });
+  out = out.replace(/\[[A-Z0-9_]+\]/g, 'les informations necessaires');
+  out = out.replace(/\s+([,;:.!?])/g, '$1').replace(/\s{2,}/g, ' ').trim();
   return out;
 }
 
-function addCustomerMessage(role, text) {
+function normalizeSources(rawSources) {
+  if (!Array.isArray(rawSources)) return [];
+  const seen = new Set();
+  return rawSources
+    .map((item) => {
+      if (!item || typeof item !== 'object') return null;
+      const source = safeText(item.source).trim();
+      const category = safeText(item.category || item.categorie || '').trim();
+      if (!source) return null;
+      const key = `${source}::${category}`;
+      if (seen.has(key)) return null;
+      seen.add(key);
+      return { source, category };
+    })
+    .filter(Boolean)
+    .slice(0, 4);
+}
+
+function addCustomerMessage(role, text, options = {}) {
+  const { typing = false, sources = [] } = options;
   const row = document.createElement('div');
   row.className = `message-row ${role}`;
-
-  if (role === 'assistant') {
-    const avatar = document.createElement('div');
-    avatar.className = 'assistant-avatar';
-    avatar.innerHTML = '<img src="/static/aelon-icon.svg" alt="AELON logo" />';
-    row.appendChild(avatar);
+  if (typing) {
+    row.classList.add('typing-row');
   }
+
+  const avatar = document.createElement('div');
+  avatar.className = role === 'assistant' ? 'assistant-avatar' : 'user-avatar';
+  avatar.innerHTML = role === 'assistant'
+    ? '<img src="/static/aelon-icon.svg" alt="AELON logo" />'
+    : '<span aria-hidden="true">VOUS</span>';
+
+  if (role === 'assistant') row.appendChild(avatar);
 
   const wrapper = document.createElement('div');
   wrapper.className = `message ${role}`;
+  if (typing) wrapper.classList.add('typing-bubble');
 
   const content = document.createElement('div');
-  content.textContent = normalizeMaskedText(text);
+  if (typing) {
+    content.innerHTML = '<span class="typing-copy">AELON analyse votre demande</span><span class="typing-dots" aria-hidden="true"><i></i><i></i><i></i></span>';
+  } else {
+    content.textContent = normalizeMaskedText(text);
+  }
   wrapper.appendChild(content);
 
+  if (role === 'assistant' && !typing) {
+    const cleanSources = normalizeSources(sources);
+    if (cleanSources.length) {
+      const citationBox = document.createElement('div');
+      citationBox.className = 'message-sources';
+      const citationTitle = document.createElement('div');
+      citationTitle.className = 'message-sources-title';
+      citationTitle.textContent = 'Sources';
+      citationBox.appendChild(citationTitle);
+
+      const citationList = document.createElement('div');
+      citationList.className = 'message-sources-list';
+      cleanSources.forEach((entry) => {
+        const chip = document.createElement('span');
+        chip.className = 'message-source-chip';
+        chip.textContent = entry.category ? `${entry.category}: ${entry.source}` : entry.source;
+        citationList.appendChild(chip);
+      });
+      citationBox.appendChild(citationList);
+      wrapper.appendChild(citationBox);
+    }
+  }
+
   row.appendChild(wrapper);
+  if (role === 'user') row.appendChild(avatar);
+
   messagesEl.appendChild(row);
   messagesEl.scrollTop = messagesEl.scrollHeight;
+  return row;
 }
 
 async function sendCustomerMessage(rawText) {
   const text = safeText(rawText).trim();
   if (!text) return;
 
+  addCustomerMessage('user', text);
   chatInput.value = '';
+  const typingIndicator = addCustomerMessage('assistant', '', { typing: true });
 
   try {
     const res = await fetch('/web/chat', {
@@ -117,11 +178,10 @@ async function sendCustomerMessage(rawText) {
 
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-
-    addCustomerMessage('user', safeText(data.user_message || text));
-    addCustomerMessage('assistant', safeText(data.answer));
+    typingIndicator.remove();
+    addCustomerMessage('assistant', safeText(data.answer), { sources: data.sources || [] });
   } catch (_err) {
-    addCustomerMessage('user', text);
+    typingIndicator.remove();
     addCustomerMessage('assistant', 'Desole, une erreur est survenue. Merci de reessayer.');
   }
 }
