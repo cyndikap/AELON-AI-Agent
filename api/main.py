@@ -16,7 +16,7 @@ from multi_agent.orchestrator import Orchestrator
 from multi_agent.privacy.privacy_agent import PrivacyAgent
 from auth import authenticate
 from models import LogEntry, QueryResponse, NewLogRequest, Incident as IncidentModel
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 from datetime import datetime
 from pydantic import BaseModel
 from utils.category_detector import detect_category
@@ -45,6 +45,7 @@ mock_incidents: list = []
 sql_client = DatabricksSQLClient()
 ANALYTICS_TABLE = "fr_raise.rag_pipeline.analytics_metrics"
 GOVERNANCE_TABLE = "fr_raise.rag_pipeline.governance_metrics"
+DOCUMENT_REFERENTIAL_TABLE = os.getenv("AELON_DOCUMENT_REFERENTIAL_TABLE", "fr_raise.rag_pipeline.gold_documents")
 rag_evaluation_service = RAGEvaluationService(sql_client)
 
 
@@ -113,25 +114,95 @@ def _strict_mask_sensitive(text: str) -> str:
     return value
 
 
-def _naturalize_missing_placeholders(text: str) -> str:
+def _naturalize_missing_placeholders(text: str, language_code: str | None = None) -> str:
     """Convert technical masking placeholders into natural banking wording."""
     value = str(text or "")
-    placeholder_map = {
-        "[ACCOUNT_NUMBER]": "votre etablissement bancaire",
-        "[BANK_ACCOUNT]": "votre etablissement bancaire",
-        "[CARD_NUMBER]": "votre etablissement bancaire",
-        "[EMAIL]": "votre adresse e-mail",
-        "[PHONE]": "le service client de votre banque",
-        "[PHONE_NUMBER]": "le service client de votre banque",
-        "[PERSON]": "votre conseiller bancaire",
+    code = str(language_code or "fr").lower()
+    placeholders_by_language = {
+        "fr": {
+            "[ACCOUNT_NUMBER]": "votre etablissement bancaire",
+            "[BANK_ACCOUNT]": "votre etablissement bancaire",
+            "[CARD_NUMBER]": "votre etablissement bancaire",
+            "[EMAIL]": "votre adresse e-mail",
+            "[PHONE]": "le service client de votre banque",
+            "[PHONE_NUMBER]": "le service client de votre banque",
+            "[PERSON]": "les informations necessaires",
+            "[LOCATION]": "les informations necessaires",
+            "[MISC]": "les informations necessaires",
+            "_generic": "les informations necessaires",
+        },
+        "en": {
+            "[ACCOUNT_NUMBER]": "your bank account",
+            "[BANK_ACCOUNT]": "your bank account",
+            "[CARD_NUMBER]": "your bank card",
+            "[EMAIL]": "your email address",
+            "[PHONE]": "your bank support line",
+            "[PHONE_NUMBER]": "your bank support line",
+            "[PERSON]": "the required information",
+            "[LOCATION]": "the required information",
+            "[MISC]": "the required information",
+            "_generic": "the required information",
+        },
+        "es": {
+            "[ACCOUNT_NUMBER]": "su cuenta bancaria",
+            "[BANK_ACCOUNT]": "su cuenta bancaria",
+            "[CARD_NUMBER]": "su tarjeta bancaria",
+            "[EMAIL]": "su correo electronico",
+            "[PHONE]": "el soporte de su banco",
+            "[PHONE_NUMBER]": "el soporte de su banco",
+            "[PERSON]": "la informacion necesaria",
+            "[LOCATION]": "la informacion necesaria",
+            "[MISC]": "la informacion necesaria",
+            "_generic": "la informacion necesaria",
+        },
+        "de": {
+            "[ACCOUNT_NUMBER]": "Ihr Bankkonto",
+            "[BANK_ACCOUNT]": "Ihr Bankkonto",
+            "[CARD_NUMBER]": "Ihre Bankkarte",
+            "[EMAIL]": "Ihre E-Mail-Adresse",
+            "[PHONE]": "der Support Ihrer Bank",
+            "[PHONE_NUMBER]": "der Support Ihrer Bank",
+            "[PERSON]": "die erforderlichen Informationen",
+            "[LOCATION]": "die erforderlichen Informationen",
+            "[MISC]": "die erforderlichen Informationen",
+            "_generic": "die erforderlichen Informationen",
+        },
+        "it": {
+            "[ACCOUNT_NUMBER]": "il suo conto bancario",
+            "[BANK_ACCOUNT]": "il suo conto bancario",
+            "[CARD_NUMBER]": "la sua carta bancaria",
+            "[EMAIL]": "il suo indirizzo e-mail",
+            "[PHONE]": "il supporto della sua banca",
+            "[PHONE_NUMBER]": "il supporto della sua banca",
+            "[PERSON]": "le informazioni necessarie",
+            "[LOCATION]": "le informazioni necessarie",
+            "[MISC]": "le informazioni necessarie",
+            "_generic": "le informazioni necessarie",
+        },
+        "ar": {
+            "[ACCOUNT_NUMBER]": "حسابك البنكي",
+            "[BANK_ACCOUNT]": "حسابك البنكي",
+            "[CARD_NUMBER]": "بطاقتك البنكية",
+            "[EMAIL]": "بريدك الإلكتروني",
+            "[PHONE]": "دعم البنك",
+            "[PHONE_NUMBER]": "دعم البنك",
+            "[PERSON]": "المعلومات المطلوبة",
+            "[LOCATION]": "المعلومات المطلوبة",
+            "[MISC]": "المعلومات المطلوبة",
+            "_generic": "المعلومات المطلوبة",
+        },
     }
+    placeholder_map = placeholders_by_language.get(code, placeholders_by_language["fr"])
     for placeholder, natural_text in placeholder_map.items():
+        if placeholder == "_generic":
+            continue
         value = value.replace(placeholder, natural_text)
 
     # Fallback for any remaining technical token, ex: [VARIABLE].
-    value = re.sub(r"\[[A-Z0-9_]+\]", "les informations necessaires", value)
-    value = re.sub(r"\s+([,;:.!?])", r"\1", value)
-    value = re.sub(r"\s{2,}", " ", value)
+    value = re.sub(r"\[[A-Z0-9_]+\]", placeholder_map.get("_generic", "les informations necessaires"), value)
+    value = re.sub(r"[ \t]+([,;:.!?])", r"\1", value)
+    # Keep line breaks to preserve structured responses while normalizing extra spaces.
+    value = re.sub(r"[ \t]{2,}", " ", value)
     return value.strip()
 
 
@@ -141,6 +212,102 @@ def _premium_fallback_answer() -> str:
         "ou son service client securise afin d'obtenir une assistance personnalisee. "
         "Pour proteger vos informations, les donnees sensibles ne sont pas affichees dans cette conversation."
     )
+
+
+def _premium_fallback_answer_by_language(language_code: str | None) -> str:
+    code = str(language_code or "fr").lower()
+    messages = {
+        "fr": (
+            "Nous vous recommandons de contacter votre etablissement bancaire "
+            "ou son service client securise afin d'obtenir une assistance personnalisee. "
+            "Pour proteger vos informations, les donnees sensibles ne sont pas affichees dans cette conversation."
+        ),
+        "en": (
+            "We recommend contacting your bank or its secure support channel for personalized assistance. "
+            "To protect your information, sensitive data is not displayed in this conversation."
+        ),
+        "es": (
+            "Le recomendamos contactar a su banco o a su canal seguro de soporte para recibir asistencia personalizada. "
+            "Para proteger su informacion, no mostramos datos sensibles en esta conversacion."
+        ),
+        "de": (
+            "Wir empfehlen Ihnen, sich fur eine personalisierte Unterstutzung an Ihre Bank oder deren sicheren Supportkanal zu wenden. "
+            "Zum Schutz Ihrer Daten werden sensible Informationen in dieser Unterhaltung nicht angezeigt."
+        ),
+        "it": (
+            "Le consigliamo di contattare la sua banca o il canale di supporto sicuro per ricevere assistenza personalizzata. "
+            "Per proteggere i suoi dati, le informazioni sensibili non vengono visualizzate in questa conversazione."
+        ),
+        "ar": (
+            "ننصحك بالتواصل مع بنكك او قناة الدعم الامنة للحصول على مساعدة مخصصة. "
+            "ولحماية بياناتك، لا يتم عرض المعلومات الحساسة في هذه المحادثة."
+        ),
+    }
+    return messages.get(code, messages["fr"])
+
+
+def _structured_premium_fallback_by_language(language_code: str | None) -> str:
+    code = str(language_code or "fr").lower()
+    opening = {
+        "fr": "Voici les informations utiles pour votre demande.",
+        "en": "Here is the relevant information for your request.",
+        "es": "Aqui tiene la informacion relevante para su solicitud.",
+        "de": "Hier sind die relevanten Informationen zu Ihrer Anfrage.",
+        "it": "Ecco le informazioni utili per la sua richiesta.",
+        "ar": "اليك المعلومات المناسبة لطلبك.",
+    }.get(code, "Voici les informations utiles pour votre demande.")
+
+    labels = {
+        "fr": ("Reponse", "Action recommandee", "Sources utilisees", "Aucune source explicite"),
+        "en": ("Response", "Recommended action", "Sources used", "No explicit source"),
+        "es": ("Respuesta", "Accion recomendada", "Fuentes utilizadas", "Sin fuente explicita"),
+        "de": ("Antwort", "Empfohlene Aktion", "Verwendete Quellen", "Keine explizite Quelle"),
+        "it": ("Risposta", "Azione raccomandata", "Fonti utilizzate", "Nessuna fonte esplicita"),
+        "ar": ("الرد", "الإجراء الموصى به", "المصادر المستخدمة", "لا توجد مصادر صريحة"),
+    }.get(code, ("Reponse", "Action recommandee", "Sources utilisees", "Aucune source explicite"))
+
+    action = {
+        "fr": "Contactez le support de votre banque pour valider les prochaines etapes.",
+        "en": "Contact your bank support channel to validate the next operational steps.",
+        "es": "Contacte el canal de soporte de su banco para validar los siguientes pasos.",
+        "de": "Kontaktieren Sie den Support Ihrer Bank, um die nachsten Schritte zu bestatigen.",
+        "it": "Contatti il supporto della banca per confermare i prossimi passaggi operativi.",
+        "ar": "تواصل مع دعم البنك لتأكيد الخطوات التالية.",
+    }.get(code, "Contactez le support de votre banque pour valider les prochaines etapes.")
+
+    answer_title, action_title, sources_title, sources_empty = labels
+    business = _premium_fallback_answer_by_language(code)
+    return (
+        f"{opening}\n\n"
+        f"{answer_title}\n"
+        f"{business}\n\n"
+        f"{action_title}\n"
+        f"{action}\n\n"
+        f"📚 {sources_title}\n"
+        f"- {sources_empty}"
+    )
+
+
+def _looks_structured_answer(text: str) -> bool:
+    value = str(text or "")
+    if value.count("\n") < 3:
+        return False
+
+    markers = (
+        "Reponse",
+        "Response",
+        "Respuesta",
+        "Antwort",
+        "Risposta",
+        "الرد",
+        "Action recommandee",
+        "Recommended action",
+        "Accion recomendada",
+        "Empfohlene Aktion",
+        "Azione raccomandata",
+        "الإجراء الموصى به",
+    )
+    return any(marker in value for marker in markers)
 
 
 def _extract_sources_for_web(response_payload: dict, limit: int = 4) -> list[dict]:
@@ -426,6 +593,105 @@ LIMIT 1
     }
 
 
+def _databricks_table_columns(table_name: str) -> list[tuple[str, str]]:
+    rows = _safe_query_data_array(f"DESCRIBE TABLE {table_name}")
+    columns: list[tuple[str, str]] = []
+    for row in rows:
+        if not row:
+            continue
+        name = str(row[0] or "").strip()
+        data_type = str(row[1] or "").strip().lower() if len(row) > 1 else ""
+        if not name or name.startswith("#"):
+            continue
+        columns.append((name, data_type))
+    return columns
+
+
+def _load_document_referential(limit: int = 3000) -> dict[str, Any]:
+    if not sql_client.is_configured():
+        return {"documents": [], "source": "databricks.unavailable"}
+
+    columns = _databricks_table_columns(DOCUMENT_REFERENTIAL_TABLE)
+    lower_map = {col_name.lower(): col_name for col_name, _ in columns}
+    candidate_columns = [
+        "source",
+        "document_name",
+        "doc_name",
+        "title",
+        "file_name",
+        "filename",
+        "path",
+        "uri",
+        "id",
+    ]
+    selected = next((lower_map[key] for key in candidate_columns if key in lower_map), None)
+    if not selected:
+        text_candidates = [
+            col_name
+            for col_name, data_type in columns
+            if any(token in data_type for token in ("string", "varchar", "char"))
+        ]
+        selected = text_candidates[0] if text_candidates else None
+    if not selected and columns:
+        selected = columns[0][0]
+    if not selected:
+        return {
+            "documents": [],
+            "source": "databricks.schema_missing_candidate_column",
+            "available_columns": [name for name, _ in columns],
+        }
+
+    query = f"""
+SELECT
+    CAST({selected} AS STRING) AS document_name
+FROM {DOCUMENT_REFERENTIAL_TABLE}
+WHERE {selected} IS NOT NULL
+  AND TRIM(CAST({selected} AS STRING)) <> ''
+LIMIT {int(limit)}
+"""
+    rows = _safe_query_data_array(query)
+    documents: list[str] = []
+    seen: set[str] = set()
+    for row in rows:
+        if not row:
+            continue
+        name = str(row[0]).strip()
+        key = name.lower()
+        if not name or key in seen:
+            continue
+        seen.add(key)
+        documents.append(name)
+    return {
+        "documents": documents,
+        "source": f"databricks.{DOCUMENT_REFERENTIAL_TABLE}.{selected}",
+    }
+
+
+def _document_quality_payload() -> dict[str, Any]:
+    governance = _governance_kpis()
+    citations = governance.get("citations_per_source") if isinstance(governance, dict) else []
+    if not isinstance(citations, list):
+        citations = []
+
+    referential = _load_document_referential()
+    referential_docs = referential.get("documents", []) if isinstance(referential, dict) else []
+    used_docs = {
+        str(item.get("source", "")).strip().lower()
+        for item in citations
+        if isinstance(item, dict) and str(item.get("source", "")).strip()
+    }
+    unused_docs = [doc for doc in referential_docs if doc.lower() not in used_docs]
+
+    return {
+        "top_sources": citations[:10],
+        "top_documents": citations[:10],
+        "unused_documents": unused_docs[:50],
+        "unused_count": len(unused_docs),
+        "referential_count": len(referential_docs),
+        "referential_source": referential.get("source", "unknown") if isinstance(referential, dict) else "unknown",
+    }
+
+
 def _evaluation_kpis() -> dict:
     try:
         if sql_client.is_configured():
@@ -548,8 +814,21 @@ def get_evaluation_kpis():
 @app.post("/web/chat")
 def web_chat(payload: WebChatRequest, request: Request):
     logger.info("web_chat.request start query=%s", payload.query)
-    privacy_result = privacy_agent.process(payload.query, language="fr")
-    safe_query = _strict_mask_sensitive(privacy_result.get("anonymized_text", payload.query))
+    detected_language = "fr"
+    try:
+        detected_language = orchestrator.sentiment_language.analyze(
+            payload.query,
+            session_id=request.headers.get("x-session-id") or "anonymous",
+        ).language_code
+    except Exception:
+        detected_language = "fr"
+
+    if detected_language in {"en", "fr"}:
+        privacy_result = privacy_agent.process(payload.query, language=detected_language)
+        safe_query = _strict_mask_sensitive(privacy_result.get("anonymized_text", payload.query))
+    else:
+        privacy_result = {"anonymized_text": payload.query, "detected_entities": []}
+        safe_query = _strict_mask_sensitive(payload.query)
     logger.info("web_chat.privacy masked_query=%s", safe_query)
 
     start = datetime.utcnow()
@@ -570,12 +849,17 @@ def web_chat(payload: WebChatRequest, request: Request):
         }
 
     final_answer_raw = response.get("answer") or response.get("response") or ""
-    answer_privacy = privacy_agent.process(final_answer_raw, language="fr")
-    masked_answer = _strict_mask_sensitive(answer_privacy.get("anonymized_text", final_answer_raw))
+    response_language = str(response.get("language") or detected_language or "fr").lower()
+    if response_language in {"en", "fr"}:
+        answer_privacy = privacy_agent.process(final_answer_raw, language=response_language)
+        masked_answer = _strict_mask_sensitive(answer_privacy.get("anonymized_text", final_answer_raw))
+    else:
+        answer_privacy = {"anonymized_text": final_answer_raw, "detected_entities": []}
+        masked_answer = _strict_mask_sensitive(final_answer_raw)
     placeholder_hits = re.findall(r"\[[A-Z0-9_]+\]", masked_answer)
-    final_answer = _naturalize_missing_placeholders(masked_answer)
-    if placeholder_hits and len(placeholder_hits) >= 2:
-        final_answer = _premium_fallback_answer()
+    final_answer = _naturalize_missing_placeholders(masked_answer, response_language)
+    if (not final_answer.strip()) or (placeholder_hits and len(placeholder_hits) >= 2 and not _looks_structured_answer(final_answer)):
+        final_answer = _structured_premium_fallback_by_language(response_language)
     evaluation = response.get("evaluation", {}) if isinstance(response.get("evaluation", {}), dict) else {}
     sources = _extract_sources_for_web(response)
     logger.info("web_chat.response ready answer_length=%s agent=%s", len(final_answer), response.get("agent", "unknown"))
@@ -590,6 +874,7 @@ def web_chat(payload: WebChatRequest, request: Request):
         "user_message": safe_query,
         "answer": final_answer,
         "agent": response.get("agent", "unknown"),
+        "language": response.get("language", "fr"),
         "escalated": bool(response.get("escalated", False)),
         "sentiment": response.get("sentiment"),
         "evaluation": {
@@ -660,6 +945,11 @@ def web_analytics_chat(payload: CopilotQuestionRequest):
 def web_governance_summary():
     rows = _load_interactions()
     return _governance_summary(rows)
+
+
+@app.get("/web/governance/document-quality")
+def web_governance_document_quality():
+    return _document_quality_payload()
 
 
 @app.post("/web/governance/copilot")

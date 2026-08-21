@@ -1,13 +1,58 @@
 document.addEventListener('DOMContentLoaded', async () => {
   const governanceKpiGrid = document.getElementById('governanceKpiGrid');
   const governanceAgentsBody = document.getElementById('governanceAgentsBody');
-  const governanceTopSources = document.getElementById('governanceTopSources');
-  const governanceTopDocuments = document.getElementById('governanceTopDocuments');
+  const governanceTopSourcesChart = document.getElementById('governanceTopSourcesChart');
+  const governanceTopDocumentsChart = document.getElementById('governanceTopDocumentsChart');
+  const governanceUnusedDocumentsChart = document.getElementById('governanceUnusedDocumentsChart');
   const governanceUnusedDocs = document.getElementById('governanceUnusedDocs');
+  const governanceThresholds = document.getElementById('governanceThresholds');
+  const governanceAlertsList = document.getElementById('governanceAlertsList');
+  const governanceRecommendations = document.getElementById('governanceRecommendations');
+  const governanceResetThresholds = document.getElementById('governanceResetThresholds');
 
   const formatPercent = (value) => `${Number(value || 0).toFixed(2)}%`;
   const formatInteger = (value) => String(Math.round(Number(value || 0)));
   const formatMs = (value) => `${Math.round(Number(value || 0))} ms`;
+  const alertStorageKey = 'aelon-governance-thresholds-v1';
+
+  const defaultThresholds = {
+    retrievalSuccessRate: { label: 'Retrieval Success Rate', orange: 85, red: 70 },
+    sourceMatchRate: { label: 'Source Match Rate', orange: 80, red: 65 },
+    categoryMatchRate: { label: 'Category Match Rate', orange: 80, red: 60 },
+    keywordMatchRate: { label: 'Keyword Match Rate', orange: 75, red: 55 },
+    responsesWithSourcesRate: { label: 'Réponses avec sources', orange: 90, red: 75 },
+  };
+
+  const getStatusClass = (value, threshold) => {
+    if (value >= threshold.orange) return 'green';
+    if (value >= threshold.red) return 'orange';
+    return 'red';
+  };
+
+  const loadThresholds = () => {
+    try {
+      const stored = JSON.parse(localStorage.getItem(alertStorageKey) || '{}');
+      const merged = {};
+      Object.entries(defaultThresholds).forEach(([key, config]) => {
+        const src = stored[key] || {};
+        let orange = Number(src.orange ?? config.orange);
+        let red = Number(src.red ?? config.red);
+        orange = Number.isFinite(orange) ? orange : config.orange;
+        red = Number.isFinite(red) ? red : config.red;
+        if (red >= orange) red = Math.max(0, orange - 5);
+        merged[key] = { ...config, orange, red };
+      });
+      return merged;
+    } catch (_error) {
+      return { ...defaultThresholds };
+    }
+  };
+
+  const saveThresholds = (thresholds) => {
+    localStorage.setItem(alertStorageKey, JSON.stringify(thresholds));
+  };
+
+  let alertThresholds = loadThresholds();
 
   const statusFromRate = (rate) => {
     if (rate >= 85) return { label: 'Stable', className: 'ok' };
@@ -31,26 +76,148 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   };
 
-  const renderBarRows = (container, rows) => {
-    if (!container) return;
-    container.innerHTML = '';
+  const ensurePlotly = () => typeof window.Plotly !== 'undefined';
 
-    if (!rows.length) {
-      container.innerHTML = '<div class="governance-bar-empty">Aucune donnée disponible.</div>';
+  const renderBarChart = (targetEl, rows, title, color) => {
+    if (!targetEl) return;
+    if (!ensurePlotly()) {
+      targetEl.innerHTML = '<div class="governance-bar-empty">Plotly indisponible.</div>';
       return;
     }
 
-    const maxValue = Math.max(...rows.map((row) => Number(row.count || 0)), 1);
-    rows.forEach((row) => {
-      const width = Math.max((Number(row.count || 0) / maxValue) * 100, 4);
-      const item = document.createElement('div');
-      item.className = 'governance-bar-row';
-      item.innerHTML = `
-        <div class="governance-bar-label">${row.label}</div>
-        <div class="governance-bar-track"><div class="governance-bar-fill" style="width:${width}%"></div></div>
-        <div class="governance-bar-value">${formatInteger(row.count)}</div>
+    if (!rows.length) {
+      targetEl.innerHTML = '<div class="governance-bar-empty">Aucune donnée disponible.</div>';
+      return;
+    }
+
+    const labels = rows.map((row) => String(row.label));
+    const values = rows.map((row) => Number(row.count || 0));
+
+    window.Plotly.newPlot(
+      targetEl,
+      [
+        {
+          type: 'bar',
+          orientation: 'h',
+          x: values,
+          y: labels,
+          marker: {
+            color,
+            line: { color: '#c8d9ef', width: 1 },
+          },
+          hovertemplate: '%{y}<br>%{x} citations<extra></extra>',
+        },
+      ],
+      {
+        margin: { l: 120, r: 20, t: 30, b: 35 },
+        title: { text: title, font: { size: 12, color: '#214673' } },
+        xaxis: { title: 'Volume', fixedrange: true, gridcolor: '#e8f0fb' },
+        yaxis: { autorange: 'reversed', fixedrange: true },
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+      },
+      { displayModeBar: false, responsive: true },
+    );
+  };
+
+  const renderUnusedDonut = (targetEl, usedCount, unusedCount) => {
+    if (!targetEl) return;
+    if (!ensurePlotly()) {
+      targetEl.innerHTML = '<div class="governance-bar-empty">Plotly indisponible.</div>';
+      return;
+    }
+
+    window.Plotly.newPlot(
+      targetEl,
+      [
+        {
+          type: 'pie',
+          hole: 0.58,
+          labels: ['Documents utilisés', 'Documents jamais utilisés'],
+          values: [Math.max(usedCount, 0), Math.max(unusedCount, 0)],
+          marker: {
+            colors: ['#0d6fd6', '#f59e0b'],
+          },
+          textinfo: 'label+percent',
+          hovertemplate: '%{label}<br>%{value}<extra></extra>',
+        },
+      ],
+      {
+        margin: { l: 10, r: 10, t: 10, b: 10 },
+        paper_bgcolor: 'rgba(0,0,0,0)',
+      },
+      { displayModeBar: false, responsive: true },
+    );
+  };
+
+  const renderThresholdControls = (metrics) => {
+    if (!governanceThresholds) return;
+    governanceThresholds.innerHTML = '';
+
+    Object.entries(alertThresholds).forEach(([key, threshold]) => {
+      const row = document.createElement('div');
+      row.className = 'governance-threshold-row';
+      row.innerHTML = `
+        <label>${threshold.label}</label>
+        <input type="number" min="0" max="100" step="1" data-kpi="${key}" data-level="orange" value="${threshold.orange}">
+        <input type="number" min="0" max="100" step="1" data-kpi="${key}" data-level="red" value="${threshold.red}">
+        <span class="governance-threshold-value">${formatPercent(metrics[key] || 0)}</span>
       `;
-      container.appendChild(item);
+      governanceThresholds.appendChild(row);
+    });
+
+    governanceThresholds.querySelectorAll('input').forEach((input) => {
+      input.addEventListener('change', () => {
+        const kpi = input.dataset.kpi;
+        const level = input.dataset.level;
+        if (!kpi || !level || !alertThresholds[kpi]) return;
+        const numericValue = Math.max(0, Math.min(100, Number(input.value || 0)));
+        alertThresholds[kpi][level] = numericValue;
+        if (alertThresholds[kpi].red >= alertThresholds[kpi].orange) {
+          alertThresholds[kpi].red = Math.max(0, alertThresholds[kpi].orange - 5);
+        }
+        saveThresholds(alertThresholds);
+        renderAlerting(metrics);
+      });
+    });
+  };
+
+  const renderAlerting = (metrics) => {
+    if (!governanceAlertsList || !governanceRecommendations) return;
+    governanceAlertsList.innerHTML = '';
+    governanceRecommendations.innerHTML = '';
+
+    const statuses = [];
+    Object.entries(alertThresholds).forEach(([key, threshold]) => {
+      const value = Number(metrics[key] || 0);
+      const statusClass = getStatusClass(value, threshold);
+      statuses.push({ key, label: threshold.label, value, statusClass });
+      const item = document.createElement('div');
+      item.className = `governance-alert-item ${statusClass}`;
+      item.textContent = `${threshold.label}: ${formatPercent(value)} · Seuils O:${threshold.orange}% R:${threshold.red}%`;
+      governanceAlertsList.appendChild(item);
+    });
+
+    const recommendations = [];
+    const redAlerts = statuses.filter((item) => item.statusClass === 'red');
+    const orangeAlerts = statuses.filter((item) => item.statusClass === 'orange');
+
+    if (redAlerts.length) {
+      recommendations.push(`Priorité P1: corriger immédiatement ${redAlerts.map((item) => item.label).join(', ')}.`);
+      recommendations.push('Activer une revue quotidienne des prompts, retrieval et matching des sources jusqu au retour en zone verte.');
+    }
+    if (orangeAlerts.length) {
+      recommendations.push(`Priorité P2: plan d amélioration ciblé sur ${orangeAlerts.map((item) => item.label).join(', ')}.`);
+    }
+    if (!redAlerts.length && !orangeAlerts.length) {
+      recommendations.push('Tous les KPI surveillés sont en zone verte. Conserver le contrôle hebdomadaire et les tests de non-régression.');
+    }
+    recommendations.push('Vérifier la qualité des documents jamais utilisés et enrichir le référentiel Databricks pour réduire les angles morts RAG.');
+
+    recommendations.forEach((text) => {
+      const li = document.createElement('li');
+      li.textContent = text;
+      governanceRecommendations.appendChild(li);
     });
   };
 
@@ -160,15 +327,17 @@ document.addEventListener('DOMContentLoaded', async () => {
       { label: '🎯 Category Match Rate', value: 'Indisponible', hint: 'Données non chargées' },
       { label: '🧠 Keyword Match Rate', value: 'Indisponible', hint: 'Données non chargées' },
     ]);
-    renderBarRows(governanceTopSources, []);
-    renderBarRows(governanceTopDocuments, []);
+    renderBarChart(governanceTopSourcesChart, [], 'Sources', '#0d6fd6');
+    renderBarChart(governanceTopDocumentsChart, [], 'Documents', '#0f9fbd');
+    renderUnusedDonut(governanceUnusedDocumentsChart, 0, 0);
     renderUnusedDocs([]);
   };
 
   try {
-    const [governanceResponse, evaluationResponse] = await Promise.all([
+    const [governanceResponse, evaluationResponse, documentQualityResponse] = await Promise.all([
       fetch('/governance'),
       fetch('/evaluation'),
+      fetch('/web/governance/document-quality'),
     ]);
 
     if (!governanceResponse.ok) {
@@ -177,6 +346,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const governanceData = await governanceResponse.json();
     const evaluationData = evaluationResponse.ok ? await evaluationResponse.json() : {};
+    const documentQuality = documentQualityResponse.ok ? await documentQualityResponse.json() : {};
 
     const retrievalSuccessRate = Number(governanceData.retrieval_success_rate || 0);
     const responsesWithSources = Number(governanceData.responses_with_sources || 0);
@@ -229,30 +399,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     ];
     renderKpis(kpis);
 
-    const topSourcesRows = citations.slice(0, 6).map((item) => ({
+    const topSourcesRows = (Array.isArray(documentQuality.top_sources) ? documentQuality.top_sources : citations)
+      .slice(0, 6)
+      .map((item) => ({
       label: String(item.source || 'Source inconnue'),
       count: Number(item.count || 0),
-    }));
-    renderBarRows(governanceTopSources, topSourcesRows);
+      }));
+    renderBarChart(governanceTopSourcesChart, topSourcesRows, 'Top Sources', '#0c67d6');
 
-    const topDocumentsRows = citations.slice(0, 6).map((item) => ({
+    const topDocumentsRows = (Array.isArray(documentQuality.top_documents) ? documentQuality.top_documents : citations)
+      .slice(0, 6)
+      .map((item) => ({
       label: `Doc · ${String(item.source || 'Inconnu')}`,
       count: Number(item.count || 0),
-    }));
-    renderBarRows(governanceTopDocuments, topDocumentsRows);
+      }));
+    renderBarChart(governanceTopDocumentsChart, topDocumentsRows, 'Top Documents', '#0fa6ba');
 
-    const governanceReferential = [
-      'RGPD_Guide_Interne.pdf',
-      'DORA_Controls_2026.pdf',
-      'KYC_Operating_Standard.pdf',
-      'Politique_AntiFraude.pdf',
-      'Base_ACPR_Conformite.pdf',
-      'Procedure_Gestion_Reclamations.pdf',
-      'SLA_Contact_Center.pdf',
-      'Nomenclature_Categories_Client.pdf',
-    ];
-    const usedSources = new Set(citations.map((item) => String(item.source || '').trim().toLowerCase()).filter(Boolean));
-    const neverUsedDocs = governanceReferential.filter((name) => !usedSources.has(name.toLowerCase()));
+    const neverUsedDocs = Array.isArray(documentQuality.unused_documents) ? documentQuality.unused_documents : [];
+    const referentialCount = Number(documentQuality.referential_count || 0);
+    const usedCount = Math.max(referentialCount - neverUsedDocs.length, 0);
+    renderUnusedDonut(governanceUnusedDocumentsChart, usedCount, neverUsedDocs.length);
     renderUnusedDocs(neverUsedDocs);
 
     const retrievalStatus = statusFromRate(retrievalSuccessRate);
@@ -311,11 +477,41 @@ document.addEventListener('DOMContentLoaded', async () => {
       weakAgents: agentRows.filter((agent) => agent.status.className !== 'ok').map((agent) => agent.name),
     };
 
+    const monitoredMetrics = {
+      retrievalSuccessRate,
+      sourceMatchRate,
+      categoryMatchRate,
+      keywordMatchRate,
+      responsesWithSourcesRate: (responsesWithSources / totalResponses) * 100,
+    };
+
+    renderThresholdControls(monitoredMetrics);
+    renderAlerting(monitoredMetrics);
+
+    if (governanceResetThresholds) {
+      governanceResetThresholds.onclick = () => {
+        alertThresholds = loadThresholds();
+        Object.keys(alertThresholds).forEach((key) => {
+          alertThresholds[key].orange = defaultThresholds[key].orange;
+          alertThresholds[key].red = defaultThresholds[key].red;
+        });
+        saveThresholds(alertThresholds);
+        renderThresholdControls(monitoredMetrics);
+        renderAlerting(monitoredMetrics);
+      };
+    }
+
     mountGovernanceCopilot();
   } catch (error) {
     renderFallbackState();
     if (governanceAgentsBody) {
       governanceAgentsBody.innerHTML = '<tr><td colspan="5">Monitoring indisponible</td></tr>';
+    }
+    if (governanceAlertsList) {
+      governanceAlertsList.innerHTML = '<div class="governance-alert-item red">Impossible de calculer les alertes.</div>';
+    }
+    if (governanceRecommendations) {
+      governanceRecommendations.innerHTML = '<li>Vérifier la disponibilité des endpoints /governance, /evaluation et /web/governance/document-quality.</li>';
     }
     mountGovernanceCopilot();
   }

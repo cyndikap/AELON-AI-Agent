@@ -19,7 +19,7 @@ from azure_chat_llm import AzureChatLLM
 from multi_agent.l0.l0_agent import L0Agent
 from multi_agent.l1.l1_agent import L1Agent
 from multi_agent.fraud.fraud_agent import FraudAgent
-from multi_agent.sentiment.sentiment_agent import SentimentAgent
+from multi_agent.sentiment_language.sentiment_language_agent import SentimentLanguageAgent
 from multi_agent.compliance.compliance_agent import ComplianceAgent
 from multi_agent.privacy.privacy_agent import PrivacyAgent
 from multi_agent.evaluation.evaluation_agent import EvaluationAgent
@@ -62,7 +62,7 @@ class Orchestrator:
         self.l1 = L1Agent(llm, retriever=retriever)
 
         self.fraud = FraudAgent(llm)
-        self.sentiment = SentimentAgent(llm)
+        self.sentiment_language = SentimentLanguageAgent()
         self.compliance = ComplianceAgent(llm)
         self.privacy = PrivacyAgent()
         self.evaluation = EvaluationAgent()
@@ -102,15 +102,145 @@ Text:
 
         return "en"
 
+    @staticmethod
+    def _normalize_sources(sources_payload: list[dict]) -> list[str]:
+        unique = set()
+        names = []
+        for item in sources_payload or []:
+            if not isinstance(item, dict):
+                continue
+            source = str(item.get("source", "")).strip()
+            if not source:
+                continue
+            key = source.lower()
+            if key in unique:
+                continue
+            unique.add(key)
+            names.append(source)
+        return names
+
+    @staticmethod
+    def _recommended_action(language_code: str, user_query: str) -> str:
+        query = str(user_query or "").lower()
+        is_card_or_fraud = any(
+            token in query
+            for token in ("fraud", "fraude", "carte", "card", "بطاقة", "احتيال", "transfer", "virement")
+        )
+
+        if language_code == "en":
+            return (
+                "Contact your bank immediately and secure your account through the official support channel."
+                if is_card_or_fraud
+                else "Contact your bank support channel to validate the next operational steps."
+            )
+        if language_code == "es":
+            return (
+                "Contacte de inmediato a su banco y asegure su cuenta por el canal oficial de soporte."
+                if is_card_or_fraud
+                else "Contacte el canal de soporte de su banco para validar los siguientes pasos."
+            )
+        if language_code == "de":
+            return (
+                "Kontaktieren Sie umgehend Ihre Bank und sichern Sie Ihr Konto uber den offiziellen Supportkanal."
+                if is_card_or_fraud
+                else "Kontaktieren Sie den Support Ihrer Bank, um die nachsten Schritte zu bestatigen."
+            )
+        if language_code == "it":
+            return (
+                "Contatti subito la banca e metta in sicurezza il conto tramite il canale ufficiale di supporto."
+                if is_card_or_fraud
+                else "Contatti il supporto della banca per confermare i prossimi passaggi operativi."
+            )
+        if language_code == "ar":
+            return (
+                "تواصل فورا مع بنكك وقم بتأمين حسابك عبر قناة الدعم الرسمية."
+                if is_card_or_fraud
+                else "تواصل مع دعم البنك لتأكيد الخطوات التالية."
+            )
+        return (
+            "Contactez immediatement votre banque et securisez votre compte via le canal de support officiel."
+            if is_card_or_fraud
+            else "Contactez le support de votre banque pour valider les prochaines etapes."
+        )
+
+    @staticmethod
+    def _response_labels(language_code: str) -> dict:
+        labels = {
+            "fr": {
+                "answer": "Reponse",
+                "action": "Action recommandee",
+                "sources": "Sources utilisees",
+                "empty": "Aucune source explicite",
+            },
+            "en": {
+                "answer": "Response",
+                "action": "Recommended action",
+                "sources": "Sources used",
+                "empty": "No explicit source",
+            },
+            "es": {
+                "answer": "Respuesta",
+                "action": "Accion recomendada",
+                "sources": "Fuentes utilizadas",
+                "empty": "Sin fuente explicita",
+            },
+            "de": {
+                "answer": "Antwort",
+                "action": "Empfohlene Aktion",
+                "sources": "Verwendete Quellen",
+                "empty": "Keine explizite Quelle",
+            },
+            "it": {
+                "answer": "Risposta",
+                "action": "Azione raccomandata",
+                "sources": "Fonti utilizzate",
+                "empty": "Nessuna fonte esplicita",
+            },
+            "ar": {
+                "answer": "الرد",
+                "action": "الإجراء الموصى به",
+                "sources": "المصادر المستخدمة",
+                "empty": "لا توجد مصادر صريحة",
+            },
+        }
+        return labels.get(language_code, labels["fr"])
+
+    def _compose_structured_response(self, opening: str, business_answer: str, action: str, sources_payload: list[dict], language_code: str) -> str:
+        labels = self._response_labels(language_code)
+        source_names = self._normalize_sources(sources_payload)
+        source_lines = "\n".join([f"- {name}" for name in source_names]) if source_names else f"- {labels['empty']}"
+
+        return (
+            f"{opening}\n\n"
+            f"{labels['answer']}\n"
+            f"{(business_answer or '').strip()}\n\n"
+            f"{labels['action']}\n"
+            f"{action}\n\n"
+            f"📚 {labels['sources']}\n"
+            f"{source_lines}"
+        ).strip()
+
     def handle_user_query(self, query, user_session_id="anonymous"):
         request_started = time.perf_counter()
         logger.info("orchestrator.start")
         logger.info("orchestrator.handle_user_query start query=%s", query)
-        privacy_result = self.privacy.process(query, language="fr")
+        pre_profile = self.sentiment_language.analyze(query, session_id=user_session_id)
+        if pre_profile.language_code in {"en", "fr"}:
+            privacy_result = self.privacy.process(query, language=pre_profile.language_code)
+        else:
+            privacy_result = {"anonymized_text": query, "detected_entities": []}
         query_safe = privacy_result.get("anonymized_text", str(query or ""))
         question = query_safe
-        user_language = self._detect_user_language(query_safe)
-        logger.info("orchestrator.language=%s safe_query=%s", user_language, query_safe)
+        tone_profile = self.sentiment_language.analyze(query_safe, session_id=user_session_id)
+        user_language = tone_profile.language_code
+        sentiment = {
+            "sentiment": tone_profile.sentiment,
+            "urgency_level": "high" if tone_profile.sentiment == "Urgent" else "medium" if tone_profile.sentiment in {"Frustré", "Inquiet"} else "low",
+            "tone_hint": tone_profile.tone_hint,
+            "raw": "rule_based",
+        }
+        tone_hint = tone_profile.tone_hint
+        logger.info("orchestrator.language=%s sentiment=%s safe_query=%s", user_language, tone_profile.sentiment, query_safe)
 
         def _persist_conversation(answer: str, sources_payload: list[dict], retrieval_count: int) -> None:
             response_time_ms = round((time.perf_counter() - request_started) * 1000, 2)
@@ -147,7 +277,22 @@ Text:
         logger.info("orchestrator.fraud_result=%s", fraud_result)
 
         if fraud_result.get("is_fraud", False):
-            blocked_response = "🚨 Activité suspecte détectée. Veuillez contacter le support."
+            fraud_messages = {
+                "fr": "Activite suspecte detectee. Veuillez contacter votre banque immediatement.",
+                "en": "Suspicious activity detected. Please contact your bank immediately.",
+                "es": "Actividad sospechosa detectada. Contacte inmediatamente con su banco.",
+                "de": "Verdachtige Aktivitat erkannt. Bitte kontaktieren Sie sofort Ihre Bank.",
+                "it": "Attivita sospetta rilevata. Contatti immediatamente la sua banca.",
+                "ar": "تم رصد نشاط مشبوه. يرجى التواصل فورا مع بنكك.",
+            }
+            blocked_response = fraud_messages.get(user_language, fraud_messages["fr"])
+            blocked_response = self._compose_structured_response(
+                opening=tone_profile.opening,
+                business_answer=blocked_response,
+                action=self._recommended_action(user_language, query_safe),
+                sources_payload=[],
+                language_code=user_language,
+            )
             evaluation = self.evaluation.evaluate(
                 question=query_safe,
                 answer=blocked_response,
@@ -162,17 +307,10 @@ Text:
                 "escalated": False,
                 "escalation_reason": "fraud_detected",
                 "agent": "blocked",
-                "sentiment": "neutre",
+                "sentiment": tone_profile.sentiment,
                 "language": user_language,
                 "response_time_ms": round((time.perf_counter() - request_started) * 1000, 2),
             }
-
-        # -------------------------------
-        # 3. SENTIMENT
-        # -------------------------------
-        sentiment = self.sentiment.analyze(query_safe)
-        tone_hint = sentiment.get("tone_hint", "neutre")
-        logger.info("orchestrator.sentiment=%s tone_hint=%s", sentiment, tone_hint)
 
         # -------------------------------
         # 4. DATA (DATABRICKS)
@@ -418,6 +556,14 @@ Task:
             logger.info("llm.end stage=language_lock")
         except Exception:
             pass
+
+        final_response = self._compose_structured_response(
+            opening=tone_profile.opening,
+            business_answer=final_response,
+            action=self._recommended_action(user_language, query_safe),
+            sources_payload=retrieval_sources,
+            language_code=user_language,
+        )
 
         evaluation = self.evaluation.evaluate(
             question=query_safe,

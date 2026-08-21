@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  const requestTimeoutMs = 65000;
 
   const appendSourcesToBubble = (bubble, sources) => {
     const cleanSources = normalizeSources(sources);
@@ -180,24 +181,42 @@ document.addEventListener('DOMContentLoaded', () => {
     isSending = true;
     const typingRow = addMessage('assistant', '', { typing: true });
     if (chatInput) chatInput.disabled = true;
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000);
-    try {
-      const response = await fetch('/web/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-session-id': sessionId,
-        },
-        body: JSON.stringify({ query: value }),
-        signal: controller.signal,
-      });
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
+    const callChatApi = async () => {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), requestTimeoutMs);
+      try {
+        const response = await fetch('/web/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-session-id': sessionId,
+          },
+          body: JSON.stringify({ query: value }),
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        return await response.json();
+      } finally {
+        clearTimeout(timeoutId);
       }
+    };
 
-      const data = await response.json();
+    try {
+      let data;
+      try {
+        data = await callChatApi();
+      } catch (error) {
+        // One silent retry for long-running model inference that exceeded timeout.
+        if (error?.name !== 'AbortError') {
+          throw error;
+        }
+        data = await callChatApi();
+      }
       typingRow.remove();
       await streamAssistantMessage(data.answer || 'Je n ai pas pu generer de reponse pour le moment.', data.sources || []);
       return data;
@@ -206,7 +225,6 @@ document.addEventListener('DOMContentLoaded', () => {
       await streamAssistantMessage('Le delai de reponse est depasse ou une erreur est survenue. Merci de reessayer dans un instant.');
       return null;
     } finally {
-      clearTimeout(timeoutId);
       isSending = false;
       if (chatInput) {
         chatInput.disabled = false;
