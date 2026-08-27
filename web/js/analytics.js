@@ -272,8 +272,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     );
   };
 
-  const answerTemplate = (question, context) => {
+  const answerTemplate = (question, context, history = []) => {
     const { fraudCount, escaladeRate, dominant, topCategoryLabel } = context;
+    const normalized = String(question || '').toLowerCase();
+    const lastAssistant = [...history].reverse().find((turn) => turn.role === 'assistant')?.content || '';
+
+    if (normalized.includes('exemple')) {
+      return `Exemple concret: une demande sur un paiement suspect peut d abord etre classee comme demande carte standard. Cela cree une escalade inutile. En ajoutant des exemples fraude plus explicites, AELON oriente plus vite vers le bon parcours.`;
+    }
+    if (normalized.includes('comment') || normalized.includes('amelior')) {
+      return `Pour ameliorer rapidement: 1) enrichir les cas metier de la categorie ${topCategoryLabel}, 2) cibler les motifs d escalade, 3) ajouter des formulations client proches du terrain. Cela reduit les reponses ambiguës et stabilise les KPI.`;
+    }
+    if (normalized.includes('precis') || normalized.includes('detail') || normalized.includes('pourquoi')) {
+      if (lastAssistant) {
+        return `En detail: ${lastAssistant} Ce signal est principalement lie au couple volume eleve + complexite metier sur les demandes sensibles.`;
+      }
+    }
 
     if (question.includes('fraudes')) {
       return `Les alertes fraude progressent principalement quand les clients mentionnent des operations sensibles. Le volume actuel est de ${fraudCount}, ce qui suggere de renforcer la prevention proactive et les scripts de verification.`;
@@ -377,12 +391,13 @@ document.addEventListener('DOMContentLoaded', async () => {
           'Quels indicateurs necessitent une attention immediate ?',
         ],
         initialMessage: 'Selectionnez une question pour afficher une analyse metier.',
-        onAsk: async (question) => {
+        onAsk: async (question, contextPayload) => {
+          const history = Array.isArray(contextPayload?.history) ? contextPayload.history : [];
           try {
             const res = await fetch('/web/analytics/chat', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ question }),
+              body: JSON.stringify({ question, history }),
             });
 
             if (!res.ok) {
@@ -390,9 +405,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             const payload = await res.json();
-            return String(payload.answer || '').trim() || answerTemplate(question, context);
+            return String(payload.answer || '').trim() || answerTemplate(question, context, history);
           } catch (_error) {
-            return answerTemplate(question, context);
+            return answerTemplate(question, context, history);
           }
         },
       });

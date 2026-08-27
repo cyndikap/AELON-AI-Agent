@@ -352,7 +352,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         'Que recommandez-vous pour le prochain sprint ?',
       ],
       initialMessage: 'Sélectionnez une question pour obtenir des recommandations d’analyse IA.',
-      onAsk: async (question) => {
+      onAsk: async (question, contextPayload) => {
+        const normalized = String(question || '').toLowerCase();
+        const history = Array.isArray(contextPayload?.history) ? contextPayload.history : [];
+        const lastAssistant = [...history].reverse().find((turn) => turn.role === 'assistant')?.content || '';
+
+        if (normalized.includes('exemple')) {
+          return 'Exemple: une question melangeant fraude et carte bancaire peut etre classee dans une seule categorie alors qu elle couvre deux intentions. Le score de categorie baisse, puis la recommandation devient trop generale.';
+        }
+        if (normalized.includes('comment') || normalized.includes('amelior')) {
+          return 'Pour ameliorer: enrichir les exemples metier hybrides, renforcer les synonymes de taxonomie et valider chaque sprint les categories les plus ambiguës avec des cas reels.';
+        }
+        if (normalized.includes('precis') || normalized.includes('detail')) {
+          if (lastAssistant) {
+            return `En detail: ${lastAssistant} Le levier prioritaire reste la qualite de classification metier.`;
+          }
+        }
+
         if (question.includes('Category Match Rate')) {
           return 'Le Category Match Rate reste faible car la taxonomie métier est partiellement sous-représentée et les requêtes couvrent des cas hybrides. Il faut enrichir les intents, corriger le mapping des catégories et renforcer la cohérence des labels métier.';
         }

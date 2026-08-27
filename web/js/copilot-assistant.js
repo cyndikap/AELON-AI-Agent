@@ -16,7 +16,7 @@
     },
     evaluation: {
       icon: '📈',
-      label: 'Evaluation Chat',
+      label: 'Evaluation Copilot',
       title: 'Evaluation Copilot',
       kicker: 'Evaluation Copilot',
       color: 'linear-gradient(135deg, #007f79 0%, #00a99e 52%, #3fc9bd 100%)',
@@ -41,8 +41,14 @@
         </div>
         <button class="copilot-assistant-close" type="button" aria-label="Fermer">×</button>
       </div>
+      <div class="copilot-assistant-section-title">💡 Questions suggerees</div>
       <div class="copilot-assistant-questions"></div>
-      <div class="copilot-assistant-answer"></div>
+      <div class="copilot-assistant-section-title">💬 Historique de conversation</div>
+      <div class="copilot-assistant-history" role="log" aria-live="polite"></div>
+      <form class="copilot-assistant-input" autocomplete="off">
+        <input type="text" class="copilot-assistant-textbox" placeholder="Posez votre question..." aria-label="Posez votre question" />
+        <button type="submit" class="copilot-assistant-send">Envoyer</button>
+      </form>
     `;
 
     const fab = document.createElement('button');
@@ -59,38 +65,111 @@
     document.body.appendChild(panel);
     document.body.appendChild(fab);
 
-    const answerEl = panel.querySelector('.copilot-assistant-answer');
+    const historyEl = panel.querySelector('.copilot-assistant-history');
     const closeEl = panel.querySelector('.copilot-assistant-close');
     const questionsEl = panel.querySelector('.copilot-assistant-questions');
+    const inputFormEl = panel.querySelector('.copilot-assistant-input');
+    const inputEl = panel.querySelector('.copilot-assistant-textbox');
+    const sendEl = panel.querySelector('.copilot-assistant-send');
 
-    answerEl.textContent = initialMessage || 'Selectionnez une question pour afficher une analyse immediate.';
+    let isAsking = false;
+    const turns = [];
 
-    questions.forEach((question) => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'copilot-assistant-question';
-      button.textContent = question;
-      button.addEventListener('click', async () => {
-        answerEl.textContent = 'Analyse en cours...';
-        try {
-          if (typeof onAsk === 'function') {
-            const response = await onAsk(question);
-            answerEl.textContent = (response || '').toString().trim() || 'Aucune recommandation disponible.';
-          } else {
-            answerEl.textContent = 'Aucune recommandation disponible.';
-          }
-        } catch (_error) {
-          answerEl.textContent = 'Une erreur est survenue pendant l analyse.';
-        }
+    const setBusyState = (busy) => {
+      isAsking = busy;
+      if (inputEl) inputEl.disabled = busy;
+      if (sendEl) sendEl.disabled = busy;
+      if (!questionsEl) return;
+      questionsEl.querySelectorAll('button').forEach((button) => {
+        button.disabled = busy;
       });
-      questionsEl.appendChild(button);
-    });
+    };
+
+    const addTurn = (role, text, opts = {}) => {
+      if (!historyEl) return null;
+      const row = document.createElement('div');
+      row.className = `copilot-assistant-msg ${role}${opts.typing ? ' typing' : ''}`;
+      const bubble = document.createElement('div');
+      bubble.className = 'copilot-assistant-bubble';
+      bubble.textContent = opts.typing ? 'Analyse en cours...' : String(text || '').trim();
+      row.appendChild(bubble);
+      historyEl.appendChild(row);
+      historyEl.scrollTop = historyEl.scrollHeight;
+      return row;
+    };
+
+    const buildHistoryPayload = () => turns.map((turn) => ({ role: turn.role, content: turn.content }));
+
+    const askQuestion = async (question) => {
+      const userText = String(question || '').trim();
+      if (!userText || isAsking || !historyEl) return;
+
+      addTurn('user', userText);
+      turns.push({ role: 'user', content: userText });
+
+      if (inputEl) {
+        inputEl.value = '';
+      }
+
+      setBusyState(true);
+      const typingRow = addTurn('assistant', '', { typing: true });
+
+      try {
+        let responseText = 'Aucune recommandation disponible.';
+        if (typeof onAsk === 'function') {
+          const response = await onAsk(userText, {
+            mode,
+            history: buildHistoryPayload(),
+          });
+          const normalized = String(response || '').trim();
+          responseText = normalized || responseText;
+        }
+        if (typingRow) typingRow.remove();
+        addTurn('assistant', responseText);
+        turns.push({ role: 'assistant', content: responseText });
+      } catch (_error) {
+        if (typingRow) typingRow.remove();
+        const errorText = 'Une erreur est survenue pendant l analyse.';
+        addTurn('assistant', errorText);
+        turns.push({ role: 'assistant', content: errorText });
+      } finally {
+        setBusyState(false);
+        if (inputEl) inputEl.focus();
+      }
+    };
+
+    if (historyEl) {
+      const intro = initialMessage || 'Selectionnez une question pour demarrer la conversation.';
+      addTurn('assistant', intro);
+      turns.push({ role: 'assistant', content: intro });
+    }
+
+    if (questionsEl) {
+      questions.forEach((question) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'copilot-assistant-question';
+        button.textContent = question;
+        button.addEventListener('click', () => {
+          askQuestion(question);
+        });
+        questionsEl.appendChild(button);
+      });
+    }
+
+    if (inputFormEl && inputEl) {
+      inputFormEl.addEventListener('submit', (event) => {
+        event.preventDefault();
+        askQuestion(inputEl.value);
+      });
+    }
 
     const open = () => {
       panel.classList.add('open');
       overlay.classList.add('open');
       panel.setAttribute('aria-hidden', 'false');
       overlay.setAttribute('aria-hidden', 'false');
+      if (inputEl) inputEl.focus();
     };
 
     const close = () => {

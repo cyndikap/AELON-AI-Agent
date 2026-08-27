@@ -353,8 +353,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     weakAgents: [],
   };
 
-  const localGovernanceAnswer = (question) => {
+  const localGovernanceAnswer = (question, history = []) => {
     const normalized = String(question || '').toLowerCase();
+    const lastAssistant = [...history].reverse().find((turn) => turn.role === 'assistant')?.content || '';
+
+    if (normalized.includes('exemple')) {
+      return 'Exemple: si le Source Match Rate baisse sur des questions RGPD, la recommandation est de renforcer les documents de reference RGPD et de verifier leur priorisation dans le retrieval.';
+    }
+    if (normalized.includes('comment') || normalized.includes('amelior')) {
+      return 'Plan d amelioration: enrichir les documents peu cites, corriger les metadonnees critiques, puis reexecuter un cycle de tests sur les parcours sensibles.';
+    }
+    if (normalized.includes('precis') || normalized.includes('detail')) {
+      if (lastAssistant) {
+        return `Precision: ${lastAssistant} L enjeu principal est de securiser les parcours reglementaires et d eviter les reponses mal justifiees.`;
+      }
+    }
+
     if (normalized.includes('sources')) {
       return `Les sources les plus utilisées sont dominées par ${governanceContext.topSource}. Le volume de réponses avec sources est actuellement de ${governanceContext.withSources}.`;
     }
@@ -387,20 +401,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         'Quels agents nécessitent une attention ?',
       ],
       initialMessage: 'Sélectionnez une question pour piloter la gouvernance IA bancaire.',
-      onAsk: async (question) => {
+      onAsk: async (question, contextPayload) => {
+        const history = Array.isArray(contextPayload?.history) ? contextPayload.history : [];
         try {
           const res = await fetch('/web/governance/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ question }),
+            body: JSON.stringify({ question, history }),
           });
           if (!res.ok) {
             throw new Error(`HTTP ${res.status}`);
           }
           const payload = await res.json();
-          return String(payload.answer || '').trim() || localGovernanceAnswer(question);
+          return String(payload.answer || '').trim() || localGovernanceAnswer(question, history);
         } catch (_error) {
-          return localGovernanceAnswer(question);
+          return localGovernanceAnswer(question, history);
         }
       },
     });
@@ -483,7 +498,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       },
       {
         id: 'sourceMatchRate',
-        businessLabel: '✅ Fiabilite des sources',
+        businessLabel: 'Fiabilite des sources',
         technicalLabel: 'Source Match Rate',
         tooltip: 'Alignement entre la source attendue et la source citee.',
         value: formatPercent(sourceMatchRate),
