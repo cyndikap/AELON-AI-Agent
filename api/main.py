@@ -850,15 +850,13 @@ def web_chat(payload: WebChatRequest, request: Request):
 
     final_answer_raw = response.get("answer") or response.get("response") or ""
     response_language = str(response.get("language") or detected_language or "fr").lower()
-    if response_language in {"en", "fr"}:
-        answer_privacy = privacy_agent.process(final_answer_raw, language=response_language)
-        masked_answer = _strict_mask_sensitive(answer_privacy.get("anonymized_text", final_answer_raw))
-    else:
-        answer_privacy = {"anonymized_text": final_answer_raw, "detected_entities": []}
-        masked_answer = _strict_mask_sensitive(final_answer_raw)
-    placeholder_hits = re.findall(r"\[[A-Z0-9_]+\]", masked_answer)
+
+    # Keep assistant content readable: only apply strict regex-based masking here.
+    # Full NER anonymization is still applied on user input earlier in the pipeline.
+    masked_answer = _strict_mask_sensitive(final_answer_raw)
     final_answer = _naturalize_missing_placeholders(masked_answer, response_language)
-    if (not final_answer.strip()) or (placeholder_hits and len(placeholder_hits) >= 2 and not _looks_structured_answer(final_answer)):
+    unresolved_placeholders = re.findall(r"\[[A-Z0-9_]+\]", final_answer)
+    if (not final_answer.strip()) or (len(unresolved_placeholders) >= 2 and not _looks_structured_answer(final_answer)):
         final_answer = _structured_premium_fallback_by_language(response_language)
     evaluation = response.get("evaluation", {}) if isinstance(response.get("evaluation", {}), dict) else {}
     sources = _extract_sources_for_web(response)
