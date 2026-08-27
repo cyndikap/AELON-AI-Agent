@@ -6,9 +6,10 @@
   <title>AELON | Evaluation Dashboard</title>
   <link rel="icon" type="image/svg+xml" href="/static/aelon-icon.svg" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/global.css" />
-  <link rel="stylesheet" href="/css/copilot-assistant.css?v=20260821" />
-  <link rel="stylesheet" href="/css/evaluation.css?v=20260821" />
+  <link rel="stylesheet" href="/css/global.css?v=20260827" />
+  <link rel="stylesheet" href="/css/explainability.css?v=20260827" />
+  <link rel="stylesheet" href="/css/copilot-assistant.css?v=20260827" />
+  <link rel="stylesheet" href="/css/evaluation.css?v=20260827" />
 </head>
 <body>
   <div class="aelon-app-shell">
@@ -44,6 +45,14 @@
           </a>
         </div>
       </div>
+
+      <div class="aelon-nav-section aelon-sidebar-guide-link">
+        <div class="aelon-section-label">Pedagogie</div>
+        <a class="aelon-space-link" href="#aelonGuidePanel">
+          <strong>🎓 Comprendre AELON</strong>
+          <small>Comment lire les scores et agir sur les performances</small>
+        </a>
+      </div>
     </aside>
 
     <main class="aelon-main">
@@ -57,38 +66,154 @@
         </header>
 
         <div class="aelon-page-content evaluation-page">
-          <div class="analytics-summary">
-            <h2>📋 Synthèse Evaluation</h2>
-            <div id="evaluationKpiGrid" class="analytics-kpi-grid"></div>
-          </div>
+          <section class="eval-topbar">
+            <div>
+              <p class="eval-eyebrow">Performance IA</p>
+              <h2>Centre de pilotage des agents bancaires</h2>
+            </div>
+            <div class="eval-topbar-actions">
+              <button class="eval-secondary-btn" type="button">Exporter</button>
+              <button class="eval-primary-btn" type="button">Dernier run · 2026-08-26</button>
+            </div>
+          </section>
 
-          <div class="analytics-grid">
-            <div class="analytics-panel large">
-              <h3>Couverture des catégories</h3>
-              <div id="evaluationCoveragePanel" class="analytics-chart-box">Chargement...</div>
+          <section class="aelon-explain-toolbar">
+            <div class="aelon-view-switch" id="evaluationViewSwitch">
+              <strong>Double vue :</strong>
+              <label><input type="radio" name="aelon-view-mode" value="business" checked /> Vue Metier</label>
+              <label><input type="radio" name="aelon-view-mode" value="technical" /> Vue Technique</label>
             </div>
-            <div class="analytics-panel medium">
-              <h3>Temps de réponse moyen</h3>
-              <div id="evaluationResponsePanel" class="analytics-chart-box">Chargement...</div>
-            </div>
-            <div class="analytics-panel medium">
-              <h3>Chunks récupérés</h3>
-              <div id="evaluationChunksPanel" class="analytics-chart-box">Chargement...</div>
-            </div>
-            <div class="analytics-panel">
-              <h3>Détail par question</h3>
-              <div id="evaluationDetailsList" class="analytics-list">
-                <div class="analytics-list-item"><span>Chargement...</span><strong>-</strong></div>
+            <p class="aelon-view-hint">Chaque KPI est cliquable avec explication, calcul et action recommandee.</p>
+          </section>
+
+          <section id="evaluationSynthesis" class="aelon-synthesis-panel"></section>
+
+          <section class="eval-kpi-panel">
+            <div class="eval-section-heading">
+              <div>
+                <p class="eval-section-kicker">KPI premium</p>
+                <h3>Indicateurs clés</h3>
               </div>
             </div>
-          </div>
+            <div id="evaluationKpiGrid" class="eval-kpi-grid"></div>
+          </section>
 
+          <section class="eval-overview-grid">
+            <article class="eval-panel eval-score-panel">
+              <div class="eval-panel-header">
+                <div>
+                  <p class="eval-section-kicker">Score global</p>
+                  <h3>🏆 Global Evaluation Score</h3>
+                </div>
+                <span id="evaluationGlobalScoreTrigger" class="eval-score-pill">78 / 100</span>
+              </div>
+              <div class="eval-score-layout">
+                <div class="eval-score-ring-wrapper">
+                  <svg viewBox="0 0 180 180" class="eval-score-ring" aria-label="Global score 78 sur 100">
+                    <circle class="eval-score-ring-bg" cx="90" cy="90" r="62"></circle>
+                    <circle class="eval-score-ring-value" cx="90" cy="90" r="62" stroke-dasharray="389.56" stroke-dashoffset="86.56"></circle>
+                  </svg>
+                  <div class="eval-score-ring-inner">
+                    <strong>78</strong>
+                    <span>/ 100</span>
+                  </div>
+                </div>
+                <div class="eval-score-breakdown">
+                  <div><span>Retrieval</span><strong>94%</strong></div>
+                  <div><span>Sources</span><strong>90%</strong></div>
+                  <div><span>Catégories</span><strong>72%</strong></div>
+                  <div><span>Keywords</span><strong>68%</strong></div>
+                  <div><span>Coverage</span><strong>82%</strong></div>
+                </div>
+              </div>
+            </article>
+
+            <article class="eval-panel">
+              <div class="eval-panel-header">
+                <div>
+                  <p class="eval-section-kicker">Visualisation IA</p>
+                  <h3>🎯 Radar Chart</h3>
+                </div>
+              </div>
+              <div id="evaluationRadarChart" class="eval-radar-wrap"></div>
+              <p id="evaluationRadarAnalysis" class="aelon-ai-analysis"></p>
+            </article>
+          </section>
+
+          <section class="eval-grid-panel">
+            <article class="eval-panel eval-panel-wide">
+              <div class="eval-panel-header">
+                <div>
+                  <p class="eval-section-kicker">Performance métier</p>
+                  <h3>📊 Performance par catégorie</h3>
+                </div>
+              </div>
+              <div id="evaluationCategoryChart" class="eval-category-chart"></div>
+              <p id="evaluationCategoryAnalysis" class="aelon-ai-analysis"></p>
+            </article>
+
+            <article class="eval-panel">
+              <div class="eval-panel-header">
+                <div>
+                  <p class="eval-section-kicker">Latence</p>
+                  <h3>⚡ Temps moyen de réponse</h3>
+                </div>
+              </div>
+              <div id="evaluationLatencyChart" class="eval-linechart"></div>
+              <p id="evaluationLatencyAnalysis" class="aelon-ai-analysis"></p>
+            </article>
+
+            <article class="eval-panel">
+              <div class="eval-panel-header">
+                <div>
+                  <p class="eval-section-kicker">Récupération</p>
+                  <h3>📦 Chunks moyens récupérés</h3>
+                </div>
+              </div>
+              <div id="evaluationChunksChart" class="eval-barchart"></div>
+              <p id="evaluationChunksAnalysis" class="aelon-ai-analysis"></p>
+            </article>
+
+            <article class="eval-panel">
+              <div class="eval-panel-header">
+                <div>
+                  <p class="eval-section-kicker">Insights</p>
+                  <h3>🤖 AI Evaluation Insights</h3>
+                </div>
+              </div>
+              <ul id="evaluationInsightsList" class="eval-insights-list"></ul>
+            </article>
+          </section>
+
+          <section class="eval-table-panel eval-panel">
+            <div class="eval-panel-header">
+              <div>
+                <p class="eval-section-kicker">Analyse des erreurs</p>
+                <h3>📉 Questions les moins performantes</h3>
+              </div>
+            </div>
+            <div class="eval-table-wrap">
+              <table class="eval-table">
+                <thead>
+                  <tr>
+                    <th>Question</th>
+                    <th>KPI faible</th>
+                    <th>Cause probable</th>
+                  </tr>
+                </thead>
+                <tbody id="evaluationErrorTableBody"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section id="aelonGuidePanel" class="aelon-guide-panel"></section>
         </div>
       </div>
     </main>
   </div>
 
-  <script src="/js/copilot-assistant.js?v=20260821"></script>
-  <script src="/js/evaluation.js?v=20260821"></script>
+  <script src="/js/aelon-explainability.js?v=20260827"></script>
+  <script src="/js/copilot-assistant.js?v=20260827"></script>
+  <script src="/js/evaluation.js?v=20260827"></script>
 </body>
 </html>

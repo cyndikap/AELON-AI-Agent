@@ -9,11 +9,31 @@ document.addEventListener('DOMContentLoaded', async () => {
   const governanceAlertsList = document.getElementById('governanceAlertsList');
   const governanceRecommendations = document.getElementById('governanceRecommendations');
   const governanceResetThresholds = document.getElementById('governanceResetThresholds');
+  const governanceSynthesis = document.getElementById('governanceSynthesis');
+  const guideEl = document.getElementById('aelonGuidePanel');
+  const sourcesAnalysisEl = document.getElementById('governanceSourcesAnalysis');
+  const documentsAnalysisEl = document.getElementById('governanceDocumentsAnalysis');
+  const coverageAnalysisEl = document.getElementById('governanceCoverageAnalysis');
 
   const formatPercent = (value) => `${Number(value || 0).toFixed(2)}%`;
   const formatInteger = (value) => String(Math.round(Number(value || 0)));
   const formatMs = (value) => `${Math.round(Number(value || 0))} ms`;
   const alertStorageKey = 'aelon-governance-thresholds-v1';
+  let currentViewMode = 'business';
+  let lastKpis = [];
+
+  if (window.AelonExplainability?.renderGuide) {
+    window.AelonExplainability.renderGuide(guideEl);
+  }
+
+  if (window.AelonExplainability?.bindViewMode) {
+    window.AelonExplainability.bindViewMode((mode) => {
+      currentViewMode = mode;
+      if (lastKpis.length) {
+        renderKpis(lastKpis);
+      }
+    });
+  }
 
   const defaultThresholds = {
     retrievalSuccessRate: { label: 'Retrieval Success Rate', orange: 85, red: 70 },
@@ -54,6 +74,63 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   let alertThresholds = loadThresholds();
 
+  const KPI_META = {
+    responsesWithSources: {
+      title: 'Reponses avec sources',
+      details: {
+        meaning: 'Mesure la part des reponses appuyees par au moins une source documentaire.',
+        why: 'Une reponse sourcee est plus fiable et plus explicable pour le metier.',
+        formula: 'Nombre de reponses avec source / Nombre total de reponses.',
+        action: 'Rendre obligatoire la citation de source pour les sujets reglementaires critiques.',
+      },
+    },
+    citedDocuments: {
+      title: 'Documents cites',
+      details: {
+        meaning: 'Volume de citations documentaires dans les reponses generees.',
+        why: 'Permet de verifier que le corpus est reellement exploite par l IA.',
+        formula: 'Somme des citations de documents sur la periode.',
+        action: 'Identifier les documents jamais cites et les enrichir.',
+      },
+    },
+    retrievalSuccessRate: {
+      title: 'Retrieval Success Rate',
+      details: {
+        meaning: 'Capacite du systeme a retrouver les bons documents pour repondre.',
+        why: 'Sans retrieval pertinent, la reponse peut devenir approximative.',
+        formula: 'Questions avec retrieval pertinent / Questions evaluees.',
+        action: 'Revoir le chunking et le ranking des documents pour les cas faibles.',
+      },
+    },
+    sourceMatchRate: {
+      title: 'Source Match Rate',
+      details: {
+        meaning: 'Mesure l alignement entre la reponse et la source attendue.',
+        why: 'Garantit la tracabilite et la conformite de la reponse.',
+        formula: 'Reponses avec source correcte / Reponses evaluees.',
+        action: 'Renforcer les regles de citation et la precision du mapping source-reponse.',
+      },
+    },
+    categoryMatchRate: {
+      title: 'Category Match Rate',
+      details: {
+        meaning: 'Mesure la bonne classification metier de la demande client.',
+        why: 'Une mauvaise categorie envoie les mauvaises recommandations.',
+        formula: 'Questions bien classees / Questions evaluees.',
+        action: 'Ameliorer le jeu d intents et la taxonomie metier.',
+      },
+    },
+    keywordMatchRate: {
+      title: 'Keyword Match Rate',
+      details: {
+        meaning: 'Mesure la couverture des mots-cles metier attendus dans la reponse.',
+        why: 'Revele si la reponse traite vraiment les points attendus.',
+        formula: 'Mots-cles retrouves / Mots-cles attendus.',
+        action: 'Ajouter des exemples metier et synonymes dans la base de connaissance.',
+      },
+    },
+  };
+
   const statusFromRate = (rate) => {
     if (rate >= 85) return { label: 'Stable', className: 'ok' };
     if (rate >= 65) return { label: 'À surveiller', className: 'warn' };
@@ -63,17 +140,28 @@ document.addEventListener('DOMContentLoaded', async () => {
   const renderKpis = (kpis) => {
     if (!governanceKpiGrid) return;
     governanceKpiGrid.innerHTML = '';
+    lastKpis = kpis;
 
     kpis.forEach((kpi) => {
       const card = document.createElement('article');
-      card.className = 'governance-kpi-card';
+      card.className = 'governance-kpi-card aelon-kpi-clickable';
+      card.setAttribute('data-kpi-id', kpi.id);
+      card.setAttribute('data-kpi-score', String(Math.round(Number(kpi.score || 0))));
+      const label = currentViewMode === 'technical' ? kpi.technicalLabel : kpi.businessLabel;
       card.innerHTML = `
-        <div class="governance-kpi-label">${kpi.label}</div>
+        <div style="display:flex;justify-content:space-between;gap:0.5rem;align-items:flex-start;">
+          <div class="governance-kpi-label">${label}</div>
+          <button type="button" class="aelon-kpi-help" data-tooltip="${kpi.tooltip || 'Explication de l indicateur'}">ⓘ</button>
+        </div>
         <div class="governance-kpi-value">${kpi.value}</div>
         <div class="governance-kpi-trend">${kpi.hint}</div>
       `;
       governanceKpiGrid.appendChild(card);
     });
+
+    if (window.AelonExplainability?.setupKpiInteractions) {
+      window.AelonExplainability.setupKpiInteractions(governanceKpiGrid, (id) => KPI_META[id]);
+    }
   };
 
   const ensurePlotly = () => typeof window.Plotly !== 'undefined';
@@ -367,37 +455,77 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const kpis = [
       {
-        label: '🛡️ Réponses avec sources',
+        id: 'responsesWithSources',
+        businessLabel: '🛡️ Reponses justifiees',
+        technicalLabel: 'Responses With Sources',
+        tooltip: 'Part des reponses qui citent au moins une source.',
         value: formatInteger(responsesWithSources),
         hint: `${formatPercent((responsesWithSources / totalResponses) * 100)} des réponses`,
+        score: (responsesWithSources / totalResponses) * 100,
       },
       {
-        label: '📚 Documents cités',
+        id: 'citedDocuments',
+        businessLabel: '📚 Documents mobilises',
+        technicalLabel: 'Cited Documents',
+        tooltip: 'Volume de documents cites pour soutenir les reponses.',
         value: formatInteger(citations.reduce((sum, item) => sum + Number(item.count || 0), 0)),
         hint: `${formatInteger(citations.length)} sources distinctes`,
+        score: Math.min(100, 55 + (citations.length * 10)),
       },
       {
-        label: '📈 Retrieval Success Rate',
+        id: 'retrievalSuccessRate',
+        businessLabel: '📚 Documents correctement retrouves',
+        technicalLabel: 'Retrieval Success Rate',
+        tooltip: 'Capacite de l IA a retrouver les documents pertinents.',
         value: formatPercent(retrievalSuccessRate),
         hint: `${formatPercent(governanceData.retrieval_empty_rate || 0)} retrieval vide`,
+        score: retrievalSuccessRate,
       },
       {
-        label: '✅ Source Match Rate',
+        id: 'sourceMatchRate',
+        businessLabel: '✅ Fiabilite des sources',
+        technicalLabel: 'Source Match Rate',
+        tooltip: 'Alignement entre la source attendue et la source citee.',
         value: formatPercent(sourceMatchRate),
         hint: 'Alignement réponse vs source',
+        score: sourceMatchRate,
       },
       {
-        label: '🎯 Category Match Rate',
+        id: 'categoryMatchRate',
+        businessLabel: '🏷 Bonne comprehension du sujet',
+        technicalLabel: 'Category Match Rate',
+        tooltip: 'Precision de la categorisation metier.',
         value: formatPercent(categoryMatchRate),
         hint: 'Précision de classification métier',
+        score: categoryMatchRate,
       },
       {
-        label: '🧠 Keyword Match Rate',
+        id: 'keywordMatchRate',
+        businessLabel: '🎯 Precision des reponses',
+        technicalLabel: 'Keyword Match Rate',
+        tooltip: 'Couverture des mots-cles metier importants.',
         value: formatPercent(keywordMatchRate),
         hint: 'Couverture des termes critiques',
+        score: keywordMatchRate,
       },
     ];
     renderKpis(kpis);
+
+    if (window.AelonExplainability?.renderSynthesis) {
+      const warnings = [];
+      if (categoryMatchRate < 80) warnings.push('La categorisation metier est encore fragile sur certains parcours clients.');
+      if (keywordMatchRate < 75) warnings.push('La precision semantique des reponses doit etre renforcee.');
+      window.AelonExplainability.renderSynthesis(governanceSynthesis, {
+        positives: [
+          `${formatPercent(retrievalSuccessRate)} des demandes retrouvent une base documentaire exploitable.`,
+          `${formatPercent(sourceMatchRate)} d alignement entre source attendue et source utilisee.`,
+        ],
+        warnings,
+        priorityAction: categoryMatchRate < 80
+          ? 'Ameliorer le moteur de classification metier pour reduire les erreurs de routage.'
+          : 'Maintenir les seuils actuels et surveiller les categories sensibles.',
+      });
+    }
 
     const topSourcesRows = (Array.isArray(documentQuality.top_sources) ? documentQuality.top_sources : citations)
       .slice(0, 6)
@@ -420,6 +548,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     const usedCount = Math.max(referentialCount - neverUsedDocs.length, 0);
     renderUnusedDonut(governanceUnusedDocumentsChart, usedCount, neverUsedDocs.length);
     renderUnusedDocs(neverUsedDocs);
+
+    if (sourcesAnalysisEl) {
+      sourcesAnalysisEl.textContent = `🤖 Analyse AELON: ${topSourcesRows.length} sources dominent les reponses. Une concentration excessive peut signaler un corpus desequilibre.`;
+    }
+    if (documentsAnalysisEl) {
+      documentsAnalysisEl.textContent = '🤖 Analyse AELON: les documents les plus cites structurent la qualite des reponses. Ils doivent etre maintenus a jour en priorite.';
+    }
+    if (coverageAnalysisEl) {
+      coverageAnalysisEl.textContent = `🤖 Analyse AELON: ${neverUsedDocs.length} documents ne sont jamais utilises. Cela peut indiquer un probleme d indexation ou de pertinence.`;
+    }
 
     const retrievalStatus = statusFromRate(retrievalSuccessRate);
     const analyticsStatus = statusFromRate(keywordMatchRate || 0);
@@ -512,6 +650,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     if (governanceRecommendations) {
       governanceRecommendations.innerHTML = '<li>Vérifier la disponibilité des endpoints /governance, /evaluation et /web/governance/document-quality.</li>';
+    }
+    if (window.AelonExplainability?.renderSynthesis) {
+      window.AelonExplainability.renderSynthesis(governanceSynthesis, {
+        positives: [],
+        warnings: ['Les donnees de gouvernance ne sont pas disponibles pour calculer les indicateurs.'],
+        priorityAction: 'Verifier les endpoints de gouvernance puis relancer l analyse.',
+      });
     }
     mountGovernanceCopilot();
   }

@@ -4,8 +4,29 @@ document.addEventListener('DOMContentLoaded', async () => {
   const categoriesPieEl = document.getElementById('categoriesPieChart');
   const sourcesBarEl = document.getElementById('sourcesBarChart');
   const sentimentsDonutEl = document.getElementById('sentimentsDonutChart');
+  const synthesisEl = document.getElementById('analyticsSynthesis');
+  const guideEl = document.getElementById('aelonGuidePanel');
+  const lineAnalysisEl = document.getElementById('analyticsLineAnalysis');
+  const categoryAnalysisEl = document.getElementById('analyticsCategoryAnalysis');
+  const sourcesAnalysisEl = document.getElementById('analyticsSourcesAnalysis');
+  const sentimentAnalysisEl = document.getElementById('analyticsSentimentAnalysis');
 
   const toneByIndex = ['tone-blue', 'tone-amber', 'tone-red', 'tone-violet', 'tone-green', 'tone-navy'];
+  let currentViewMode = 'business';
+  let lastDashboardSnapshot = null;
+
+  if (window.AelonExplainability?.renderGuide) {
+    window.AelonExplainability.renderGuide(guideEl);
+  }
+
+  if (window.AelonExplainability?.bindViewMode) {
+    window.AelonExplainability.bindViewMode((mode) => {
+      currentViewMode = mode;
+      if (lastDashboardSnapshot) {
+        renderKpis(lastDashboardSnapshot);
+      }
+    });
+  }
 
   const formatNumber = (value) => {
     const num = Number(value || 0);
@@ -52,28 +73,143 @@ document.addEventListener('DOMContentLoaded', async () => {
     return categories[0].label;
   };
 
+  const KPI_META = {
+    totalConversations: {
+      title: 'Conversations analysees',
+      details: {
+        meaning: 'Indique le volume total de conversations clients prises en compte dans le pilotage.',
+        why: 'Plus le volume est eleve, plus vous avez une vision fiable des besoins clients.',
+        formula: 'Nombre de conversations enregistrees sur la periode selectionnee.',
+        action: 'Verifier que les canaux principaux sont bien collectes pour eviter un biais de lecture.',
+      },
+    },
+    avgResponseTime: {
+      title: 'Temps moyen de reponse',
+      details: {
+        meaning: 'Mesure le delai moyen pour fournir une reponse a un client.',
+        why: 'Une latence elevee degrade l experience client et augmente les escalades.',
+        formula: 'Somme des temps de reponse / Nombre total de conversations.',
+        action: 'Prioriser l optimisation des flux sur les demandes les plus frequentes.',
+      },
+    },
+    fraudAlerts: {
+      title: 'Alertes fraude',
+      details: {
+        meaning: 'Nombre de conversations detectees comme potentiellement frauduleuses.',
+        why: 'Permet d anticiper le risque client et de proteger les comptes sensibles.',
+        formula: 'Nombre de conversations marquees is_fraud = true.',
+        action: 'Renforcer les guardrails sur les intents sensibles et les messages d alerte.',
+      },
+    },
+    dominantSentiment: {
+      title: 'Sentiment dominant',
+      details: {
+        meaning: 'Emotion la plus frequente exprimee par les clients.',
+        why: 'Aide a detecter une degradation de la satisfaction ou un pic d inquietude.',
+        formula: 'Categorie de sentiment avec la frequence la plus elevee.',
+        action: 'Adapter les parcours et messages si le sentiment negatif progresse.',
+      },
+    },
+    usedSources: {
+      title: 'Sources utilisees',
+      details: {
+        meaning: 'Nombre de sources documentaires mobilisees par l IA.',
+        why: 'Garantit que les reponses s appuient sur un socle documentaire vivant.',
+        formula: 'Nombre de sources distinctes citees sur la periode.',
+        action: 'Elargir les sources de reference pour couvrir les sujets emergents.',
+      },
+    },
+    topCategory: {
+      title: 'Bonne comprehension du sujet',
+      details: {
+        meaning: 'Theme de demande le plus frequent identifie dans les conversations.',
+        why: 'Permet de prioriser les feuilles de route produit et support.',
+        formula: 'Categorie avec le volume de conversations le plus eleve.',
+        action: 'Concentrer les efforts d amelioration sur cette categorie en priorite.',
+      },
+    },
+  };
+
   const renderKpis = ({ analytics, rows, categories, sentiments, sources }) => {
     const fraudCount = rows.filter((row) => !!row?.is_fraud).length;
     const cards = [
-      { icon: '📊', label: 'Conversations analysees', value: formatNumber(analytics.total_conversations || rows.length) },
-      { icon: '⚡', label: 'Temps moyen de reponse', value: formatMs(analytics.avg_response_time_ms || average(rows.map((row) => Number(row.response_time_ms || 0)))) },
-      { icon: '🚨', label: 'Alertes fraude', value: formatNumber(fraudCount) },
-      { icon: '😊', label: 'Sentiment dominant', value: dominantSentiment(sentiments) },
-      { icon: '📚', label: 'Sources utilisees', value: formatNumber(sources.length) },
-      { icon: '🎯', label: 'Top categorie', value: topCategory(categories) },
+      {
+        id: 'totalConversations',
+        icon: '📊',
+        businessLabel: 'Conversations analysees',
+        technicalLabel: 'Total Conversations',
+        tooltip: 'Volume total de conversations traitees.',
+        value: formatNumber(analytics.total_conversations || rows.length),
+        score: 90,
+      },
+      {
+        id: 'avgResponseTime',
+        icon: '⚡',
+        businessLabel: 'Reactivite des reponses',
+        technicalLabel: 'Average Response Time',
+        tooltip: 'Temps moyen necessaire pour repondre.',
+        value: formatMs(analytics.avg_response_time_ms || average(rows.map((row) => Number(row.response_time_ms || 0)))),
+        score: Math.max(0, 100 - Math.round((analytics.avg_response_time_ms || average(rows.map((row) => Number(row.response_time_ms || 0)))) / 40)),
+      },
+      {
+        id: 'fraudAlerts',
+        icon: '🚨',
+        businessLabel: 'Alertes fraude detectees',
+        technicalLabel: 'Fraud Alerts',
+        tooltip: 'Signalements potentiellement frauduleux identifies.',
+        value: formatNumber(fraudCount),
+        score: Math.max(35, 90 - Math.min(70, fraudCount * 5)),
+      },
+      {
+        id: 'dominantSentiment',
+        icon: '😊',
+        businessLabel: 'Ressenti client dominant',
+        technicalLabel: 'Dominant Sentiment',
+        tooltip: 'Emotion la plus frequente dans les echanges.',
+        value: dominantSentiment(sentiments),
+        score: dominantSentiment(sentiments).toLowerCase().includes('neg') ? 55 : 82,
+      },
+      {
+        id: 'usedSources',
+        icon: '📚',
+        businessLabel: 'Sources documentaires mobilisees',
+        technicalLabel: 'Distinct Sources Used',
+        tooltip: 'Nombre de sources distinctes utilisees.',
+        value: formatNumber(sources.length),
+        score: Math.min(100, 55 + (sources.length * 9)),
+      },
+      {
+        id: 'topCategory',
+        icon: '🏷️',
+        businessLabel: 'Bonne comprehension du sujet',
+        technicalLabel: 'Top Category',
+        tooltip: 'Categorie de demandes la plus frequente.',
+        value: topCategory(categories),
+        score: 78,
+      },
     ];
 
     kpiGrid.innerHTML = '';
     cards.forEach((card, index) => {
       const item = document.createElement('article');
-      item.className = `analytics-kpi-card ${toneByIndex[index % toneByIndex.length]}`;
+      item.className = `analytics-kpi-card aelon-kpi-clickable ${toneByIndex[index % toneByIndex.length]}`;
+      item.setAttribute('data-kpi-id', card.id);
+      item.setAttribute('data-kpi-score', String(Math.round(Number(card.score || 0))));
+      const label = currentViewMode === 'technical' ? card.technicalLabel : card.businessLabel;
       item.innerHTML = `
-        <div class="analytics-kpi-icon">${card.icon}</div>
-        <div class="analytics-kpi-label">${card.label}</div>
+        <div class="analytics-kpi-topline" style="display:flex;justify-content:space-between;gap:0.5rem;align-items:flex-start;">
+          <div class="analytics-kpi-icon">${card.icon}</div>
+          <button type="button" class="aelon-kpi-help" data-tooltip="${card.tooltip}">ⓘ</button>
+        </div>
+        <div class="analytics-kpi-label">${label}</div>
         <div class="analytics-kpi-value">${card.value}</div>
       `;
       kpiGrid.appendChild(item);
     });
+
+    if (window.AelonExplainability?.setupKpiInteractions) {
+      window.AelonExplainability.setupKpiInteractions(kpiGrid, (id) => KPI_META[id]);
+    }
   };
 
   const average = (values) => {
@@ -200,14 +336,45 @@ document.addEventListener('DOMContentLoaded', async () => {
       topCategoryLabel: topCategory(categories),
     };
 
+    lastDashboardSnapshot = { analytics, rows, categories, sentiments, sources };
+
+    if (window.AelonExplainability?.renderSynthesis) {
+      const warnings = [];
+      if (escaladeRate > 30) warnings.push('Le taux d escalade depasse 30%, signe que certaines demandes necessitent plus de precision contextuelle.');
+      if (fraudCount > 0) warnings.push(`${fraudCount} alertes fraude detectees, a suivre de pres avec les equipes risque.`);
+      window.AelonExplainability.renderSynthesis(synthesisEl, {
+        positives: [
+          `${formatNumber(analytics.total_conversations || rows.length)} conversations analysees sur la periode.`,
+          `${formatNumber(sources.length)} sources documentaires mobilisees pour appuyer les reponses.`,
+        ],
+        warnings,
+        priorityAction: escaladeRate > 30
+          ? 'Ameliorer la couverture documentaire des cas complexes pour reduire les escalades.'
+          : 'Conserver la dynamique actuelle et renforcer les categories les plus frequentes.',
+      });
+    }
+
+    if (lineAnalysisEl) {
+      lineAnalysisEl.textContent = `🤖 Analyse AELON: l activite conversationnelle montre ${lineSeries.length} points de mesure. Les pics representent les moments ou la demande client est la plus forte.`;
+    }
+    if (categoryAnalysisEl) {
+      categoryAnalysisEl.textContent = `🤖 Analyse AELON: la categorie dominante est "${topCategory(categories)}", ce qui guide les priorites d amelioration metier.`;
+    }
+    if (sourcesAnalysisEl) {
+      sourcesAnalysisEl.textContent = `🤖 Analyse AELON: ${sources.length} sources differentes ont ete sollicitees, un signal cle pour la fiabilite des reponses.`;
+    }
+    if (sentimentAnalysisEl) {
+      sentimentAnalysisEl.textContent = `🤖 Analyse AELON: le sentiment dominant est "${dominantSentiment(sentiments)}". Ce signal aide a anticiper la satisfaction client.`;
+    }
+
     if (window.CopilotAssistant?.create) {
       window.CopilotAssistant.create({
         mode: 'analytics',
         questions: [
-          'Pourquoi les fraudes augmentent ?',
-          'Quelles categories progressent ?',
-          'Quels sujets sont les plus frequents ?',
-          'Quels problemes utilisateurs reviennent souvent ?',
+          'Pourquoi certains indicateurs sont faibles ?',
+          'Quelles actions metier prioriser cette semaine ?',
+          'Quel est le principal risque client actuellement ?',
+          'Quels indicateurs necessitent une attention immediate ?',
         ],
         initialMessage: 'Selectionnez une question pour afficher une analyse metier.',
         onAsk: async (question) => {

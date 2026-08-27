@@ -1,0 +1,257 @@
+.aelon-explain-toolbar {
+  border: 1px solid var(--aelon-border);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(240,247,255,0.92));
+  padding: 0.8rem 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.9rem;
+}
+
+.aelon-view-switch {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.aelon-view-switch label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 999px;
+  padding: 0.35rem 0.7rem;
+  background: #fff;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.aelon-view-switch input {
+  accent-color: #0a3d91;
+}
+
+.aelon-view-hint {
+  margin: 0;
+  color: #4b5d75;
+  font-size: 0.78rem;
+}
+
+.aelon-kpi-help {
+  border: 1px solid rgba(122, 148, 186, 0.4);
+  background: #f7fbff;
+  color: #0d3a73;
+  border-radius: 999px;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.aelon-kpi-help:hover {
+  background: #eaf4ff;
+}
+
+.aelon-kpi-clickable {
+  cursor: pointer;
+}
+
+.aelon-synthesis-panel {
+  border: 1px solid rgba(147, 173, 205, 0.5);
+  border-radius: 16px;
+  background: linear-gradient(140deg, rgba(255,255,255,0.96), rgba(233,245,255,0.92));
+  padding: 0.9rem 1rem;
+}
+
+.aelon-synthesis-panel h3 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.aelon-synthesis-list {
+  margin: 0.6rem 0 0;
+  padding-left: 1.15rem;
+}
+
+.aelon-synthesis-list li {
+  margin-bottom: 0.34rem;
+  color: #24364f;
+  font-size: 0.84rem;
+}
+
+.aelon-priority-action {
+  margin: 0.5rem 0 0;
+  font-size: 0.84rem;
+  color: #24364f;
+}
+
+.aelon-ai-analysis {
+  margin: 0.5rem 0 0;
+  font-size: 0.78rem;
+  color: #3f5578;
+  background: rgba(13, 80, 166, 0.05);
+  border: 1px dashed rgba(13, 80, 166, 0.24);
+  border-radius: 10px;
+  padding: 0.52rem 0.62rem;
+}
+
+.aelon-guide-panel {
+  border: 1px solid rgba(147, 173, 205, 0.5);
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(255,255,255,0.96), rgba(242,248,255,0.92));
+  padding: 0.95rem 1rem;
+}
+
+.aelon-guide-panel h3 {
+  margin: 0;
+  font-size: 0.94rem;
+}
+
+.aelon-guide-list {
+  margin: 0.55rem 0 0;
+  padding-left: 1.12rem;
+}
+
+.aelon-guide-list li {
+  margin-bottom: 0.46rem;
+  color: #1f314c;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.aelon-kpi-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+}
+
+.aelon-kpi-modal.open {
+  display: flex;
+}
+
+.aelon-kpi-modal-card {
+  max-width: 680px;
+  width: 100%;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  box-shadow: 0 24px 56px rgba(15, 23, 42, 0.24);
+  padding: 1rem;
+  position: relative;
+}
+
+.aelon-kpi-modal-close {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  border-radius: 999px;
+  background: #fff;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+
+.aelon-kpi-modal-card h3 {
+  margin: 0 0 0.8rem;
+  color: #0f315f;
+}
+
+.aelon-kpi-modal-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 999px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.76rem;
+  font-weight: 800;
+  margin-bottom: 0.65rem;
+}
+
+.aelon-kpi-modal-status.excellent {
+  background: rgba(34, 197, 94, 0.14);
+  color: #0f6a35;
+}
+
+.aelon-kpi-modal-status.warning {
+  background: rgba(245, 158, 11, 0.16);
+  color: #9a5a00;
+}
+
+.aelon-kpi-modal-status.critical {
+  background: rgba(239, 68, 68, 0.14);
+  color: #9d1f1f;
+}
+
+.aelon-kpi-modal-status.info {
+  background: rgba(59, 130, 246, 0.12);
+  color: #174987;
+}
+
+.aelon-kpi-modal-body section {
+  margin-bottom: 0.65rem;
+}
+
+.aelon-kpi-modal-body h4 {
+  margin: 0;
+  font-size: 0.84rem;
+  color: #1b4c8d;
+}
+
+.aelon-kpi-modal-body p {
+  margin: 0.22rem 0 0;
+  font-size: 0.83rem;
+  color: #223551;
+  line-height: 1.45;
+}
+
+.aelon-kpi-modal-body ul {
+  margin: 0.35rem 0 0;
+  padding-left: 1.15rem;
+}
+
+.aelon-kpi-modal-body li {
+  margin-bottom: 0.2rem;
+  color: #223551;
+  font-size: 0.82rem;
+}
+
+.aelon-kpi-modal-actions {
+  margin-top: 0.7rem;
+}
+
+.aelon-kpi-learn-more {
+  border: 1px solid rgba(59, 130, 246, 0.34);
+  background: #f7fbff;
+  color: #0d3f78;
+  border-radius: 999px;
+  padding: 0.36rem 0.75rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.aelon-kpi-learn-more-panel {
+  margin-top: 0.55rem;
+  border: 1px dashed rgba(100, 116, 139, 0.38);
+  border-radius: 10px;
+  padding: 0.58rem 0.66rem;
+  background: #f8fbff;
+  color: #2a3f5f;
+  font-size: 0.8rem;
+  line-height: 1.42;
+}
+
+.aelon-sidebar-guide-link {
+  margin-top: 0.8rem;
+}

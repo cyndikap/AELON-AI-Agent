@@ -8,8 +8,9 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
   <link rel="stylesheet" href="/css/global.css" />
-  <link rel="stylesheet" href="/css/copilot-assistant.css?v=20260821c" />
-  <link rel="stylesheet" href="/css/governance.css?v=20260821c" />
+  <link rel="stylesheet" href="/css/explainability.css?v=20260827" />
+  <link rel="stylesheet" href="/css/copilot-assistant.css?v=20260827" />
+  <link rel="stylesheet" href="/css/governance.css?v=20260827" />
 </head>
 <body>
   <div class="aelon-app-shell">
@@ -45,6 +46,14 @@
           </a>
         </div>
       </div>
+
+      <div class="aelon-nav-section aelon-sidebar-guide-link">
+        <div class="aelon-section-label">Pedagogie</div>
+        <a class="aelon-space-link" href="#aelonGuidePanel">
+          <strong>🎓 Comprendre AELON</strong>
+          <small>Glossaire IA, RAG, conformite et interpretation KPI</small>
+        </a>
+      </div>
     </aside>
 
     <main class="aelon-main">
@@ -73,6 +82,17 @@
             <div class="governance-status-pill ok"><span class="governance-dot"></span>Audit trail complet</div>
             <div class="governance-status-pill warn"><span class="governance-dot"></span>Supervision continue requise</div>
           </div>
+
+          <section class="aelon-explain-toolbar">
+            <div class="aelon-view-switch" id="governanceViewSwitch">
+              <strong>Double vue :</strong>
+              <label><input type="radio" name="aelon-view-mode" value="business" checked /> Vue Metier</label>
+              <label><input type="radio" name="aelon-view-mode" value="technical" /> Vue Technique</label>
+            </div>
+            <p class="aelon-view-hint">Cliquez sur un KPI pour comprendre son role, son calcul et l'action conseillee.</p>
+          </section>
+
+          <section id="governanceSynthesis" class="aelon-synthesis-panel"></section>
 
           <section class="governance-section">
             <div class="governance-section-head">
@@ -121,16 +141,19 @@
               <article class="governance-doc-card">
                 <h3>Sources les plus utilisées</h3>
                 <div id="governanceTopSourcesChart" class="governance-plot"></div>
+                <p id="governanceSourcesAnalysis" class="aelon-ai-analysis"></p>
               </article>
 
               <article class="governance-doc-card">
                 <h3>Documents les plus cités</h3>
                 <div id="governanceTopDocumentsChart" class="governance-plot"></div>
+                <p id="governanceDocumentsAnalysis" class="aelon-ai-analysis"></p>
               </article>
 
               <article class="governance-doc-card">
                 <h3>Documents jamais utilisés</h3>
                 <div id="governanceUnusedDocumentsChart" class="governance-plot"></div>
+                <p id="governanceCoverageAnalysis" class="aelon-ai-analysis"></p>
                 <ul id="governanceUnusedDocs" class="governance-unused-list">
                   <li>Chargement...</li>
                 </ul>
@@ -164,12 +187,15 @@
             </div>
           </section>
 
+          <section id="aelonGuidePanel" class="aelon-guide-panel"></section>
+
         </div>
       </div>
     </main>
   </div>
 
-  <script src="/js/copilot-assistant.js?v=20260821c"></script>
-  <script src="/js/governance.js?v=20260821c"></script>
+  <script src="/js/aelon-explainability.js?v=20260827"></script>
+  <script src="/js/copilot-assistant.js?v=20260827"></script>
+  <script src="/js/governance.js?v=20260827"></script>
 </body>
 </html>
