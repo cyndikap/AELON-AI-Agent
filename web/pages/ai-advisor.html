@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AELON | AI Advisor</title>
+  <link rel="icon" type="image/svg+xml" href="/static/aelon-icon.svg" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/global.css?v=20260827" />
+  <link rel="stylesheet" href="/css/ai-advisor.css?v=20260827" />
+</head>
+<body>
+  <div class="aelon-app-shell">
+    <aside class="aelon-sidebar">
+      <div class="aelon-brand">
+        <span class="aelon-brand-mark">
+          <img src="/static/aelon-icon.svg" alt="AELON" />
+        </span>
+        <div>
+          <div class="aelon-brand-title">AELON</div>
+          <div class="aelon-brand-sub">From Customer Conversations</div>
+        </div>
+      </div>
+
+      <div class="aelon-nav-section">
+        <div class="aelon-section-label">Espaces</div>
+        <div class="aelon-space-group">
+          <a class="aelon-space-link" data-space="customer" href="/banking">
+            <strong>💬 Banking Chat</strong>
+            <small>Votre assistant bancaire intelligent</small>
+          </a>
+          <a class="aelon-space-link" data-space="analytics" href="/dashboards/analytics">
+            <strong>📊 Analytics Dashboard</strong>
+            <small>Analyse des conversations clients</small>
+          </a>
+          <a class="aelon-space-link" data-space="governance" href="/dashboards/governance">
+            <strong>🏛 Governance Dashboard</strong>
+            <small>Supervision IA et qualite des donnees</small>
+          </a>
+          <a class="aelon-space-link" data-space="evaluation" href="/dashboards/evaluation">
+            <strong>🧪 Evaluation Dashboard</strong>
+            <small>Mesure automatique du RAG</small>
+          </a>
+        </div>
+      </div>
+
+      <div class="aelon-nav-section aelon-sidebar-guide-link">
+        <div class="aelon-section-label">Conseil IA</div>
+        <a class="aelon-space-link active" href="/dashboards/ai-advisor">
+          <strong>🤖 AI Advisor</strong>
+          <small>Conseiller metier et interpretation automatique des KPI</small>
+        </a>
+      </div>
+    </aside>
+
+    <main class="aelon-main">
+      <div class="aelon-page">
+        <header class="aelon-page-header">
+          <div>
+            <h1 class="aelon-page-title">🤖 AI Advisor</h1>
+            <p class="aelon-page-subtitle">AELON analyse vos indicateurs et identifie automatiquement les points forts, les risques et les actions recommandees.</p>
+          </div>
+          <span class="aelon-status-badge">Decision Hub</span>
+        </header>
+
+        <div class="aelon-page-content ai-advisor-page">
+          <section class="advisor-panel advisor-summary-panel">
+            <div class="advisor-panel-head">
+              <h2>Synthese Executive</h2>
+              <p>Vision immediate de la situation globale AELON.</p>
+            </div>
+            <ul id="advisorExecutiveList" class="advisor-list advisor-list-check"></ul>
+            <div id="advisorPriority" class="advisor-priority"></div>
+          </section>
+
+          <section class="advisor-grid-2">
+            <article class="advisor-panel">
+              <div class="advisor-panel-head">
+                <h3>Points forts</h3>
+                <p>KPI excellents identifies automatiquement.</p>
+              </div>
+              <ul id="advisorStrengths" class="advisor-list"></ul>
+            </article>
+
+            <article class="advisor-panel">
+              <div class="advisor-panel-head">
+                <h3>Points a ameliorer</h3>
+                <p>Points sensibles et impacts metier associes.</p>
+              </div>
+              <div id="advisorImprovements" class="advisor-improvements"></div>
+            </article>
+          </section>
+
+          <section class="advisor-panel">
+            <div class="advisor-panel-head">
+              <h3>Recommandations IA</h3>
+              <p>Actions prioritaires pour ameliorer rapidement les performances.</p>
+            </div>
+            <ol id="advisorRecommendations" class="advisor-recommendations"></ol>
+          </section>
+
+          <section class="advisor-grid-2">
+            <article class="advisor-panel">
+              <div class="advisor-panel-head">
+                <h3>Questions frequentes</h3>
+                <p>Cliquez pour injecter une question dans le chat AI Advisor.</p>
+              </div>
+              <div id="advisorFaqCards" class="advisor-faq-grid"></div>
+            </article>
+
+            <article class="advisor-panel">
+              <div class="advisor-panel-head">
+                <h3>Alertes</h3>
+                <p>Etat automatique par criticite.</p>
+              </div>
+              <div class="advisor-alert-columns">
+                <div>
+                  <h4>🔴 Critique</h4>
+                  <ul id="advisorAlertCritical" class="advisor-list advisor-alert-list"></ul>
+                </div>
+                <div>
+                  <h4>🟠 A surveiller</h4>
+                  <ul id="advisorAlertWatch" class="advisor-list advisor-alert-list"></ul>
+                </div>
+                <div>
+                  <h4>🟢 Conforme</h4>
+                  <ul id="advisorAlertOk" class="advisor-list advisor-alert-list"></ul>
+                </div>
+              </div>
+            </article>
+          </section>
+
+          <section class="advisor-panel">
+            <div class="advisor-panel-head">
+              <h3>AI Advisor Chat</h3>
+              <p>Posez librement vos questions metier et poursuivez la conversation.</p>
+            </div>
+            <div id="advisorChatHistory" class="advisor-chat-history" role="log" aria-live="polite"></div>
+            <form id="advisorChatForm" class="advisor-chat-form" autocomplete="off">
+              <input id="advisorChatInput" type="text" placeholder="Posez votre question..." aria-label="Posez votre question" />
+              <button id="advisorChatSend" type="submit">Envoyer</button>
+            </form>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/ai-advisor.js?v=20260827"></script>
+</body>
+</html>

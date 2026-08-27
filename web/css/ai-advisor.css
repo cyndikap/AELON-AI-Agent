@@ -1,0 +1,228 @@
+.ai-advisor-page {
+  display: grid;
+  gap: 1rem;
+  padding-bottom: 1.5rem;
+}
+
+.advisor-panel {
+  background: linear-gradient(145deg, #ffffff 0%, #f4f8ff 70%, #eef7ff 100%);
+  border: 1px solid #d9e6fb;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(20, 49, 94, 0.08);
+  padding: 1rem;
+}
+
+.advisor-summary-panel {
+  background: linear-gradient(135deg, #0d4bb6 0%, #1a62d7 48%, #26a6c6 100%);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+
+.advisor-summary-panel .advisor-panel-head h2,
+.advisor-summary-panel .advisor-panel-head p {
+  color: #fff;
+}
+
+.advisor-panel-head h2,
+.advisor-panel-head h3 {
+  margin: 0;
+  color: #173f7c;
+  font-weight: 800;
+}
+
+.advisor-panel-head p {
+  margin: 0.3rem 0 0;
+  color: #4a5f83;
+  font-size: 0.93rem;
+}
+
+.advisor-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.advisor-list {
+  margin: 0.85rem 0 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.45rem;
+  color: #264773;
+}
+
+.advisor-list-check {
+  color: rgba(255, 255, 255, 0.96);
+}
+
+.advisor-priority {
+  margin-top: 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  padding: 0.65rem 0.8rem;
+  font-weight: 700;
+}
+
+.advisor-improvements {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 0.8rem;
+}
+
+.advisor-improvement-card {
+  background: #fff;
+  border: 1px solid #d7e6fb;
+  border-left: 4px solid #f59e0b;
+  border-radius: 12px;
+  padding: 0.65rem 0.75rem;
+}
+
+.advisor-improvement-card h4 {
+  margin: 0;
+  font-size: 0.96rem;
+  color: #183963;
+}
+
+.advisor-improvement-card p {
+  margin: 0.45rem 0 0;
+  color: #355079;
+  font-size: 0.9rem;
+}
+
+.advisor-recommendations {
+  margin: 0.85rem 0 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 0.5rem;
+  color: #1d4577;
+}
+
+.advisor-faq-grid {
+  margin-top: 0.8rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.advisor-faq-card {
+  border: 1px solid #ceddf7;
+  background: linear-gradient(180deg, #ffffff, #f2f7ff);
+  border-radius: 12px;
+  text-align: left;
+  padding: 0.7rem 0.75rem;
+  color: #134174;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.advisor-faq-card:hover {
+  background: linear-gradient(180deg, #eef5ff, #e8f1ff);
+}
+
+.advisor-alert-columns {
+  margin-top: 0.8rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.advisor-alert-columns h4 {
+  margin: 0 0 0.3rem;
+  font-size: 0.9rem;
+}
+
+.advisor-alert-list {
+  padding-left: 0.95rem;
+  margin-top: 0;
+  font-size: 0.88rem;
+}
+
+.advisor-chat-history {
+  margin-top: 0.8rem;
+  min-height: 230px;
+  max-height: 360px;
+  overflow-y: auto;
+  border: 1px solid #cfe0fa;
+  border-radius: 14px;
+  background: #fff;
+  padding: 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.advisor-chat-row {
+  display: flex;
+}
+
+.advisor-chat-row.user {
+  justify-content: flex-end;
+}
+
+.advisor-chat-row.assistant {
+  justify-content: flex-start;
+}
+
+.advisor-chat-bubble {
+  max-width: 88%;
+  border-radius: 12px;
+  padding: 0.55rem 0.7rem;
+  white-space: pre-wrap;
+  line-height: 1.45;
+}
+
+.advisor-chat-row.user .advisor-chat-bubble {
+  background: linear-gradient(180deg, #1f6fe0, #1459bf);
+  color: #fff;
+  border: 1px solid #1459bf;
+}
+
+.advisor-chat-row.assistant .advisor-chat-bubble {
+  background: linear-gradient(180deg, #eef4ff, #e7f8fb);
+  color: #173f72;
+  border: 1px solid #d3e3fb;
+}
+
+.advisor-chat-row.typing .advisor-chat-bubble {
+  font-style: italic;
+}
+
+.advisor-chat-form {
+  margin-top: 0.7rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+#advisorChatInput {
+  flex: 1;
+  border: 1px solid #c9dbf8;
+  border-radius: 10px;
+  padding: 0.62rem 0.72rem;
+  color: #1a355a;
+}
+
+#advisorChatInput:focus-visible {
+  outline: 2px solid rgba(47, 141, 247, 0.38);
+}
+
+#advisorChatSend {
+  border: 1px solid #1f62ca;
+  background: linear-gradient(180deg, #2d7ce8, #1d61ca);
+  color: #fff;
+  border-radius: 10px;
+  padding: 0.58rem 0.8rem;
+  font-weight: 700;
+}
+
+#advisorChatInput:disabled,
+#advisorChatSend:disabled,
+.advisor-faq-card:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+@media (max-width: 1024px) {
+  .advisor-grid-2,
+  .advisor-alert-columns {
+    grid-template-columns: 1fr;
+  }
+}

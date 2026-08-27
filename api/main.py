@@ -796,6 +796,14 @@ def evaluation_page(request: Request):
     return HTMLResponse(content=page_path.read_text(encoding="utf-8"))
 
 
+@app.get("/dashboards/ai-advisor", response_class=HTMLResponse)
+def ai_advisor_page(request: Request):
+    page_path = WEB_DIR / "pages" / "ai-advisor.html"
+    if not page_path.exists():
+        raise HTTPException(status_code=404, detail="AI Advisor page not found")
+    return HTMLResponse(content=page_path.read_text(encoding="utf-8"))
+
+
 @app.get("/analytics")
 def get_analytics_kpis():
     return _analytics_kpis()
