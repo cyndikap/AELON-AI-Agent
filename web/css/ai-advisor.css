@@ -4,6 +4,11 @@
   padding-bottom: 1.5rem;
 }
 
+.aelon-page-content.ai-advisor-page {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 .advisor-panel {
   background: linear-gradient(145deg, #ffffff 0%, #f4f8ff 70%, #eef7ff 100%);
   border: 1px solid #d9e6fb;
