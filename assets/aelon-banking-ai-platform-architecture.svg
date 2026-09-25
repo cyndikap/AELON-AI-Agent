@@ -1,0 +1,156 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">AELON - Multi-Agent Banking AI Platform</title>
+  <desc id="desc">Enterprise banking AI platform architecture showing customer interactions, a multi-agent orchestrator, Databricks Lakehouse, RAG, trust and governance, and business value.</desc>
+  <defs>
+    <linearGradient id="canvas" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8fbfd"/>
+      <stop offset="1" stop-color="#eef4f7"/>
+    </linearGradient>
+    <linearGradient id="hero" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#082c4c"/>
+      <stop offset="1" stop-color="#0b5574"/>
+    </linearGradient>
+    <linearGradient id="orchestrator" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07375b"/>
+      <stop offset="1" stop-color="#0a6b87"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="5" stdDeviation="8" flood-color="#07375b" flood-opacity=".12"/>
+    </filter>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 Z" fill="#55bdd0"/>
+    </marker>
+    <marker id="arrow-dark" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 Z" fill="#0b5574"/>
+    </marker>
+    <style>
+      .font { font-family: 'Segoe UI', Arial, sans-serif; fill: #15334a; }
+      .title { font-size: 31px; font-weight: 700; letter-spacing: .2px; }
+      .subtitle { font-size: 15px; fill: #b9e4ec; letter-spacing: .4px; }
+      .section { font-size: 13px; font-weight: 700; letter-spacing: 1.3px; fill: #0b5574; }
+      .label { font-size: 13px; font-weight: 600; }
+      .small { font-size: 11px; fill: #547084; }
+      .tiny { font-size: 10px; fill: #547084; }
+      .white { fill: #fff; }
+      .line { stroke: #55bdd0; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+      .line-dark { stroke: #0b5574; stroke-width: 2; fill: none; marker-end: url(#arrow-dark); }
+      .soft-line { stroke: #a5d9e3; stroke-width: 1.5; fill: none; }
+    </style>
+  </defs>
+
+  <rect width="1600" height="1000" fill="url(#canvas)"/>
+  <rect x="0" y="0" width="1600" height="116" fill="url(#hero)"/>
+  <rect x="0" y="112" width="1600" height="4" fill="#55bdd0"/>
+  <text x="64" y="51" class="font white title">AELON - Multi-Agent Banking AI Platform</text>
+  <text x="66" y="82" class="font subtitle">Transforming customer conversations into governed business intelligence</text>
+  <text x="1535" y="50" text-anchor="end" class="font white section" fill="#b9e4ec">ENTERPRISE ARCHITECTURE</text>
+  <text x="1535" y="76" text-anchor="end" class="font subtitle">RAG  |  Multi-Agent AI  |  Databricks</text>
+
+  <!-- trust zone -->
+  <rect x="1070" y="139" width="466" height="85" rx="8" fill="#e6f4f6" stroke="#8bcbd7"/>
+  <text x="1094" y="164" class="font section">TRUST &amp; GOVERNANCE ZONE</text>
+  <g class="font label">
+    <rect x="1093" y="180" width="83" height="26" rx="13" fill="#fff" stroke="#b8dfe5"/><text x="1134" y="197" text-anchor="middle">Explainability</text>
+    <rect x="1183" y="180" width="78" height="26" rx="13" fill="#fff" stroke="#b8dfe5"/><text x="1222" y="197" text-anchor="middle">Traceability</text>
+    <rect x="1268" y="180" width="72" height="26" rx="13" fill="#fff" stroke="#b8dfe5"/><text x="1304" y="197" text-anchor="middle">Compliance</text>
+    <rect x="1347" y="180" width="91" height="26" rx="13" fill="#fff" stroke="#b8dfe5"/><text x="1392" y="197" text-anchor="middle">Data Governance</text>
+    <rect x="1445" y="180" width="73" height="26" rx="13" fill="#fff" stroke="#b8dfe5"/><text x="1481" y="197" text-anchor="middle">AI Governance</text>
+  </g>
+
+  <!-- customer interactions -->
+  <text x="64" y="166" class="font section">01  CUSTOMER INTERACTIONS</text>
+  <rect x="48" y="184" width="230" height="350" rx="12" fill="#fff" stroke="#c8dbe2" filter="url(#shadow)"/>
+  <rect x="48" y="184" width="230" height="48" rx="12" fill="#e8f5f7"/>
+  <path d="M48 220h230" stroke="#c8dbe2"/>
+  <text x="71" y="214" class="font label">Customer Interactions</text>
+  <g class="font">
+    <circle cx="88" cy="272" r="19" fill="#0b5574"/><path d="M79 292c0-13 18-13 18 0" stroke="#0b5574" stroke-width="7" fill="none"/>
+    <text x="122" y="270" class="label">Retail customer</text><text x="122" y="287" class="small">Mobile banking chat</text>
+    <circle cx="88" cy="354" r="19" fill="#55bdd0"/><path d="M79 374c0-13 18-13 18 0" stroke="#55bdd0" stroke-width="7" fill="none"/>
+    <text x="122" y="352" class="label">Relationship manager</text><text x="122" y="369" class="small">Advisor workspace</text>
+    <circle cx="88" cy="436" r="19" fill="#7198aa"/><path d="M79 456c0-13 18-13 18 0" stroke="#7198aa" stroke-width="7" fill="none"/>
+    <text x="122" y="434" class="label">Operations team</text><text x="122" y="451" class="small">Service channels</text>
+  </g>
+  <rect x="70" y="482" width="185" height="28" rx="5" fill="#f3f8fa"/><text x="162" y="500" text-anchor="middle" class="font small">Questions | Events | Documents</text>
+
+  <!-- connectors into orchestrator -->
+  <path d="M278 358 C320 358 324 358 350 358" class="line"/>
+  <text x="294" y="345" class="font tiny">secure intake</text>
+
+  <!-- orchestrator -->
+  <text x="365" y="261" class="font section">02  INTELLIGENCE FABRIC</text>
+  <rect x="350" y="278" width="585" height="256" rx="14" fill="#f8fcfd" stroke="#a5d9e3"/>
+  <circle cx="642" cy="406" r="98" fill="url(#orchestrator)" filter="url(#shadow)"/>
+  <circle cx="642" cy="406" r="79" fill="none" stroke="#55bdd0" stroke-width="2" stroke-dasharray="3 7"/>
+  <text x="642" y="394" text-anchor="middle" class="font white" font-size="19" font-weight="700">AI ORCHESTRATOR</text>
+  <text x="642" y="419" text-anchor="middle" class="font subtitle" font-size="12">route | reason | act | observe</text>
+  <g class="font label">
+    <rect x="377" y="304" width="124" height="37" rx="7" fill="#fff" stroke="#c8dbe2"/><text x="439" y="327" text-anchor="middle">Privacy Agent</text>
+    <rect x="377" y="363" width="124" height="37" rx="7" fill="#fff" stroke="#c8dbe2"/><text x="439" y="386" text-anchor="middle">Fraud Detection</text>
+    <rect x="377" y="422" width="124" height="37" rx="7" fill="#fff" stroke="#c8dbe2"/><text x="439" y="445" text-anchor="middle">Sentiment Agent</text>
+    <rect x="783" y="304" width="124" height="37" rx="7" fill="#fff" stroke="#c8dbe2"/><text x="845" y="327" text-anchor="middle">Compliance Agent</text>
+    <rect x="783" y="363" width="124" height="37" rx="7" fill="#fff" stroke="#c8dbe2"/><text x="845" y="386" text-anchor="middle">Governance Agent</text>
+    <rect x="783" y="422" width="124" height="37" rx="7" fill="#fff" stroke="#c8dbe2"/><text x="845" y="445" text-anchor="middle">Retrieval Agent</text>
+    <rect x="525" y="474" width="124" height="37" rx="7" fill="#fff" stroke="#c8dbe2"/><text x="587" y="497" text-anchor="middle">Analytics Agent</text>
+    <rect x="665" y="474" width="124" height="37" rx="7" fill="#fff" stroke="#c8dbe2"/><text x="727" y="497" text-anchor="middle">Evaluation Agent</text>
+  </g>
+  <g class="soft-line">
+    <path d="M501 322 L563 354"/><path d="M501 381 L548 389"/><path d="M501 440 L563 424"/>
+    <path d="M783 322 L721 354"/><path d="M783 381 L736 389"/><path d="M783 440 L721 424"/>
+    <path d="M587 474 L620 492"/><path d="M727 474 L666 492"/>
+  </g>
+
+  <!-- business value -->
+  <path d="M935 358 C972 358 975 358 1008 358" class="line"/>
+  <text x="950" y="345" class="font tiny">governed outputs</text>
+  <text x="1008" y="261" class="font section">03  BUSINESS VALUE</text>
+  <rect x="992" y="278" width="544" height="256" rx="14" fill="#fff" stroke="#c8dbe2" filter="url(#shadow)"/>
+  <g class="font label">
+    <rect x="1018" y="305" width="235" height="49" rx="7" fill="#e8f5f7"/><text x="1038" y="326">Strategic Intelligence</text><text x="1038" y="343" class="small">Signals across the enterprise</text>
+    <rect x="1272" y="305" width="235" height="49" rx="7" fill="#f3f8fa"/><text x="1292" y="326">Business Insights</text><text x="1292" y="343" class="small">Faster, evidence-led answers</text>
+    <rect x="1018" y="369" width="235" height="49" rx="7" fill="#f3f8fa"/><text x="1038" y="390">Decision Support</text><text x="1038" y="407" class="small">Confident next-best action</text>
+    <rect x="1272" y="369" width="235" height="49" rx="7" fill="#e8f5f7"/><text x="1292" y="390">AI Governance</text><text x="1292" y="407" class="small">Controls built into every flow</text>
+    <rect x="1018" y="433" width="235" height="49" rx="7" fill="#f3f8fa"/><text x="1038" y="454">Executive Dashboards</text><text x="1038" y="471" class="small">One view of performance</text>
+    <rect x="1272" y="433" width="235" height="49" rx="7" fill="#f3f8fa"/><text x="1292" y="454">Risk Monitoring</text><text x="1292" y="471" class="small">Continuous control signals</text>
+  </g>
+  <rect x="1139" y="493" width="235" height="25" rx="12" fill="#0b5574"/><text x="1256" y="510" text-anchor="middle" class="font white" font-size="11" font-weight="600">Continuous Evaluation</text>
+
+  <!-- lakehouse -->
+  <text x="64" y="585" class="font section">04  DATABRICKS LAKEHOUSE PLATFORM</text>
+  <rect x="48" y="602" width="887" height="290" rx="14" fill="#fff" stroke="#c8dbe2" filter="url(#shadow)"/>
+  <text x="76" y="636" class="font" font-size="17" font-weight="700">Databricks Lakehouse</text>
+  <text x="76" y="656" class="font small">Trusted data foundation for governed AI</text>
+  <g class="font">
+    <rect x="76" y="681" width="228" height="91" rx="8" fill="#f1f5f6" stroke="#d3e0e4"/><rect x="76" y="681" width="228" height="9" rx="5" fill="#809aaa"/><text x="94" y="716" class="label">Bronze Layer</text><text x="94" y="738" class="small">Raw data</text><text x="94" y="756" class="tiny">events | documents | conversations</text>
+    <rect x="324" y="681" width="228" height="91" rx="8" fill="#edf7f7" stroke="#b8dfe5"/><rect x="324" y="681" width="228" height="9" rx="5" fill="#55bdd0"/><text x="342" y="716" class="label">Silver Layer</text><text x="342" y="738" class="small">Cleaned and enriched data</text><text x="342" y="756" class="tiny">quality | identity | metadata</text>
+    <rect x="572" y="681" width="228" height="91" rx="8" fill="#e3f3f1" stroke="#9ed5d1"/><rect x="572" y="681" width="228" height="9" rx="5" fill="#168477"/><text x="590" y="716" class="label">Gold Layer</text><text x="590" y="738" class="small">Business-ready knowledge</text><text x="590" y="756" class="tiny">metrics | policies | insights</text>
+    <path d="M304 726 H324" class="line-dark"/><path d="M552 726 H572" class="line-dark"/>
+  </g>
+  <g class="font label">
+    <rect x="76" y="802" width="130" height="42" rx="7" fill="#f8fbfc" stroke="#c8dbe2"/><text x="141" y="827" text-anchor="middle">Unity Catalog</text>
+    <rect x="218" y="802" width="111" height="42" rx="7" fill="#f8fbfc" stroke="#c8dbe2"/><text x="273" y="827" text-anchor="middle">Delta Lake</text>
+    <rect x="341" y="802" width="119" height="42" rx="7" fill="#f8fbfc" stroke="#c8dbe2"/><text x="400" y="827" text-anchor="middle">Vector Search</text>
+    <rect x="472" y="802" width="104" height="42" rx="7" fill="#f8fbfc" stroke="#c8dbe2"/><text x="524" y="827" text-anchor="middle">Embeddings</text>
+    <rect x="588" y="802" width="126" height="42" rx="7" fill="#f8fbfc" stroke="#c8dbe2"/><text x="651" y="827" text-anchor="middle">Knowledge Base</text>
+  </g>
+
+  <!-- RAG engine -->
+  <rect x="992" y="602" width="544" height="290" rx="14" fill="#07375b" filter="url(#shadow)"/>
+  <text x="1020" y="638" class="font white" font-size="17" font-weight="700">RAG Engine</text>
+  <text x="1020" y="659" class="font subtitle">Grounded generation with traceable context</text>
+  <g class="font">
+    <rect x="1020" y="695" width="98" height="61" rx="7" fill="#fff"/><text x="1069" y="721" text-anchor="middle" class="label">Question</text><text x="1069" y="740" text-anchor="middle" class="tiny">user intent</text>
+    <rect x="1150" y="695" width="98" height="61" rx="7" fill="#dff2f4"/><text x="1199" y="721" text-anchor="middle" class="label">Retrieval</text><text x="1199" y="740" text-anchor="middle" class="tiny">vector search</text>
+    <rect x="1280" y="695" width="98" height="61" rx="7" fill="#dff2f4"/><text x="1329" y="721" text-anchor="middle" class="label">Context</text><text x="1329" y="740" text-anchor="middle" class="tiny">ranked evidence</text>
+    <rect x="1410" y="695" width="98" height="61" rx="7" fill="#55bdd0"/><text x="1459" y="721" text-anchor="middle" class="label">LLM</text><text x="1459" y="740" text-anchor="middle" class="tiny">grounded answer</text>
+  </g>
+  <path d="M1118 725 H1150" class="line"/><path d="M1248 725 H1280" class="line"/><path d="M1378 725 H1410" class="line"/>
+  <path d="M1069 770 V820 H1459 V770" class="soft-line" stroke="#55bdd0"/>
+  <text x="1264" y="848" text-anchor="middle" class="font subtitle" font-size="12">context is governed, evaluated and observable end-to-end</text>
+
+  <!-- bottom message -->
+  <rect x="48" y="928" width="1488" height="40" rx="8" fill="#e2f2f4"/>
+  <circle cx="76" cy="948" r="6" fill="#168477"/>
+  <text x="94" y="954" class="font" font-size="14" font-weight="600">AELON turns every conversation into trusted intelligence, measurable decisions and responsible action.</text>
+  <text x="1510" y="954" text-anchor="end" class="font small">AELON | Banking AI Platform</text>
+</svg>

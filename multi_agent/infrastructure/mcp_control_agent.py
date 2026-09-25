@@ -151,7 +151,7 @@ class MCPControlAgent:
             }
 
         # ------------------------------------------------------------------
-        # ✅ CRITICAL PART: reproduce manual startup EXACTLY
+        # CRITICAL PART: reproduce manual startup EXACTLY
         # ------------------------------------------------------------------
 
         # Working directory MUST be the project root
@@ -167,18 +167,18 @@ class MCPControlAgent:
         start_cmd = [
             self.python_executable,
             "-m", "uvicorn",
-            "api.main:app",              # ✅ EXACT entrypoint
+            "api.main:app",              #  EXACT entrypoint
             "--host", "127.0.0.1",
             "--port", "8000",
         ]
 
         env = dict(os.environ)
-        env["MCP_TOKEN"] = self.mcp_token  # ✅ propagate token
+        env["MCP_TOKEN"] = self.mcp_token  # propagate token
 
         try:
             self.process = subprocess.Popen(
                 start_cmd,
-                cwd=str(project_root),     # ✅ CRITICAL
+                cwd=str(project_root),     #  CRITICAL
                 env=env,
                 stdout=None,               # show logs (dev)
                 stderr=None,

@@ -19,7 +19,7 @@ class MemoryAgent:
             "assistant": safe_assistant
         })
 
-        # ✅ garder les 5 derniers échanges
+        #  garder les 5 derniers échanges
         self.memory[session_id] = self.memory[session_id][-5:]
 
     def get_context(self, session_id):

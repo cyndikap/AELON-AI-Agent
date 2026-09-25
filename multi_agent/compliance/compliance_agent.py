@@ -32,9 +32,25 @@ class ComplianceAgent:
         self._prepend = prepend
 
     def check(self, response: str, user_query: str, user_language: str = "en") -> dict:
-        # Vérification rapide par mots-clés
-        response_lower = response.lower()
+        response_lower = str(response or "").lower()
+        user_query_lower = str(user_query or "").lower()
         sensitive_hit = [p for p in SENSITIVE_PATTERNS if p in response_lower]
+        risky_query_terms = [
+            "mot de passe", "password", "otp", "cvv", "iban", "account number",
+            "numéro de carte", "card number", "code pin", "numéro de compte",
+        ]
+        query_risk = [term for term in risky_query_terms if term in user_query_lower]
+
+        # Fast path: if the response contains no sensitive patterns and the user is not asking
+        # for sensitive data, there is no need to pay an additional LLM call for compliance.
+        if not sensitive_hit and not query_risk:
+            return {
+                "is_compliant": True,
+                "risk_level": "low",
+                "sensitive_keywords_found": [],
+                "corrected_response": response,
+                "raw": "rule_based_safe",
+            }
 
         rules_text = "\n".join(f"- {r}" for r in COMPLIANCE_RULES)
 
@@ -71,7 +87,6 @@ Réponds uniquement en JSON :
         elif '"risk_level": "medium"' in llm_output.lower():
             risk_level = "medium"
 
-        # Extraire la réponse corrigée du JSON LLM
         corrected = response
         marker = '"corrected_response":'
         if marker in llm_output:

@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const cards = [
       {
         id: 'totalConversations',
-        icon: '📊',
+        icon: '📊  Total Conversations',
         businessLabel: 'Conversations analysees',
         technicalLabel: 'Total Conversations',
         tooltip: 'Volume total de conversations traitees.',
@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       },
       {
         id: 'avgResponseTime',
-        icon: '⚡',
+        icon: '⚡  Temps de reponse',
         businessLabel: 'Reactivite des reponses',
         technicalLabel: 'Average Response Time',
         tooltip: 'Temps moyen necessaire pour repondre.',
@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       },
       {
         id: 'fraudAlerts',
-        icon: '🚨',
+        icon: '🚨  Fraud Alerts',
         businessLabel: 'Alertes fraude detectees',
         technicalLabel: 'Fraud Alerts',
         tooltip: 'Signalements potentiellement frauduleux identifies.',
@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       },
       {
         id: 'dominantSentiment',
-        icon: '😊',
+        icon: '😊  Sentiments',
         businessLabel: 'Ressenti client dominant',
         technicalLabel: 'Dominant Sentiment',
         tooltip: 'Emotion la plus frequente dans les echanges.',
@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       },
       {
         id: 'usedSources',
-        icon: '📚',
+        icon: '📚  Sources',
         businessLabel: 'Sources documentaires mobilisees',
         technicalLabel: 'Distinct Sources Used',
         tooltip: 'Nombre de sources distinctes utilisees.',
@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       },
       {
         id: 'topCategory',
-        icon: '🏷️',
+        icon: '🏷️  Autre',
         businessLabel: 'Bonne comprehension du sujet',
         technicalLabel: 'Top Category',
         tooltip: 'Categorie de demandes la plus frequente.',

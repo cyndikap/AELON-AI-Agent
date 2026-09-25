@@ -17,3 +17,8 @@ def extract_all(raw_dir: str = "data/raw") -> list:
         elif fname.endswith(".json"):
             records.extend(extract_json(fpath))
     return records
+{
+  "source": "Banque de France",
+  "titre": "Fraude bancaire",
+  "contenu": "..."
+}

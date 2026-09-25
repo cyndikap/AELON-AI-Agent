@@ -70,11 +70,38 @@ class Orchestrator:
         self.observability = ObservabilityAgent()
         self.analytics = AnalyticsAgent()
         self.conversation_logger = ConversationLogger()
+        self.answer_cache: dict[str, tuple[float, dict]] = {}
+        self.cache_ttl_seconds = 15 * 60
 
         # Optional providers sourced from L0 when available.
         self.azure_kb = getattr(self.l0, "kb", None)
         self.memory = getattr(self.l0, "memory", None)
         self.user_agent = None
+
+    def _get_cached_answer(self, query_safe: str) -> dict | None:
+        if not query_safe:
+            return None
+        cache_key = str(query_safe).strip().lower()
+        if not cache_key:
+            return None
+        cache_entry = self.answer_cache.get(cache_key)
+        if cache_entry is None:
+            return None
+        expires_at, payload = cache_entry
+        if time.time() > expires_at:
+            self.answer_cache.pop(cache_key, None)
+            return None
+        logger.info("cache.hit key=%s", cache_key[:80])
+        return payload
+
+    def _store_cached_answer(self, query_safe: str, payload: dict) -> None:
+        if not query_safe:
+            return
+        cache_key = str(query_safe).strip().lower()
+        if not cache_key:
+            return
+        self.answer_cache[cache_key] = (time.time() + self.cache_ttl_seconds, payload)
+        logger.info("cache.store key=%s ttl_seconds=%s", cache_key[:80], self.cache_ttl_seconds)
 
     def _detect_user_language(self, query: str) -> str:
         """Return a best-effort ISO 639-1 language code for the user query."""
@@ -222,8 +249,39 @@ Text:
 
     def handle_user_query(self, query, user_session_id="anonymous"):
         request_started = time.perf_counter()
+        stage_started = {"total": request_started}
+        stage_durations = {}
+
+        def _mark_stage(name: str, started_at: float | None = None) -> float:
+            if started_at is None:
+                started_at = time.perf_counter()
+            elapsed_ms = round((time.perf_counter() - started_at) * 1000, 2)
+            stage_durations[name] = elapsed_ms
+            logger.info("performance.stage name=%s elapsed_ms=%s", name, elapsed_ms)
+            return elapsed_ms
+
         logger.info("orchestrator.start")
         logger.info("orchestrator.handle_user_query start query=%s", query)
+
+        if isinstance(query, str):
+            cached = self._get_cached_answer(query)
+            if cached is not None:
+                cached_response = dict(cached)
+                cached_response["response_time_ms"] = round((time.perf_counter() - request_started) * 1000, 2)
+                cached_response["performance"] = {
+                    "question": str(query or "").strip(),
+                    "retrieval_ms": 0.0,
+                    "llm_ms": 0.0,
+                    "compliance_ms": 0.0,
+                    "humanization_ms": 0.0,
+                    "total_ms": cached_response["response_time_ms"],
+                }
+                logger.info(
+                    "performance.summary %s",
+                    json.dumps(cached_response["performance"], ensure_ascii=False),
+                )
+                return cached_response
+        stage_started["privacy_start"] = time.perf_counter()
         pre_profile = self.sentiment_language.analyze(query, session_id=user_session_id)
         if pre_profile.language_code in {"en", "fr"}:
             privacy_result = self.privacy.process(query, language=pre_profile.language_code)
@@ -231,8 +289,12 @@ Text:
             privacy_result = {"anonymized_text": query, "detected_entities": []}
         query_safe = privacy_result.get("anonymized_text", str(query or ""))
         question = query_safe
+        _mark_stage("privacy", stage_started["privacy_start"])
+
+        stage_started["sentiment_start"] = time.perf_counter()
         tone_profile = self.sentiment_language.analyze(query_safe, session_id=user_session_id)
         user_language = tone_profile.language_code
+        _mark_stage("sentiment_language", stage_started["sentiment_start"])
         sentiment = {
             "sentiment": tone_profile.sentiment,
             "urgency_level": "high" if tone_profile.sentiment == "Urgent" else "medium" if tone_profile.sentiment in {"Frustré", "Inquiet"} else "low",
@@ -273,7 +335,9 @@ Text:
         # -------------------------------
         # 2. FRAUD CHECK
         # -------------------------------
+        stage_started["fraud_start"] = time.perf_counter()
         fraud_result = self.fraud.analyze(query_safe)
+        _mark_stage("fraud_check", stage_started["fraud_start"])
         logger.info("orchestrator.fraud_result=%s", fraud_result)
 
         if fraud_result.get("is_fraud", False):
@@ -329,13 +393,14 @@ Text:
         # -------------------------------
         # 4.1 RETRIEVAL CONTEXT
         # -------------------------------
+        stage_started["retrieval_start"] = time.perf_counter()
         retrieval_results = {"result": {"data_array": []}}
         try:
-            retrieval_results = retrieve_context(question)
+            retrieval_results = retrieve_context(question, num_results=3)
         except Exception:
             logger.exception("orchestrator.retrieval.failed")
 
-        retrieval_rows = retrieval_results.get("result", {}).get("data_array", [])
+        retrieval_rows = retrieval_results.get("result", {}).get("data_array", [])[:3]
         retrieval_context = ""
         for row in retrieval_rows:
             if len(row) > 1:
@@ -347,6 +412,7 @@ Text:
                 "source": row[2] if len(row) > 2 else "",
                 "categorie": row[3] if len(row) > 3 else "",
             })
+        _mark_stage("retrieval", stage_started["retrieval_start"])
 
         # -------------------------------
         # 5. KB (AZURE)
@@ -424,16 +490,12 @@ Reponds a partir des documents fournis.
 """
         retrieval_answer = ""
         if retrieval_context.strip():
-            try:
-                logger.info("llm.start stage=retrieval_answer")
-                retrieval_answer = self.llm(rag_prompt)
-                logger.info("llm.end stage=retrieval_answer")
-            except Exception:
-                logger.exception("orchestrator.retrieval_prompt.failed")
+            logger.info("performance.note stage=retrieval_answer_skipped reason=llm_call_avoided")
 
         # -------------------------------
         # 8. L0
         # -------------------------------
+        stage_started["l0_start"] = time.perf_counter()
         try:
             logger.info("orchestrator.l0.start")
             l0_result = self.l0.handle(
@@ -443,6 +505,7 @@ Reponds a partir des documents fournis.
                 user_language=user_language,
             )
             logger.info("orchestrator.l0.result=%s", l0_result)
+            _mark_stage("l0_agent", stage_started["l0_start"])
         except Exception:
             logger.exception("orchestrator.l0.failed")
             l0_result = {
@@ -515,27 +578,33 @@ Reponds a partir des documents fournis.
     {raw_response}
     """
 
+        stage_started["humanization_start"] = time.perf_counter()
         logger.info("llm.start stage=humanization")
         final_response = self.llm(humanization_prompt)
         logger.info("llm.end stage=humanization")
+        _mark_stage("humanization", stage_started["humanization_start"])
 
         # -------------------------------
         # 11. COMPLIANCE + RETURN
         # -------------------------------
+        stage_started["compliance_start"] = time.perf_counter()
         try:
             compliance = self.compliance.check(final_response, query_safe, user_language=user_language)
-            # Only apply compliance rewrite when the answer is not compliant.
-            # This preserves the language chosen in the humanization step.
             if compliance and not compliance.get("is_compliant", True):
                 final_response = compliance.get("corrected_response", final_response)
         except Exception:
             compliance = None
+        _mark_stage("compliance", stage_started["compliance_start"])
 
         # -------------------------------
         # 12. LANGUAGE LOCK (FINAL GUARD)
         # -------------------------------
+        # The model already follows the target language in the humanization prompt. Keeping a
+        # second LLM pass here multiplies latency without a proportional gain, so only run it on
+        # exceptional cases when the response is empty or obviously mixed-language.
         try:
-            language_lock_prompt = f"""
+            if not final_response or len(final_response.strip()) < 20 or re.search(r"[A-Za-z]{3,}.*[\u00C0-\u024F]", final_response):
+                language_lock_prompt = f"""
 You are a strict language guard.
 
 User original question:
@@ -551,9 +620,11 @@ Task:
 - Do not add explanations about translation.
 - Output only the final response text.
 """
-            logger.info("llm.start stage=language_lock")
-            final_response = self.llm(language_lock_prompt)
-            logger.info("llm.end stage=language_lock")
+                stage_started["language_lock_start"] = time.perf_counter()
+                logger.info("llm.start stage=language_lock")
+                final_response = self.llm(language_lock_prompt)
+                logger.info("llm.end stage=language_lock")
+                _mark_stage("language_lock", stage_started["language_lock_start"])
         except Exception:
             pass
 
@@ -614,8 +685,25 @@ Task:
             retrieval_count=len(retrieval_rows),
         )
         logger.info("orchestrator.end")
+        total_elapsed = round((time.perf_counter() - request_started) * 1000, 2)
+        stage_durations["total"] = total_elapsed
+        logger.info("performance.total elapsed_ms=%s", total_elapsed)
 
-        return {
+        performance_summary = {
+            "question": str(query_safe or query or "").strip(),
+            "retrieval_ms": float(stage_durations.get("retrieval", 0.0)),
+            "llm_ms": float(
+                stage_durations.get("l0_agent", 0.0)
+                + stage_durations.get("humanization", 0.0)
+                + stage_durations.get("language_lock", 0.0)
+            ),
+            "compliance_ms": float(stage_durations.get("compliance", 0.0)),
+            "humanization_ms": float(stage_durations.get("humanization", 0.0)),
+            "total_ms": float(total_elapsed),
+        }
+        logger.info("performance.summary %s", json.dumps(performance_summary, ensure_ascii=False))
+
+        payload = {
             "answer": final_response,
             "response": final_response,
             "retrieval": retrieval_results,
@@ -630,9 +718,12 @@ Task:
             "explainability": explanation,
             "observability": observability,
             "analytics": analytics,
-            "response_time_ms": round((time.perf_counter() - request_started) * 1000, 2),
+            "response_time_ms": total_elapsed,
+            "performance": performance_summary,
             "privacy": {
                 "anonymized_query": query_safe,
                 "detected_entities": privacy_result.get("detected_entities", []),
             },
         }
+        self._store_cached_answer(query_safe or str(query or ""), payload)
+        return payload

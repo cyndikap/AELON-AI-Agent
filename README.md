@@ -1,272 +1,175 @@
 # AELON
 
-Plateforme bancaire orientee Data + IA, construite sur Databricks, pour ingerer, traiter, ordonner et exploiter des contenus documentaires et conversationnels afin d'alimenter un assistant RAG, des KPI metier, des tableaux de bord Analytics et des controles de Governance.
+> 🏦 Plateforme intelligente de service apres-vente bancaire, orientee Data Engineering, GenAI, RAG et Multi-Agents.
 
-## Objectif produit
+## Overview
 
-AELON ne se limite pas a un chat. Le coeur de la plateforme est une chaine de valeur data centree sur Databricks :
+AELON est une plateforme intelligente de service apres-vente bancaire developpee dans le cadre du projet RAISE. Elle combine Data Engineering, Intelligence Artificielle Generative, Retrieval-Augmented Generation (RAG) et Architecture Multi-Agents afin d'assister les utilisateurs bancaires, d'exploiter les conversations comme source d'aide a la decision et de superviser les performances des agents IA.
 
-- ingestion de sources documentaires bancaires
-- structuration via architecture medaillon
-- preparation des chunks et embeddings
-- exposition via Vector Search
-- consommation par le moteur RAG pour generer les reponses
-- persistance des conversations pour l'analytics, la gouvernance et l'amelioration continue
+Concue comme une plateforme de capacites IA et data, AELON depasse le cadre d'un simple chatbot et structure un dispositif complet de recherche documentaire, generation de reponses, pilotage de qualite et valorisation analytique.
 
-## Architecture cible
+## Key Features
 
-```text
-Sources documentaires
--> Bronze
--> Silver
--> Gold
--> Chunking / Embeddings
--> Databricks Vector Search
--> Retrieval Agent
--> Orchestrator IA
--> Chat / APIs
--> gold_conversations
--> Analytics Metrics / Governance Metrics
--> Dashboards / Supervision
+| Feature | Value |
+|--------|-------|
+|  - Banking Chat | Assistant bancaire conversationnel alimente par IA Generative et sources metier fiables. |
+|  - Multi-Agent Architecture | Orchestration d'agents specialises pour retrieval, raisonnement, controle et supervision. |
+|  - Databricks Lakehouse | Fondations data pour ingestion, transformation, historisation et exploitation analytique. |
+|  - Databricks Vector Search | Recherche semantique par embeddings pour contextualiser les reponses. |
+|  - Retrieval-Augmented Generation (RAG) | Reponses enrichies et ancrees sur un corpus documentaire bancaire. |
+|  - Analytics Dashboard | Indicateurs sur volumes, categories et tendances conversationnelles. |
+|  - Governance Dashboard | Suivi de la qualite, de l'usage des sources et monitoring des agents IA. |
+|  - AI Evaluation Framework | Cadre de mesure des performances RAG et agents sur un dataset metier. |
+|  - Conversation Analytics | Exploitation des conversations utilisateurs comme signal operationnel. |
+|  - Decision Support | Production d'insights pour les equipes metier, data et gouvernance. |
+
+## Architecture
+
+### Architecture Globale
+
+![AELON - Architecture Globale](docs/images/aelon-architecture-globale.png)
+
+*Vue logique end-to-end du parcours utilisateur, de l'orchestration multi-agents et de la boucle Analytics/Governance/Evaluation.*
+
+```mermaid
+flowchart TD
+    U[Utilisateur] --> C[Banking Chat]
+    C --> O[Orchestrateur]
+    O --> MA[Architecture Multi-Agents]
+    MA --> RA[Retrieval Agent]
+    RA --> VS[Databricks Vector Search]
+    VS --> DOC[Corpus Documentaire]
+    DOC --> GM[Modele Generatif]
+    GM --> R[Reponse]
+    R --> GC[gold_conversations]
+    GC --> A[Analytics]
+    GC --> G[Governance]
+    GC --> E[Evaluation]
 ```
 
-## Architecture medaillon Databricks
+Cette architecture fait d'AELON un systeme bancaire intelligent bout en bout, ou chaque interaction utilisateur devient a la fois une assistance immediate et une source de pilotage pour l'amelioration continue.
+
+## Medallion Architecture
+
+Le pipeline documentaire AELON s'appuie sur une architecture medaillon pour garantir qualite, tracabilite et exploitation industrielle des donnees.
+
+![AELON - Architecture Medaillon](docs/images/aelon-medallion-architecture.png)
+
+*Architecture medaillon orientee Lakehouse pour fiabiliser l'ingestion documentaire, la standardisation des donnees et l'alimentation RAG.*
 
 ### Bronze
 
-Couche d'atterrissage des sources brutes. Elle conserve les documents collectes avec une logique de tracabilite et de reprise.
-
-Exemples de contenus :
-
-- FAQ bancaires
-- contenus ACPR
-- contenus Banque de France
-- contenus CNIL / FBF
-- documents PDF et sources textuelles
+- `bronze_documents`
+- Role : ingestion des documents bruts, conservation des traces d'origine et reprise fiable des traitements.
 
 ### Silver
 
-Couche de normalisation et de nettoyage. Les documents y sont harmonises, dedoublonnes, nettoyes et prepares pour la suite du pipeline.
-
-Objectifs :
-
-- standardiser les structures de donnees
-- isoler les contenus utiles au RAG
-- supprimer le bruit documentaire
-- faciliter la qualite et la gouvernance de la donnee
+- `silver_documents`
+- Role : nettoyage, normalisation et structuration des contenus documentaires pour les rendre exploitables.
 
 ### Gold
 
-Couche de consommation metier et IA. Elle contient les actifs directement exploitables par les composants applicatifs et analytiques.
+- `gold_documents`
+- `gold_embeddings`
+- `gold_conversations`
+- Role : couche de consommation pour le RAG, la recherche vectorielle, l'analytics et la gouvernance.
 
-Tables principales :
+## Tech Stack
 
-- `fr_raise.rag_pipeline.bronze_documents`
-- `fr_raise.rag_pipeline.silver_documents`
-- `fr_raise.rag_pipeline.gold_documents`
-- `fr_raise.rag_pipeline.gold_embeddings`
-- `fr_raise.rag_pipeline.gold_conversations`
-- `fr_raise.rag_pipeline.gold_governance`
+| Domaine | Technologies |
+|----------|-------------|
+| Data Engineering | Databricks, PySpark, Delta Lake |
+| AI | GenAI, RAG, Embeddings |
+| Search | Databricks Vector Search |
+| Governance | Unity Catalog |
+| Backend | Python |
+| Frontend | HTML, CSS, JavaScript |
+| Analytics | Dashboards & KPI |
 
-Tables KPI :
+## Document Sources
 
-- `fr_raise.rag_pipeline.analytics_metrics`
-- `fr_raise.rag_pipeline.governance_metrics`
+Le corpus documentaire est construit a partir de sources de reference reglementaires et metier.
 
-## Chaine RAG
+- Banque de France
+- ACPR
+- CNIL
+- FBF
+- FAQ metier
 
-Le RAG AELON s'appuie sur Databricks comme socle de preparation et de restitution du contexte.
+## Analytics & Governance
 
-### Etapes principales
+### Analytics Dashboard
 
-1. ingestion des documents dans la medallion architecture
-2. generation des chunks documentaires
-3. calcul des embeddings avec `databricks-gte-large-en`
-4. indexation dans Databricks Vector Search
-5. recherche des top chunks par le Retrieval Agent
-6. injection du contexte dans l'Orchestrator
-7. generation de la reponse par le LLM
-8. persistance de la conversation pour reusage analytique et gouvernance
+Le dashboard Analytics fournit une vision claire de la dynamique conversationnelle.
 
-### Flux d'execution
+![AELON - Analytics Dashboard](docs/images/aelon-analytics-dashboard.png)
 
-```text
-Utilisateur
--> Orchestrator
--> Retrieval Agent
--> Databricks Vector Search
--> Top Chunks
--> LLM
--> Reponse
--> Conversation Logger
--> gold_conversations
-```
-
-## Couches IA et usages
-
-### Chat bancaire
-
-Le chat consomme le contexte RAG pour fournir des reponses alimentees par la base documentaire. Les agents de privacy, fraude, sentiment, compliance, explainability et evaluation enrichissent le traitement.
-
-### Analytics
-
-La couche Analytics exploite les conversations sauvegardees pour produire des KPI de pilotage :
+*Exemple de dashboard Analytics pour suivre les volumes, tendances, categories et signaux metier issus des conversations.*
 
 - volume de conversations
-- questions par jour
-- questions par categorie
-- sources les plus utilisees
-- nombre moyen de chunks recuperes
-- temps moyen de reponse
-- top requetes utilisateurs
+- categories
+- tendances
 
-### Governance
+### Governance Dashboard
 
-La couche Governance suit la qualite et la robustesse du systeme RAG :
+Le dashboard Governance mesure la robustesse du systeme IA et la qualite des sorties.
 
-- taux de retrieval reussi
-- taux de retrieval vide
-- nombre de reponses avec sources
-- nombre moyen de documents recuperes
-- contexte moyen injecte
-- citations par source
-- signaux d'observabilite et de compliance
+- qualite des reponses
+- utilisation des sources
+- monitoring des agents
 
-## Persistance des conversations
+## Evaluation Framework
 
-Chaque reponse generee est enregistree dans `fr_raise.rag_pipeline.gold_conversations` avec les attributs suivants :
+Le framework d'evaluation AELON permet de monitorer en continu la performance du systeme RAG et des agents IA sur des cas bancaires concrets.
 
-- `conversation_id`
-- `timestamp`
-- `question`
-- `answer`
-- `sources`
-- `categories`
-- `retrieval_count`
-- `response_time_ms`
-- `user_session_id`
+### Dataset
 
-Cette table devient la source de verite pour :
+- 36 questions metier
 
-- l'analyse des usages
-- les dashboards metiers
-- le suivi de performance du RAG
-- l'audit et la gouvernance
+### Categories
 
-Si le SQL Warehouse Databricks est indisponible, les evenements sont stockes temporairement dans :
+- Fraude
+- Carte bancaire
+- Virement
+- RGPD
+- KYC
+- Conformite
 
-- `data/processed/failed_conversation_events.jsonl`
+### KPIs
 
-Le rejeu est disponible via :
+- Retrieval Success Rate
+- Source Match Rate
+- Category Match Rate
+- Keyword Match Rate
 
-```powershell
-Set-Location C:/Users/csileuka/OneDrive - Capgemini/Bureau/PROJETS/AI.Agent.AELON/GEN.AI
-.\.venv\Scripts\python.exe .\scripts\replay_failed_conversations.py
-```
+### Resultats obtenus
 
-## APIs principales
+| KPI | Valeur |
+|-----|--------|
+| Retrieval Success Rate | 100 % |
+| Source Match Rate | 100 % |
+| Category Coverage | 100 % |
+| Keyword Match Rate | 62,5 % |
+| Category Match Rate | 50 % |
 
-### Surface applicative
+Ces resultats valident la solidite du retrieval et de la couverture documentaire, tout en mettant en evidence des axes d'amelioration sur la precision semantique et la classification finale.
 
-- `POST /web/chat`
-- `GET /dashboards/analytics`
-- `GET /dashboards/governance`
+## Project Impact
 
-### APIs KPI
+AELON cree une valeur directe pour les operations bancaires et les equipes metier.
 
-- `GET /analytics`
-- `GET /governance`
+- assistance bancaire intelligente
+- reduction du temps de recherche documentaire
+- exploitation des conversations utilisateurs
+- aide a la decision pour les equipes metier
+- evaluation continue des agents IA
 
-Ces endpoints exposent les indicateurs consolides issus des tables Databricks de metrics, avec fallback local si les tables ne sont pas encore materialisees.
+## Roadmap
 
-## Artefacts Data / KPI
+Les prochaines etapes visent l'industrialisation et la maturite LLMOps de la plateforme.
 
-### Scripts SQL
-
-- `sql/analytics_metrics.sql`
-- `sql/governance_metrics.sql`
-- `sql/analytics_kpis.sql`
-- `sql/governance_kpis.sql`
-
-### Notebooks Databricks
-
-- `notebooks/05_analytics_metrics.ipynb`
-- `notebooks/06_governance_metrics.ipynb`
-
-## Variables d'environnement critiques
-
-```env
-DATABRICKS_HOST=...
-DATABRICKS_TOKEN=...
-DATABRICKS_SQL_WAREHOUSE_ID=...
-DATABRICKS_CATALOG=fr_raise
-DATABRICKS_SCHEMA=rag_pipeline
-
-AZURE_OPENAI_ENDPOINT=...
-AZURE_OPENAI_API_KEY=...
-AZURE_OPENAI_CHAT_DEPLOYMENT=...
-
-AZURE_AI_SEARCH_INDEX_NAME=...
-AZURE_AI_SEARCH_API_KEY=...
-```
-
-Sans `DATABRICKS_SQL_WAREHOUSE_ID`, l'ecriture directe dans `gold_conversations` n'est pas possible et le systeme bascule sur le fichier de reprise local.
-
-## Monitoring et exploitation
-
-Les logs structurants suivants sont emis pour superviser la chaine RAG :
-
-- `orchestrator.start`
-- `orchestrator.end`
-- `retrieval.start`
-- `retrieval.documents_found`
-- `retrieval.sources`
-- `retrieval.response_time`
-- `retrieval.end`
-- `llm.start`
-- `llm.end`
-- `conversation.saved`
-
-Points de surveillance prioritaires :
-
-- disponibilite du SQL Warehouse
-- volume de fichiers de reprise locale
-- taux de retrieval vide
-- degradation du temps de reponse
-- baisse du nombre de sources citees
-
-## Demarrage local
-
-### Bootstrap
-
-```powershell
-Set-Location C:/Users/csileuka/OneDrive - Capgemini/Bureau/PROJETS/AI.Agent.AELON/GEN.AI
-powershell -ExecutionPolicy Bypass -File .\scripts\bootstrap-ui.ps1
-```
-
-### Lancement
-
-```powershell
-Set-Location C:/Users/csileuka/OneDrive - Capgemini/Bureau/PROJETS/AI.Agent.AELON/GEN.AI
-powershell -ExecutionPolicy Bypass -File .\scripts\run-ui.ps1
-```
-
-Ou en execution directe :
-
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-python -m uvicorn api.main:app --host 127.0.0.1 --port 8010 --reload
-```
-
-L'interface web est exposee sur `http://127.0.0.1:8010/`.
-
-## Positionnement AELON
-
-AELON doit etre lu comme une plateforme complete :
-
-- Databricks porte l'ingestion, le traitement et l'ordonnancement des donnees
-- la couche RAG se branche sur cette fondation pour alimenter les reponses
-- la persistance des conversations alimente l'analytics et la governance
-- la couche IA n'est pas isolee : elle repose sur une base data industrialisee, traçable et exploitable
+- enrichissement documentaire
+- feedback utilisateur
+- guardrails IA
+- deploiement industriel
+- evaluation avancee des agents

@@ -1,10 +1,14 @@
+import json
 import logging
 import os
 import time
+from typing import Any
 
 from dotenv import load_dotenv
 
 logger = logging.getLogger("aelon.retrieval")
+
+_RETRIEVAL_CACHE: dict[tuple[str, int], dict[str, Any]] = {}
 
 load_dotenv()
 
@@ -43,7 +47,7 @@ class RetrievalAgent:
         self._index = index
         return deploy_client, index
 
-    def retrieve_context(self, question: str, num_results: int = 5):
+    def retrieve_context(self, question: str, num_results: int = 3):
         logger.info("retrieval.start")
         start = time.perf_counter()
 
@@ -52,6 +56,12 @@ class RetrievalAgent:
             logger.info("retrieval.documents_found=0")
             logger.info("retrieval.end")
             return {"result": {"data_array": []}}
+
+        cache_key = (question_text, max(1, int(num_results)))
+        cached = _RETRIEVAL_CACHE.get(cache_key)
+        if cached is not None:
+            logger.info("retrieval.cache_hit=%s", cache_key[0][:80])
+            return cached
 
         deploy_client, index = self._get_clients()
 
@@ -64,20 +74,23 @@ class RetrievalAgent:
         results = index.similarity_search(
             query_vector=question_vector,
             columns=["chunk_id", "texte_chunk", "source_document", "categorie"],
-            num_results=num_results,
+            num_results=max(1, int(num_results)),
         )
 
-        data_array = results.get("result", {}).get("data_array", []) if isinstance(results, dict) else []
+        final_results = results if isinstance(results, dict) else {"result": {"data_array": []}}
+        data_array = final_results.get("result", {}).get("data_array", []) if isinstance(final_results, dict) else []
         sources = [row[2] for row in data_array if len(row) > 2]
         logger.info("retrieval.documents_found=%s", len(data_array))
         logger.info("retrieval.sources=%s", sources)
         elapsed_ms = round((time.perf_counter() - start) * 1000, 2)
         logger.info("retrieval.response_time=%s", elapsed_ms)
         logger.info("retrieval.end elapsed_ms=%s", elapsed_ms)
-        return results if isinstance(results, dict) else {"result": {"data_array": []}}
+
+        _RETRIEVAL_CACHE[cache_key] = final_results
+        return final_results
 
     def search(self, query):
-        rows = self.retrieve_context(query, num_results=5).get("result", {}).get("data_array", [])
+        rows = self.retrieve_context(query, num_results=3).get("result", {}).get("data_array", [])
         return [
             {
                 "chunk_id": row[0] if len(row) > 0 else "",

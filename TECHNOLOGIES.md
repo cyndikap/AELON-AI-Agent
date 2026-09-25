@@ -370,14 +370,14 @@ run_pipeline()
 ## 📝 Conclusion
 
 GEN.AI intègre une **stack cloud-native complète** combinant :
-- ✅ LLM avancés (Azure OpenAI)
-- ✅ Recherche sémantique (ChromaDB + Azure Search)
-- ✅ Architecture multi-agent orchestrée
-- ✅ API REST scalable (FastAPI)
-- ✅ Interface utilisateur web (FastAPI + HTML/CSS/JS)
-- ✅ Détection fraude & conformité intégrée
-- ✅ Pipeline ETL modulaire
-- ✅ Analytics temps réel
+-   LLM avancés (Azure OpenAI)
+-   Recherche sémantique (ChromaDB + Azure Search)
+-   Architecture multi-agent orchestrée
+-   API REST scalable (FastAPI)
+-   Interface utilisateur web (FastAPI + HTML/CSS/JS)
+-   Détection fraude & conformité intégrée
+-   Pipeline ETL modulaire
+-   Analytics temps réel
 
 **Déploiement** : Cloud-ready sur Azure, extensible pour on-premises.
 

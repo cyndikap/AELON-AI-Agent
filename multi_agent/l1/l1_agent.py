@@ -4,6 +4,10 @@ from typing import Dict, Any
 from global_prompt import prepend
 
 
+from multi_agent.explainability.explainability_agent import ExplainabilityAgent
+from multi_agent.observability.observability_agent import ObservabilityAgent
+from multi_agent.analytics.analytics_agent import AnalyticsAgent
+
 class L1Agent:
     """
     L1Agent – diagnostic technique enrichi par les données (RAG simple)
